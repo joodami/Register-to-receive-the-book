@@ -87,27 +87,43 @@
 
     <div class="container mx-auto px-5 pt-safe py-8 flex-grow flex flex-col justify-between items-center relative z-10 max-w-md lg:max-w-4xl">
       
-      <!-- Header & School Logo -->
-      <div class="w-full text-center mt-2 mb-6">
-        <div class="inline-flex items-center gap-2 bg-white/10 border border-white/15 px-3.5 py-1 rounded-full text-xs font-medium text-amber-200 mb-5 backdrop-blur-md">
-          <i class="fa-solid fa-shield-halved text-amber-300"></i>
-          <span>ระบบงานสารบรรณอิเล็กทรอนิกส์</span>
-        </div>
+      <!-- Header & School Logo (ปรับตามแนวทางที่ 1: เพิ่มภาพพื้นหลังแบบ Banner) -->
+      <div class="w-full text-center mt-2 mb-6 relative overflow-hidden rounded-3xl bg-slate-900/80 border border-white/15 p-6 backdrop-blur-xl shadow-2xl">
         
-        <!-- Logo Container -->
-        <div class="relative w-28 h-28 lg:w-32 lg:h-32 mx-auto mb-4 p-2 bg-white/10 rounded-full border border-white/20 backdrop-blur-md shadow-2xl flex items-center justify-center">
-          <img id="portalSchoolLogo" src="https://raw.githubusercontent.com/joodami/school-assets/main/logo.png" 
-               alt="ตราโรงเรียนพิมานพิทยาสรรค์" 
-               class="w-full h-full object-contain filter drop-shadow-md p-1">
+        <!-- รูปภาพพื้นหลังส่วนหัว -->
+        <img id="headerBgImg" 
+             src="https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?q=80&w=1200&auto=format&fit=crop" 
+             alt="Header Background" 
+             class="absolute inset-0 w-full h-full object-cover opacity-20 pointer-events-none mix-blend-overlay">
+        
+        <!-- Overlay แสงฟุ้งไล่เฉดสีเพิ่มมิติ -->
+        <div class="absolute -top-24 -left-24 w-48 h-48 bg-amber-500/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-24 -right-24 w-48 h-48 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+        <!-- Content ด้านใน Header -->
+        <div class="relative z-10">
+          <div class="inline-flex items-center gap-2 bg-white/10 border border-white/20 px-4 py-1.5 rounded-full text-xs font-medium text-amber-200 mb-4 backdrop-blur-md shadow-inner">
+            <i class="fa-solid fa-shield-halved text-amber-300"></i>
+            <span>ระบบงานสารบรรณอิเล็กทรอนิกส์</span>
+          </div>
+          
+          <!-- Logo Container -->
+          <div class="relative w-28 h-28 lg:w-32 lg:h-32 mx-auto mb-4 p-2 bg-white/10 rounded-full border border-white/30 backdrop-blur-md shadow-2xl flex items-center justify-center ring-4 ring-white/5">
+            <img id="portalSchoolLogo" 
+                 src="https://raw.githubusercontent.com/joodami/school-assets/main/logo.png" 
+                 alt="ตราโรงเรียนพิมานพิทยาสรรค์" 
+                 class="w-full h-full object-contain filter drop-shadow-lg p-1">
+          </div>
+
+          <h1 class="text-2xl lg:text-3xl font-bold text-white tracking-tight drop-shadow-md">
+            ระบบรับหนังสือเข้า
+          </h1>
+          <p class="text-slate-300 text-sm lg:text-base mt-1 font-light tracking-wide">
+            โรงเรียนพิมานพิทยาสรรค์
+          </p>
+          <div class="w-16 h-1 bg-gradient-to-r from-transparent via-amber-400 to-transparent mx-auto mt-4 rounded-full opacity-80"></div>
         </div>
 
-        <h1 class="text-2xl lg:text-3xl font-bold text-white tracking-tight drop-shadow-sm">
-          ระบบรับหนังสือเข้า
-        </h1>
-        <p class="text-slate-300 text-sm lg:text-base mt-1 font-light">
-          โรงเรียนพิมานพิทยาสรรค์
-        </p>
-        <div class="w-12 h-0.5 bg-amber-400/60 mx-auto mt-3 rounded-full"></div>
       </div>
 
       <!-- Action Cards -->
@@ -207,7 +223,7 @@
         </button>
         
         <div class="flex items-center justify-center gap-3 mb-2">
-          <img class="modalSchoolLogo w-10 h-10 object-contain" src="https://lookaside.fbsbx.com/lookaside/crawler/media/?media_id=100079987957008" alt="Logo">
+          <img class="modalSchoolLogo w-10 h-10 object-contain" src="https://raw.githubusercontent.com/joodami/school-assets/main/logo.png" alt="Logo">
           <div class="text-left">
             <h3 id="modalTitle" class="text-base font-bold leading-tight text-white">เข้าสู่ระบบ</h3>
             <p class="text-[11px] text-amber-200/90 font-light">โรงเรียนพิมานพิทยาสรรค์</p>
@@ -257,7 +273,7 @@
       <div class="container mx-auto max-w-5xl flex justify-between items-center">
         
         <div class="flex items-center gap-3">
-          <img class="headerSchoolLogo w-9 h-9 object-contain" src="https://lookaside.fbsbx.com/lookaside/crawler/media/?media_id=100079987957008" alt="Logo">
+          <img class="headerSchoolLogo w-9 h-9 object-contain" src="https://raw.githubusercontent.com/joodami/school-assets/main/logo.png" alt="Logo">
           <div class="border-l border-slate-200 pl-3">
             <h2 class="font-bold text-sm lg:text-base text-slate-800 leading-tight">ระบบรับหนังสือเข้า</h2>
             <p id="userInfo" class="text-xs text-[#1a5276] font-medium"></p>
@@ -333,16 +349,22 @@
   <script>
     const GAS_URL = "https://script.google.com/macros/s/AKfycbxw0zb196W_WDnIvW_TpfEcmreRUEtkE1aKWCI4w68d1dafBtUs308Sl-jcfMYxF8t1/exec"; 
     
-    // ตั้งค่า URL โลโก้โรงเรียน (เปลี่ยนURL ตรงนี้หากต้องการเปลี่ยนรูปโลโก้)
+    // ตั้งค่า URL โลโก้โรงเรียน
     const SCHOOL_LOGO_URL = "https://raw.githubusercontent.com/joodami/school-assets/main/logo.png";
+    
+    // ตั้งค่า URL รูปภาพพื้นหลังส่วนหัว (สามารถเปลี่ยนลิงก์รูปได้ตามต้องการ)
+    const HEADER_BG_URL = "https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?q=80&w=1200&auto=format&fit=crop";
 
     let currentUser = null;
     let targetRoleGroup = null;
 
-    // อัปเดตโลโก้ทุกจุดในระบบ
+    // อัปเดตโลโก้และภาพพื้นหลังทุกจุดเมื่อเริ่มโหลด
     document.addEventListener("DOMContentLoaded", () => {
       const portalLogo = document.getElementById('portalSchoolLogo');
       if (portalLogo) portalLogo.src = SCHOOL_LOGO_URL;
+
+      const bgImg = document.getElementById('headerBgImg');
+      if (bgImg) bgImg.src = HEADER_BG_URL;
 
       document.querySelectorAll('.modalSchoolLogo, .headerSchoolLogo').forEach(img => {
         img.src = SCHOOL_LOGO_URL;
