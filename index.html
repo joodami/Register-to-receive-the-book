@@ -29,14 +29,6 @@
 
     .bg-main-gradient { background: var(--main-gradient); }
 
-    /* App Shell Glassmorphism */
-    .app-glass-card {
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.6);
-    }
-    
     .app-portal-card {
       background: rgba(255, 255, 255, 0.12);
       backdrop-filter: blur(16px);
@@ -50,7 +42,6 @@
       background: rgba(255, 255, 255, 0.22);
     }
 
-    /* Floating Navigation Pill */
     .floating-nav {
       background: rgba(255, 255, 255, 0.92);
       backdrop-filter: blur(20px);
@@ -58,7 +49,6 @@
       box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1), 0 0 20px 0 rgba(26, 82, 118, 0.05);
     }
 
-    /* Smooth Transitions */
     .page-transition {
       animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
@@ -68,7 +58,6 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Safe Area Insets for Modern Mobile Devices */
     .pb-safe { padding-bottom: max(1.25rem, env(safe-area-inset-bottom)); }
     .pt-safe { padding-top: max(1rem, env(safe-area-inset-top)); }
   </style>
@@ -78,27 +67,24 @@
   <!-- ================= 1. หน้าแรก LANDING PAGE (MOBILE-APP PORTAL) ================= -->
   <div id="portalSection" class="bg-main-gradient min-h-screen w-full flex flex-col justify-between relative overflow-x-hidden">
     
-    <!-- Dynamic Ambient Background Spheres -->
     <div class="absolute -top-20 -left-20 w-80 h-80 bg-blue-400/20 rounded-full blur-3xl pointer-events-none"></div>
     <div class="absolute top-1/3 -right-20 w-96 h-96 bg-cyan-400/15 rounded-full blur-3xl pointer-events-none"></div>
     <div class="absolute -bottom-20 left-1/3 w-80 h-80 bg-indigo-500/15 rounded-full blur-3xl pointer-events-none"></div>
 
     <div class="container mx-auto px-5 pt-safe py-8 flex-grow flex flex-col justify-between items-center relative z-10 max-w-md lg:max-w-4xl">
       
-      <!-- Top App Header -->
       <div class="w-full text-center mt-4 mb-6">
         <div class="inline-flex items-center gap-2 bg-white/10 border border-white/20 px-4 py-1.5 rounded-full text-xs font-semibold text-cyan-200 mb-6 backdrop-blur-md shadow-inner">
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
           <span>PS-SARABUN APP v2.5</span>
         </div>
         
-        <!-- App Icon Avatar -->
         <div class="relative w-24 h-24 lg:w-28 lg:h-28 mx-auto mb-4">
           <div class="w-full h-full bg-white/20 rounded-3xl flex items-center justify-center text-white shadow-2xl border border-white/30 backdrop-blur-xl transform transition duration-300">
             <i class="fa-solid fa-folder-closed text-4xl lg:text-5xl text-white drop-shadow-md"></i>
           </div>
           <div class="absolute -bottom-2 -right-2 w-9 h-9 bg-emerald-500 text-white rounded-2xl flex items-center justify-center shadow-lg border-2 border-[#1a5276] text-sm">
-            <i class="fa-solid fa-[#1a5276] fa-check"></i>
+            <i class="fa-solid fa-check"></i>
           </div>
         </div>
 
@@ -110,7 +96,6 @@
         </p>
       </div>
 
-      <!-- Mobile App Cards (Select Portal) -->
       <div class="w-full space-y-3.5 lg:space-y-0 lg:grid lg:grid-cols-3 lg:gap-5 my-auto">
         
         <!-- Card 1: งานสารบรรณโรงเรียน -->
@@ -128,7 +113,7 @@
                 </span>
               </div>
               <p class="text-blue-100/80 text-xs font-light line-clamp-2">
-                ลงรับหนังสือเข้า ประทับตรา และเสนอเสนอหนังสือ
+                ลงรับหนังสือเข้า ประทับตรา และเสนอหนังสือ
               </p>
             </div>
           </div>
@@ -187,7 +172,6 @@
 
       </div>
 
-      <!-- App Bottom Info -->
       <div class="w-full text-center py-4 text-xs text-blue-200/70 font-light">
         <p>โรงเรียนพิมานพิทยาสรรค์ © Piman Phityasan School</p>
       </div>
@@ -195,14 +179,12 @@
     </div>
   </div>
 
-  <!-- ================= 2. MODAL LOG IN (MOBILE SHEET STYLE) ================= -->
+  <!-- ================= 2. MODAL LOG IN ================= -->
   <div id="loginModal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md flex items-end lg:items-center justify-center p-0 lg:p-4 z-50 hidden transition-all duration-300">
     <div class="bg-white rounded-t-3xl lg:rounded-3xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all border border-slate-100 page-transition">
       
-      <!-- Drag Indicator Bar for Mobile Sheet Feel -->
       <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto my-3 lg:hidden"></div>
 
-      <!-- Modal Header -->
       <div id="modalHeaderBg" class="px-6 py-4 text-white text-center relative bg-[#1a5276]">
         <button onclick="closeLoginModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-black/15 hover:bg-black/30 text-white flex items-center justify-center transition">
           <i class="fa-solid fa-xmark text-sm"></i>
@@ -214,7 +196,6 @@
         <p class="text-xs text-blue-100 font-light mt-0.5">ยืนยันตัวตนเพื่อเข้าใช้งานระบบ</p>
       </div>
 
-      <!-- Modal Form -->
       <form id="loginForm" onsubmit="handleLogin(event)" class="p-6 space-y-4">
         <input type="hidden" id="selectedRoleGroup">
         
@@ -250,14 +231,12 @@
     </div>
   </div>
 
-  <!-- ================= 3. DASHBOARD MAIN (MOBILE APP EXPERIENCE) ================= -->
+  <!-- ================= 3. DASHBOARD MAIN ================= -->
   <div id="mainDashboard" class="hidden min-h-screen bg-[#f8fafc] flex flex-col justify-between page-transition">
     
-    <!-- App Header Bar -->
     <header class="bg-white/80 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-30 px-4 py-3 pt-safe">
       <div class="container mx-auto max-w-5xl flex justify-between items-center">
         
-        <!-- App Logo & User Info -->
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 bg-main-gradient rounded-2xl flex items-center justify-center text-white font-bold text-base shadow-sm">
             <i class="fa-solid fa-file-signature text-lg"></i>
@@ -268,7 +247,6 @@
           </div>
         </div>
 
-        <!-- Quick Profile Logout -->
         <button onclick="logout()" class="w-9 h-9 bg-slate-100 hover:bg-red-50 text-slate-600 hover:text-red-500 rounded-xl flex items-center justify-center text-xs transition shadow-sm border border-slate-200">
           <i class="fa-solid fa-power-off"></i>
         </button>
@@ -276,14 +254,10 @@
       </div>
     </header>
 
-    <!-- App Dynamic Content Body -->
     <main class="container mx-auto px-4 py-5 flex-grow pb-28 lg:pb-10 max-w-5xl">
-      <div id="roleContent" class="w-full">
-        <!-- โหลดเนื้อหาตามสิทธิ์แบบ Dynamic -->
-      </div>
+      <div id="roleContent" class="w-full"></div>
     </main>
 
-    <!-- Mobile Modern Floating Bottom Navigation Bar (App Experience) -->
     <div class="fixed bottom-4 left-0 right-0 z-40 px-4 max-w-md mx-auto">
       <nav class="floating-nav rounded-3xl p-1.5 border border-white/80 flex justify-around items-center">
         
@@ -296,7 +270,7 @@
 
         <button onclick="alert('ลงรับหนังสือเข้า')" class="flex flex-col items-center justify-center w-full py-2 text-slate-400 hover:text-[#1a5276] transition group">
           <div class="w-10 h-8 rounded-2xl flex items-center justify-center">
-            <i class="fa-solid fa-[#1a5276] fa-circle-plus text-base"></i>
+            <i class="fa-solid fa-circle-plus text-base"></i>
           </div>
           <span class="text-[10px] mt-1 font-medium">ลงรับ</span>
         </button>
@@ -320,12 +294,13 @@
 
   </div>
 
-  <!-- JavaScript Controls -->
   <script>
     const GAS_URL = "https://script.google.com/macros/s/AKfycbxw0zb196W_WDnIvW_TpfEcmreRUEtkE1aKWCI4w68d1dafBtUs308Sl-jcfMYxF8t1/exec"; 
     let currentUser = null;
+    let targetRoleGroup = null;
 
     function openLoginModal(roleGroup, title, colorBg, iconClass) {
+      targetRoleGroup = roleGroup;
       document.getElementById('selectedRoleGroup').value = roleGroup;
       document.getElementById('modalTitle').innerText = title;
       
@@ -365,6 +340,24 @@
         const res = await response.json();
 
         if (res.success) {
+          const userRole = res.user.role;
+          let hasPermission = false;
+          
+          if (targetRoleGroup === 'SARABUN' && userRole === 'SARABUN') {
+            hasPermission = true;
+          } else if (targetRoleGroup === 'EXEC' && (userRole === 'DIRECTOR' || userRole === 'VICE_DIRECTOR')) {
+            hasPermission = true;
+          } else if (targetRoleGroup === 'TEACHER' && (userRole === 'TEACHER' || userRole === 'STAFF')) {
+            hasPermission = true;
+          }
+
+          if (!hasPermission) {
+            alert("คุณไม่มีสิทธิ์เข้าใช้งานระบบนี้ กรุณาเลือกระบบให้ตรงกับสิทธิ์ของคุณ");
+            btn.innerHTML = `<span>เข้าสู่ระบบ</span> <i class="fa-solid fa-arrow-right-to-bracket text-xs"></i>`;
+            btn.disabled = false;
+            return;
+          }
+
           currentUser = res.user;
           closeLoginModal();
           document.getElementById('portalSection').classList.add('hidden');
@@ -425,6 +418,7 @@
 
     function logout() {
       currentUser = null;
+      targetRoleGroup = null;
       document.getElementById('mainDashboard').classList.add('hidden');
       document.body.className = "bg-[#f8fafc] min-h-full text-slate-800 flex flex-col justify-between antialiased";
       document.getElementById('portalSection').classList.remove('hidden');
