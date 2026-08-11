@@ -15,9 +15,11 @@
   
   <style>
     :root {
-      --primary: #1a5276;
-      --bg: #f8fafc;
-      --main-gradient: linear-gradient(135deg, #0f3752 0%, #1a5276 50%, #2980b9 100%);
+      --primary: #0f2b48;
+      --primary-light: #1a5276;
+      --accent-gold: #d4af37;
+      --bg: #f4f6f9;
+      --main-gradient: linear-gradient(135deg, #0a1f35 0%, #0f2b48 50%, #1a4366 100%);
     }
     
     body { 
@@ -29,32 +31,44 @@
 
     .bg-main-gradient { background: var(--main-gradient); }
 
+    .official-card {
+      background: rgba(255, 255, 255, 0.98);
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 20px -2px rgba(15, 43, 72, 0.05);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
     .app-portal-card {
-      background: rgba(255, 255, 255, 0.12);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.25);
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
     
+    .app-portal-card:hover {
+      background: rgba(255, 255, 255, 0.18);
+      border-color: rgba(212, 175, 55, 0.4);
+      transform: translateY(-2px);
+    }
+
     .app-portal-card:active {
-      transform: scale(0.97);
-      background: rgba(255, 255, 255, 0.22);
+      transform: scale(0.98);
     }
 
     .floating-nav {
-      background: rgba(255, 255, 255, 0.92);
+      background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1), 0 0 20px 0 rgba(26, 82, 118, 0.05);
+      box-shadow: 0 10px 30px -5px rgba(15, 43, 72, 0.12), 0 0 1px 1px rgba(0,0,0,0.05);
     }
 
     .page-transition {
-      animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: fadeIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(8px); }
+      from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
@@ -62,117 +76,119 @@
     .pt-safe { padding-top: max(1rem, env(safe-area-inset-top)); }
   </style>
 </head>
-<body class="bg-[#f8fafc] min-h-full text-slate-800 flex flex-col justify-between selection:bg-[#1a5276] selection:text-white antialiased">
+<body class="bg-[#f4f6f9] min-h-full text-slate-800 flex flex-col justify-between selection:bg-[#0f2b48] selection:text-white antialiased">
 
-  <!-- ================= 1. หน้าแรก LANDING PAGE (MOBILE-APP PORTAL) ================= -->
+  <!-- ================= 1. หน้าแรก LANDING PAGE (OFFICIAL PORTAL) ================= -->
   <div id="portalSection" class="bg-main-gradient min-h-screen w-full flex flex-col justify-between relative overflow-x-hidden">
     
-    <div class="absolute -top-20 -left-20 w-80 h-80 bg-blue-400/20 rounded-full blur-3xl pointer-events-none"></div>
-    <div class="absolute top-1/3 -right-20 w-96 h-96 bg-cyan-400/15 rounded-full blur-3xl pointer-events-none"></div>
-    <div class="absolute -bottom-20 left-1/3 w-80 h-80 bg-indigo-500/15 rounded-full blur-3xl pointer-events-none"></div>
+    <!-- Background Elements -->
+    <div class="absolute -top-32 -left-32 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute top-1/2 -right-32 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
     <div class="container mx-auto px-5 pt-safe py-8 flex-grow flex flex-col justify-between items-center relative z-10 max-w-md lg:max-w-4xl">
       
-      <div class="w-full text-center mt-4 mb-6">
-        <div class="inline-flex items-center gap-2 bg-white/10 border border-white/20 px-4 py-1.5 rounded-full text-xs font-semibold text-cyan-200 mb-6 backdrop-blur-md shadow-inner">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span>PS-SARABUN APP v2.5</span>
+      <!-- Header & School Logo -->
+      <div class="w-full text-center mt-2 mb-6">
+        <div class="inline-flex items-center gap-2 bg-white/10 border border-white/15 px-3.5 py-1 rounded-full text-xs font-medium text-amber-200 mb-5 backdrop-blur-md">
+          <i class="fa-solid fa-shield-halved text-amber-300"></i>
+          <span>ระบบงานสารบรรณอิเล็กทรอนิกส์</span>
         </div>
         
-        <div class="relative w-24 h-24 lg:w-28 lg:h-28 mx-auto mb-4">
-          <div class="w-full h-full bg-white/20 rounded-3xl flex items-center justify-center text-white shadow-2xl border border-white/30 backdrop-blur-xl transform transition duration-300">
-            <i class="fa-solid fa-folder-closed text-4xl lg:text-5xl text-white drop-shadow-md"></i>
-          </div>
-          <div class="absolute -bottom-2 -right-2 w-9 h-9 bg-emerald-500 text-white rounded-2xl flex items-center justify-center shadow-lg border-2 border-[#1a5276] text-sm">
-            <i class="fa-solid fa-check"></i>
-          </div>
+        <!-- Logo Container -->
+        <div class="relative w-28 h-28 lg:w-32 lg:h-32 mx-auto mb-4 p-2 bg-white/10 rounded-full border border-white/20 backdrop-blur-md shadow-2xl flex items-center justify-center">
+          <img id="portalSchoolLogo" src="https://lookaside.fbsbx.com/lookaside/crawler/media/?media_id=100079987957008" 
+               alt="ตราโรงเรียนพิมานพิทยาสรรค์" 
+               class="w-full h-full object-contain filter drop-shadow-md p-1">
         </div>
 
-        <h1 class="text-2xl lg:text-4xl font-bold text-white tracking-tight drop-shadow-sm">
+        <h1 class="text-2xl lg:text-3xl font-bold text-white tracking-tight drop-shadow-sm">
           ระบบรับหนังสือเข้า
         </h1>
-        <p class="text-blue-100/90 text-sm lg:text-base mt-1 font-light">
+        <p class="text-slate-300 text-sm lg:text-base mt-1 font-light">
           โรงเรียนพิมานพิทยาสรรค์
         </p>
+        <div class="w-12 h-0.5 bg-amber-400/60 mx-auto mt-3 rounded-full"></div>
       </div>
 
-      <div class="w-full space-y-3.5 lg:space-y-0 lg:grid lg:grid-cols-3 lg:gap-5 my-auto">
+      <!-- Action Cards -->
+      <div class="w-full space-y-3 lg:space-y-0 lg:grid lg:grid-cols-3 lg:gap-5 my-auto">
         
         <!-- Card 1: งานสารบรรณโรงเรียน -->
-        <div onclick="openLoginModal('SARABUN', 'ระบบงานสารบรรณโรงเรียน', 'bg-[#1a5276]', 'fa-folder-open')" 
+        <div onclick="openLoginModal('SARABUN', 'ระบบงานสารบรรณโรงเรียน', 'bg-[#0f2b48]', 'fa-folder-open')" 
              class="app-portal-card p-4 lg:p-6 rounded-2xl shadow-lg cursor-pointer group flex items-center lg:flex-col lg:items-start justify-between">
           <div class="flex items-center lg:flex-col lg:items-start gap-4">
-            <div class="w-13 h-13 min-w-[52px] lg:w-14 lg:h-14 bg-white/20 text-white rounded-2xl flex items-center justify-center text-2xl shadow-inner border border-white/20">
+            <div class="w-12 h-12 lg:w-14 lg:h-14 bg-white/15 text-amber-300 rounded-xl flex items-center justify-center text-xl shadow-inner border border-white/20">
               <i class="fa-solid fa-folder-open"></i>
             </div>
             <div>
               <div class="flex items-center gap-2 mb-1">
-                <h2 class="text-base lg:text-lg font-bold text-white leading-snug">งานสารบรรณ</h2>
-                <span class="text-[10px] font-semibold px-2 py-0.5 bg-white/20 text-white rounded-md border border-white/20">
+                <h2 class="text-base lg:text-lg font-bold text-white">งานสารบรรณ</h2>
+                <span class="text-[10px] font-semibold px-2 py-0.5 bg-amber-400/20 text-amber-300 rounded border border-amber-400/30">
                   Admin
                 </span>
               </div>
-              <p class="text-blue-100/80 text-xs font-light line-clamp-2">
+              <p class="text-slate-300 text-xs font-light line-clamp-2">
                 ลงรับหนังสือเข้า ประทับตรา และเสนอหนังสือ
               </p>
             </div>
           </div>
-          <div class="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center text-white text-xs lg:mt-4 group-hover:bg-white group-hover:text-[#1a5276] transition-all">
-            <i class="fa-solid fa-chevron-right"></i>
+          <div class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-white text-xs lg:mt-4 group-hover:bg-amber-400 group-hover:text-slate-950 transition-all">
+            <i class="fa-solid fa-arrow-right"></i>
           </div>
         </div>
 
         <!-- Card 2: ฝ่ายบริหาร -->
-        <div onclick="openLoginModal('EXEC', 'ระบบฝ่ายบริหาร (ผอ. / รอง ผอ.)', 'bg-[#1a5276]', 'fa-user-tie')" 
+        <div onclick="openLoginModal('EXEC', 'ระบบฝ่ายบริหาร (ผอ. / รอง ผอ.)', 'bg-[#0f2b48]', 'fa-user-tie')" 
              class="app-portal-card p-4 lg:p-6 rounded-2xl shadow-lg cursor-pointer group flex items-center lg:flex-col lg:items-start justify-between">
           <div class="flex items-center lg:flex-col lg:items-start gap-4">
-            <div class="w-13 h-13 min-w-[52px] lg:w-14 lg:h-14 bg-amber-500/25 text-amber-300 rounded-2xl flex items-center justify-center text-2xl shadow-inner border border-amber-400/30">
+            <div class="w-12 h-12 lg:w-14 lg:h-14 bg-white/15 text-amber-300 rounded-xl flex items-center justify-center text-xl shadow-inner border border-white/20">
               <i class="fa-solid fa-user-tie"></i>
             </div>
             <div>
               <div class="flex items-center gap-2 mb-1">
-                <h2 class="text-base lg:text-lg font-bold text-white leading-snug">ฝ่ายบริหาร</h2>
-                <span class="text-[10px] font-semibold px-2 py-0.5 bg-amber-500/30 text-amber-200 rounded-md border border-amber-400/30">
+                <h2 class="text-base lg:text-lg font-bold text-white">ฝ่ายบริหาร</h2>
+                <span class="text-[10px] font-semibold px-2 py-0.5 bg-amber-400/20 text-amber-300 rounded border border-amber-400/30">
                   Executive
                 </span>
               </div>
-              <p class="text-blue-100/80 text-xs font-light line-clamp-2">
-                สำหรับ ผอ. และ รอง ผอ. ตรวจพิจารณา เกษียณสั่งการ
+              <p class="text-slate-300 text-xs font-light line-clamp-2">
+                สำหรับ ผอ. และ รอง ผอ. พิจารณา เกษียณสั่งการ
               </p>
             </div>
           </div>
-          <div class="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center text-amber-200 text-xs lg:mt-4 group-hover:bg-amber-400 group-hover:text-slate-900 transition-all">
-            <i class="fa-solid fa-chevron-right"></i>
+          <div class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-white text-xs lg:mt-4 group-hover:bg-amber-400 group-hover:text-slate-950 transition-all">
+            <i class="fa-solid fa-arrow-right"></i>
           </div>
         </div>
 
         <!-- Card 3: ครูและบุคลากร -->
-        <div onclick="openLoginModal('TEACHER', 'ระบบครูและบุคลากร', 'bg-[#1a5276]', 'fa-chalkboard-user')" 
+        <div onclick="openLoginModal('TEACHER', 'ระบบครูและบุคลากร', 'bg-[#0f2b48]', 'fa-chalkboard-user')" 
              class="app-portal-card p-4 lg:p-6 rounded-2xl shadow-lg cursor-pointer group flex items-center lg:flex-col lg:items-start justify-between">
           <div class="flex items-center lg:flex-col lg:items-start gap-4">
-            <div class="w-13 h-13 min-w-[52px] lg:w-14 lg:h-14 bg-emerald-500/25 text-emerald-300 rounded-2xl flex items-center justify-center text-2xl shadow-inner border border-emerald-400/30">
+            <div class="w-12 h-12 lg:w-14 lg:h-14 bg-white/15 text-amber-300 rounded-xl flex items-center justify-center text-xl shadow-inner border border-white/20">
               <i class="fa-solid fa-chalkboard-user"></i>
             </div>
             <div>
               <div class="flex items-center gap-2 mb-1">
-                <h2 class="text-base lg:text-lg font-bold text-white leading-snug">ครูและบุคลากร</h2>
-                <span class="text-[10px] font-semibold px-2 py-0.5 bg-emerald-500/30 text-emerald-200 rounded-md border border-emerald-400/30">
+                <h2 class="text-base lg:text-lg font-bold text-white">ครูและบุคลากร</h2>
+                <span class="text-[10px] font-semibold px-2 py-0.5 bg-amber-400/20 text-amber-300 rounded border border-amber-400/30">
                   Staff
                 </span>
               </div>
-              <p class="text-blue-100/80 text-xs font-light line-clamp-2">
+              <p class="text-slate-300 text-xs font-light line-clamp-2">
                 ตรวจสอบหนังสือที่ได้รับมอบหมาย และรับทราบงาน
               </p>
             </div>
           </div>
-          <div class="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center text-emerald-200 text-xs lg:mt-4 group-hover:bg-emerald-400 group-hover:text-slate-900 transition-all">
-            <i class="fa-solid fa-chevron-right"></i>
+          <div class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-white text-xs lg:mt-4 group-hover:bg-amber-400 group-hover:text-slate-950 transition-all">
+            <i class="fa-solid fa-arrow-right"></i>
           </div>
         </div>
 
       </div>
 
-      <div class="w-full text-center py-4 text-xs text-blue-200/70 font-light">
+      <!-- Footer -->
+      <div class="w-full text-center py-4 text-xs text-slate-400 font-light">
         <p>โรงเรียนพิมานพิทยาสรรค์ © Piman Phityasan School</p>
       </div>
 
@@ -180,51 +196,54 @@
   </div>
 
   <!-- ================= 2. MODAL LOG IN ================= -->
-  <div id="loginModal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md flex items-end lg:items-center justify-center p-0 lg:p-4 z-40 hidden transition-all duration-300">
-    <div class="bg-white rounded-t-3xl lg:rounded-3xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all border border-slate-100 page-transition">
+  <div id="loginModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-md flex items-end lg:items-center justify-center p-0 lg:p-4 z-40 hidden transition-all duration-300">
+    <div class="bg-white rounded-t-3xl lg:rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all border border-slate-200 page-transition">
       
-      <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto my-3 lg:hidden"></div>
+      <div class="w-12 h-1 bg-slate-300 rounded-full mx-auto my-2.5 lg:hidden"></div>
 
-      <div id="modalHeaderBg" class="px-6 py-4 text-white text-center relative bg-[#1a5276]">
-        <button onclick="closeLoginModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-black/15 hover:bg-black/30 text-white flex items-center justify-center transition">
+      <div id="modalHeaderBg" class="px-6 py-5 text-white text-center relative bg-[#0f2b48] border-b border-amber-400/30">
+        <button onclick="closeLoginModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition">
           <i class="fa-solid fa-xmark text-sm"></i>
         </button>
-        <div class="w-12 h-12 bg-white/15 rounded-2xl flex items-center justify-center mx-auto mb-2 backdrop-blur-md border border-white/20 shadow-inner">
-          <i id="modalIcon" class="text-xl"></i>
+        
+        <div class="flex items-center justify-center gap-3 mb-2">
+          <img class="modalSchoolLogo w-10 h-10 object-contain" src="https://lookaside.fbsbx.com/lookaside/crawler/media/?media_id=100079987957008" alt="Logo">
+          <div class="text-left">
+            <h3 id="modalTitle" class="text-base font-bold leading-tight text-white">เข้าสู่ระบบ</h3>
+            <p class="text-[11px] text-amber-200/90 font-light">โรงเรียนพิมานพิทยาสรรค์</p>
+          </div>
         </div>
-        <h3 id="modalTitle" class="text-lg font-bold leading-tight">เข้าสู่ระบบ</h3>
-        <p class="text-xs text-blue-100 font-light mt-0.5">ยืนยันตัวตนเพื่อเข้าใช้งานระบบ</p>
       </div>
 
       <form id="loginForm" onsubmit="handleLogin(event)" class="p-6 space-y-4">
         <input type="hidden" id="selectedRoleGroup">
         
         <div class="space-y-1">
-          <label class="text-xs font-semibold text-slate-600 ml-1">ชื่อผู้ใช้งาน</label>
+          <label class="text-xs font-semibold text-slate-700 ml-1">ชื่อผู้ใช้งาน</label>
           <div class="relative">
             <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
-              <i class="fa-solid fa-user-gear text-sm"></i>
+              <i class="fa-solid fa-user text-sm"></i>
             </span>
             <input type="text" id="username" required placeholder="ระบุชื่อผู้ใช้..." 
-                   class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-[#1a5276] focus:border-[#1a5276] focus:bg-white text-sm outline-none transition-all">
+                   class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0f2b48] focus:border-[#0f2b48] focus:bg-white text-sm outline-none transition-all">
           </div>
         </div>
 
         <div class="space-y-1">
-          <label class="text-xs font-semibold text-slate-600 ml-1">รหัสผ่าน</label>
+          <label class="text-xs font-semibold text-slate-700 ml-1">รหัสผ่าน</label>
           <div class="relative">
             <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
-              <i class="fa-solid fa-key text-sm"></i>
+              <i class="fa-solid fa-lock text-sm"></i>
             </span>
             <input type="password" id="password" required placeholder="••••••••" 
-                   class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-[#1a5276] focus:border-[#1a5276] focus:bg-white text-sm outline-none transition-all">
+                   class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0f2b48] focus:border-[#0f2b48] focus:bg-white text-sm outline-none transition-all">
           </div>
         </div>
 
         <button type="submit" id="btnLogin" 
-                class="w-full py-3.5 bg-[#1a5276] hover:bg-[#143f5b] active:scale-[0.98] text-white font-semibold rounded-2xl text-sm shadow-md transition duration-200 flex items-center justify-center gap-2 mt-2">
-          <span>เข้าสู่ระบบ</span>
-          <i class="fa-solid fa-arrow-right-to-bracket text-xs"></i>
+                class="w-full py-3.5 bg-[#0f2b48] hover:bg-[#1a4366] active:scale-[0.98] text-white font-semibold rounded-xl text-sm shadow-md transition duration-200 flex items-center justify-center gap-2 mt-2 border border-amber-400/20">
+          <span>ยืนยันเข้าสู่ระบบ</span>
+          <i class="fa-solid fa-arrow-right-to-bracket text-xs text-amber-300"></i>
         </button>
       </form>
 
@@ -232,59 +251,57 @@
   </div>
 
   <!-- ================= 3. DASHBOARD MAIN ================= -->
-  <div id="mainDashboard" class="hidden min-h-screen bg-[#f8fafc] flex flex-col justify-between page-transition">
+  <div id="mainDashboard" class="hidden min-h-screen bg-[#f4f6f9] flex flex-col justify-between page-transition">
     
-    <header class="bg-white/80 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-30 px-4 py-3 pt-safe">
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 px-4 py-3 pt-safe shadow-sm">
       <div class="container mx-auto max-w-5xl flex justify-between items-center">
         
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-main-gradient rounded-2xl flex items-center justify-center text-white font-bold text-base shadow-sm">
-            <i class="fa-solid fa-file-signature text-lg"></i>
-          </div>
-          <div>
+          <img class="headerSchoolLogo w-9 h-9 object-contain" src="https://lookaside.fbsbx.com/lookaside/crawler/media/?media_id=100079987957008" alt="Logo">
+          <div class="border-l border-slate-200 pl-3">
             <h2 class="font-bold text-sm lg:text-base text-slate-800 leading-tight">ระบบรับหนังสือเข้า</h2>
             <p id="userInfo" class="text-xs text-[#1a5276] font-medium"></p>
           </div>
         </div>
 
-        <button onclick="logout()" class="w-9 h-9 bg-slate-100 hover:bg-red-50 text-slate-600 hover:text-red-500 rounded-xl flex items-center justify-center text-xs transition shadow-sm border border-slate-200">
+        <button onclick="logout()" class="w-9 h-9 bg-slate-100 hover:bg-red-50 text-slate-600 hover:text-red-500 rounded-xl flex items-center justify-center text-xs transition border border-slate-200">
           <i class="fa-solid fa-power-off"></i>
         </button>
 
       </div>
     </header>
 
-    <main class="container mx-auto px-4 py-5 flex-grow pb-28 lg:pb-10 max-w-5xl">
+    <main class="container mx-auto px-4 py-6 flex-grow pb-28 lg:pb-10 max-w-5xl">
       <div id="roleContent" class="w-full"></div>
     </main>
 
     <div class="fixed bottom-4 left-0 right-0 z-30 px-4 max-w-md mx-auto">
-      <nav class="floating-nav rounded-3xl p-1.5 border border-white/80 flex justify-around items-center">
+      <nav class="floating-nav rounded-2xl p-1.5 border border-slate-200 flex justify-around items-center">
         
-        <button onclick="loadRoleDashboard()" class="flex flex-col items-center justify-center w-full py-2 text-[#1a5276] transition group">
-          <div class="w-10 h-8 bg-blue-50/80 rounded-2xl flex items-center justify-center text-[#1a5276] shadow-sm">
-            <i class="fa-solid fa-house-chimney text-base"></i>
+        <button onclick="loadRoleDashboard()" class="flex flex-col items-center justify-center w-full py-2 text-[#0f2b48] transition group">
+          <div class="w-9 h-7 bg-slate-100 rounded-lg flex items-center justify-center text-[#0f2b48]">
+            <i class="fa-solid fa-house-chimney text-sm"></i>
           </div>
           <span class="text-[10px] mt-1 font-semibold">หน้าแรก</span>
         </button>
 
-        <button onclick="showAlert('ระบบลงรับหนังสือเข้ากำลังเปิดปรับปรุงการทำงาน', 'แจ้งเตือน', 'info')" class="flex flex-col items-center justify-center w-full py-2 text-slate-400 hover:text-[#1a5276] transition group">
-          <div class="w-10 h-8 rounded-2xl flex items-center justify-center">
-            <i class="fa-solid fa-circle-plus text-base"></i>
+        <button onclick="showAlert('ระบบลงรับหนังสือเข้ากำลังเปิดปรับปรุงการทำงาน', 'แจ้งเตือน', 'info')" class="flex flex-col items-center justify-center w-full py-2 text-slate-400 hover:text-[#0f2b48] transition group">
+          <div class="w-9 h-7 rounded-lg flex items-center justify-center">
+            <i class="fa-solid fa-circle-plus text-sm"></i>
           </div>
           <span class="text-[10px] mt-1 font-medium">ลงรับ</span>
         </button>
 
-        <button onclick="showAlert('ระบบทะเบียนหนังสือรับกำลังเปิดปรับปรุงการทำงาน', 'แจ้งเตือน', 'info')" class="flex flex-col items-center justify-center w-full py-2 text-slate-400 hover:text-[#1a5276] transition group">
-          <div class="w-10 h-8 rounded-2xl flex items-center justify-center">
-            <i class="fa-solid fa-receipt text-base"></i>
+        <button onclick="showAlert('ระบบทะเบียนหนังสือรับกำลังเปิดปรับปรุงการทำงาน', 'แจ้งเตือน', 'info')" class="flex flex-col items-center justify-center w-full py-2 text-slate-400 hover:text-[#0f2b48] transition group">
+          <div class="w-9 h-7 rounded-lg flex items-center justify-center">
+            <i class="fa-solid fa-receipt text-sm"></i>
           </div>
           <span class="text-[10px] mt-1 font-medium">ทะเบียน</span>
         </button>
 
-        <button onclick="logout()" class="flex flex-col items-center justify-center w-full py-2 text-red-400 hover:text-red-600 transition group">
-          <div class="w-10 h-8 rounded-2xl flex items-center justify-center">
-            <i class="fa-solid fa-arrow-right-from-bracket text-base"></i>
+        <button onclick="logout()" class="flex flex-col items-center justify-center w-full py-2 text-red-500 hover:text-red-700 transition group">
+          <div class="w-9 h-7 rounded-lg flex items-center justify-center">
+            <i class="fa-solid fa-arrow-right-from-bracket text-sm"></i>
           </div>
           <span class="text-[10px] mt-1 font-medium">ออก</span>
         </button>
@@ -294,19 +311,19 @@
 
   </div>
 
-  <!-- ================= 4. CUSTOM ALERT MODAL (แจ้งเตือนสวยงามทั้งระบบ) ================= -->
-  <div id="alertModal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md flex items-center justify-center p-4 z-50 hidden transition-all duration-300">
-    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden text-center p-6 page-transition border border-slate-100">
+  <!-- ================= 4. CUSTOM ALERT MODAL ================= -->
+  <div id="alertModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-4 z-50 hidden transition-all duration-300">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden text-center p-6 page-transition border border-slate-200">
       
-      <div id="alertIconContainer" class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl shadow-inner transition-all">
+      <div id="alertIconContainer" class="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-inner transition-all">
         <i id="alertIcon" class="fa-solid"></i>
       </div>
 
-      <h3 id="alertTitle" class="text-lg font-bold text-slate-800 mb-1 leading-tight">แจ้งเตือน</h3>
-      <p id="alertMessage" class="text-slate-600 text-sm font-light leading-relaxed mb-6 px-2"></p>
+      <h3 id="alertTitle" class="text-base font-bold text-slate-800 mb-1 leading-tight">แจ้งเตือน</h3>
+      <p id="alertMessage" class="text-slate-600 text-xs font-light leading-relaxed mb-6 px-2"></p>
 
       <button onclick="closeAlertModal()" 
-              class="w-full py-3.5 bg-[#1a5276] hover:bg-[#143f5b] active:scale-[0.98] text-white font-semibold rounded-2xl text-sm shadow-md transition duration-200">
+              class="w-full py-3 bg-[#0f2b48] hover:bg-[#1a4366] active:scale-[0.98] text-white font-semibold rounded-xl text-sm shadow transition duration-200">
         ตกลง
       </button>
 
@@ -315,10 +332,24 @@
 
   <script>
     const GAS_URL = "https://script.google.com/macros/s/AKfycbxw0zb196W_WDnIvW_TpfEcmreRUEtkE1aKWCI4w68d1dafBtUs308Sl-jcfMYxF8t1/exec"; 
+    
+    // ตั้งค่า URL โลโก้โรงเรียน (เปลี่ยนURL ตรงนี้หากต้องการเปลี่ยนรูปโลโก้)
+    const SCHOOL_LOGO_URL = "https://lookaside.fbsbx.com/lookaside/crawler/media/?media_id=100079987957008";
+
     let currentUser = null;
     let targetRoleGroup = null;
 
-    // --- ฟังก์ชันแสดง Alert Modal สวยงามแทน alert() เดิม ---
+    // อัปเดตโลโก้ทุกจุดในระบบ
+    document.addEventListener("DOMContentLoaded", () => {
+      const portalLogo = document.getElementById('portalSchoolLogo');
+      if (portalLogo) portalLogo.src = SCHOOL_LOGO_URL;
+
+      document.querySelectorAll('.modalSchoolLogo, .headerSchoolLogo').forEach(img => {
+        img.src = SCHOOL_LOGO_URL;
+      });
+    });
+
+    // --- ฟังก์ชันแสดง Alert Modal สวยงามแทน alert() ---
     function showAlert(message, title = 'แจ้งเตือน', type = 'error') {
       const modal = document.getElementById('alertModal');
       const iconContainer = document.getElementById('alertIconContainer');
@@ -330,16 +361,16 @@
       messageEl.innerText = message;
 
       if (type === 'error') {
-        iconContainer.className = "w-16 h-16 bg-red-50 text-red-500 border border-red-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl shadow-sm";
+        iconContainer.className = "w-14 h-14 bg-red-50 text-red-600 border border-red-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-sm";
         icon.className = "fa-solid fa-triangle-exclamation";
       } else if (type === 'success') {
-        iconContainer.className = "w-16 h-16 bg-emerald-50 text-emerald-500 border border-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl shadow-sm";
+        iconContainer.className = "w-14 h-14 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-sm";
         icon.className = "fa-solid fa-circle-check";
       } else if (type === 'warning') {
-        iconContainer.className = "w-16 h-16 bg-amber-50 text-amber-500 border border-amber-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl shadow-sm";
+        iconContainer.className = "w-14 h-14 bg-amber-50 text-amber-600 border border-amber-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-sm";
         icon.className = "fa-solid fa-circle-exclamation";
       } else { // info
-        iconContainer.className = "w-16 h-16 bg-blue-50 text-[#1a5276] border border-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl shadow-sm";
+        iconContainer.className = "w-14 h-14 bg-blue-50 text-[#0f2b48] border border-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-sm";
         icon.className = "fa-solid fa-circle-info";
       }
 
@@ -356,10 +387,7 @@
       document.getElementById('modalTitle').innerText = title;
       
       const headerBg = document.getElementById('modalHeaderBg');
-      headerBg.className = `px-6 py-4 text-white text-center relative ${colorBg}`;
-      
-      const icon = document.getElementById('modalIcon');
-      icon.className = `fa-solid ${iconClass} text-xl`;
+      headerBg.className = `px-6 py-5 text-white text-center relative ${colorBg} border-b border-amber-400/30`;
 
       document.getElementById('loginModal').classList.remove('hidden');
     }
@@ -404,7 +432,7 @@
 
           if (!hasPermission) {
             showAlert("คุณไม่มีสิทธิ์เข้าใช้งานในส่วนนี้ กรุณาเลือกระบบเข้าใช้งานให้ตรงกับสิทธิ์ของคุณ", "ไม่มีสิทธิ์เข้าถึงระบบ", "error");
-            btn.innerHTML = `<span>เข้าสู่ระบบ</span> <i class="fa-solid fa-arrow-right-to-bracket text-xs"></i>`;
+            btn.innerHTML = `<span>ยืนยันเข้าสู่ระบบ</span> <i class="fa-solid fa-arrow-right-to-bracket text-xs text-amber-300"></i>`;
             btn.disabled = false;
             return;
           }
@@ -412,7 +440,7 @@
           currentUser = res.user;
           closeLoginModal();
           document.getElementById('portalSection').classList.add('hidden');
-          document.body.className = "bg-[#f8fafc] min-h-full text-slate-800 flex flex-col justify-between antialiased";
+          document.body.className = "bg-[#f4f6f9] min-h-full text-slate-800 flex flex-col justify-between antialiased";
           document.getElementById('mainDashboard').classList.remove('hidden');
           document.getElementById('userInfo').innerText = `${currentUser.name} • ${currentUser.position}`;
           
@@ -424,7 +452,7 @@
         showAlert("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้ กรุณาตรวจสอบอินเทอร์เน็ตแล้วลองใหม่อีกครั้ง", "เกิดข้อผิดพลาด", "error");
         console.error(err);
       } finally {
-        btn.innerHTML = `<span>เข้าสู่ระบบ</span> <i class="fa-solid fa-arrow-right-to-bracket text-xs"></i>`;
+        btn.innerHTML = `<span>ยืนยันเข้าสู่ระบบ</span> <i class="fa-solid fa-arrow-right-to-bracket text-xs text-amber-300"></i>`;
         btn.disabled = false;
       }
     }
@@ -433,36 +461,45 @@
       const content = document.getElementById('roleContent');
       if (currentUser.role === 'SARABUN') {
         content.innerHTML = `
-          <div class="bg-white p-5 lg:p-7 rounded-3xl shadow-sm border border-slate-200/80 space-y-4">
-            <div class="w-12 h-12 bg-blue-50 text-[#1a5276] rounded-2xl flex items-center justify-center text-xl">
-              <i class="fa-solid fa-folder-open"></i>
+          <div class="official-card p-6 rounded-2xl border border-slate-200 space-y-3">
+            <div class="flex items-center gap-3 border-b border-slate-100 pb-3">
+              <div class="w-10 h-10 bg-slate-100 text-[#0f2b48] rounded-xl flex items-center justify-center text-lg">
+                <i class="fa-solid fa-folder-open"></i>
+              </div>
+              <div>
+                <h3 class="text-base font-bold text-slate-800">งานสารบรรณโรงเรียน</h3>
+                <p class="text-xs text-slate-500">ส่วนปฏิบัติการลงรับและจัดการเอกสาร</p>
+              </div>
             </div>
-            <div>
-              <h3 class="text-lg lg:text-xl font-bold text-slate-800">งานสารบรรณโรงเรียน</h3>
-              <p class="text-slate-500 text-xs lg:text-sm mt-1">พร้อมสำหรับการฟอร์มลงรับหนังสือใหม่ และการประทับตรามุมขวาบน</p>
-            </div>
+            <p class="text-slate-600 text-xs leading-relaxed">พร้อมสำหรับการฟอร์มลงรับหนังสือใหม่ และการประทับตรามุมขวาบน</p>
           </div>`;
       } else if (currentUser.role === 'DIRECTOR' || currentUser.role === 'VICE_DIRECTOR') {
         content.innerHTML = `
-          <div class="bg-white p-5 lg:p-7 rounded-3xl shadow-sm border border-slate-200/80 space-y-4">
-            <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center text-xl">
-              <i class="fa-solid fa-user-tie"></i>
+          <div class="official-card p-6 rounded-2xl border border-slate-200 space-y-3">
+            <div class="flex items-center gap-3 border-b border-slate-100 pb-3">
+              <div class="w-10 h-10 bg-amber-50 text-amber-700 rounded-xl flex items-center justify-center text-lg">
+                <i class="fa-solid fa-user-tie"></i>
+              </div>
+              <div>
+                <h3 class="text-base font-bold text-slate-800">ฝ่ายบริหาร</h3>
+                <p class="text-xs text-slate-500">ส่วนพิจารณาและกำกับการปฏิบัติงาน</p>
+              </div>
             </div>
-            <div>
-              <h3 class="text-lg lg:text-xl font-bold text-slate-800">ฝ่ายบริหาร</h3>
-              <p class="text-slate-500 text-xs lg:text-sm mt-1">รายการหนังสือรอการเกษียณและสั่งการ</p>
-            </div>
+            <p class="text-slate-600 text-xs leading-relaxed">รายการหนังสือรอการเกษียณและสั่งการ</p>
           </div>`;
       } else {
         content.innerHTML = `
-          <div class="bg-white p-5 lg:p-7 rounded-3xl shadow-sm border border-slate-200/80 space-y-4">
-            <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center text-xl">
-              <i class="fa-solid fa-chalkboard-user"></i>
+          <div class="official-card p-6 rounded-2xl border border-slate-200 space-y-3">
+            <div class="flex items-center gap-3 border-b border-slate-100 pb-3">
+              <div class="w-10 h-10 bg-emerald-50 text-emerald-700 rounded-xl flex items-center justify-center text-lg">
+                <i class="fa-solid fa-chalkboard-user"></i>
+              </div>
+              <div>
+                <h3 class="text-base font-bold text-slate-800">ครูและบุคลากร</h3>
+                <p class="text-xs text-slate-500">ส่วนรับทราบและติดตามงาน</p>
+              </div>
             </div>
-            <div>
-              <h3 class="text-lg lg:text-xl font-bold text-slate-800">ครูและบุคลากร</h3>
-              <p class="text-slate-500 text-xs lg:text-sm mt-1">รายการหนังสือที่ได้รับมอบหมายปฏิบัติงาน</p>
-            </div>
+            <p class="text-slate-600 text-xs leading-relaxed">รายการหนังสือที่ได้รับมอบหมายปฏิบัติงาน</p>
           </div>`;
       }
     }
@@ -471,7 +508,7 @@
       currentUser = null;
       targetRoleGroup = null;
       document.getElementById('mainDashboard').classList.add('hidden');
-      document.body.className = "bg-[#f8fafc] min-h-full text-slate-800 flex flex-col justify-between antialiased";
+      document.body.className = "bg-[#f4f6f9] min-h-full text-slate-800 flex flex-col justify-between antialiased";
       document.getElementById('portalSection').classList.remove('hidden');
     }
   </script>
