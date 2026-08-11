@@ -336,7 +336,7 @@
     </div>
   </div>
 
-  <script>
+ <script>
     const GAS_URL = "https://script.google.com/macros/s/AKfycbxw0zb196W_WDnIvW_TpfEcmreRUEtkE1aKWCI4w68d1dafBtUs308Sl-jcfMYxF8t1/exec"; 
     
     // ตั้งค่า URL โลโก้โรงเรียน
@@ -344,6 +344,12 @@
 
     let currentUser = null;
     let targetRoleGroup = null;
+
+    // ตัวแปรสำหรับเก็บรายการหนังสือรับ
+    let incomingBooks = [];
+    let todayCount = 0;
+    let pendingCount = 0;
+    let totalCount = 0;
 
     // อัปเดตโลโก้ทุกจุดเมื่อเริ่มโหลด
     document.addEventListener("DOMContentLoaded", () => {
@@ -463,122 +469,25 @@
       }
     }
 
-function loadRoleDashboard() {
-  const content = document.getElementById('roleContent');
-  if (currentUser.role === 'SARABUN') {
-    content.innerHTML = `
-      <div class="space-y-5 page-transition">
-        
-        <!-- 1. STATS & QUICK ACTIONS -->
-        <div class="grid grid-cols-3 gap-2.5">
-          <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm text-center">
-            <span class="text-[10px] font-medium text-slate-500 block mb-0.5">รับวันนี้</span>
-            <span class="text-lg font-bold text-[#0f2b48]">12</span>
-            <span class="text-[9px] text-emerald-600 font-medium block">ฉบับ</span>
-          </div>
-          <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm text-center">
-            <span class="text-[10px] font-medium text-slate-500 block mb-0.5">รอเสนอ ผอ.</span>
-            <span class="text-lg font-bold text-amber-600">3</span>
-            <span class="text-[9px] text-amber-600 font-medium block">รายการ</span>
-          </div>
-          <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm text-center">
-            <span class="text-[10px] font-medium text-slate-500 block mb-0.5">เสร็จสิ้น</span>
-            <span class="text-lg font-bold text-slate-700">145</span>
-            <span class="text-[9px] text-slate-400 font-medium block">ทั้งหมด</span>
-          </div>
-        </div>
-
-        <!-- 2. FORM ACTION BUTTON -->
-        <button onclick="toggleRegisterForm()" 
-                class="w-full py-3.5 px-4 bg-[#0f2b48] hover:bg-[#1a4366] active:scale-[0.98] text-white font-semibold rounded-2xl shadow-lg flex items-center justify-between transition-all border border-amber-400/30">
-          <div class="flex items-center gap-3">
-            <div class="w-9 h-9 bg-white/10 rounded-xl flex items-center justify-center text-amber-300">
-              <i class="fa-solid fa-file-circle-plus text-base"></i>
-            </div>
-            <div class="text-left">
-              <div class="text-sm font-bold">ลงรับหนังสือเข้าใหม่</div>
-              <div class="text-[10px] text-amber-200/80 font-light">กรอกรายละเอียดและอัปโหลด PDF</div>
-            </div>
-          </div>
-          <i class="fa-solid fa-chevron-down text-xs text-amber-300 transition-transform duration-300" id="formToggleIcon"></i>
-        </button>
-
-        <!-- 3. INCOMING BOOK FORM (COLLAPSIBLE) -->
-        <div id="registerFormContainer" class="hidden bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-            <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
-              <i class="fa-solid fa-[#0f2b48] fa-pen-to-square text-[#0f2b48]"></i>
-              ฟอร์มลงรับหนังสือ
-            </h3>
-            <span class="text-[11px] font-semibold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
-              เลขรับอัตโนมัติ: 104/2569
-            </span>
-          </div>
-
-          <form id="sarabunRegisterForm" onsubmit="handleRegisterBook(event)" class="space-y-3.5">
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label class="text-[11px] font-semibold text-slate-600 mb-1 block">เลขที่หนังสือต้นทาง</label>
-                <input type="text" required placeholder="ศธ 1234/2569" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-1 focus:ring-[#0f2b48] focus:bg-white outline-none">
+    function loadRoleDashboard() {
+      const content = document.getElementById('roleContent');
+      if (currentUser.role === 'SARABUN') {
+        renderSarabunDashboard();
+      } else if (currentUser.role === 'DIRECTOR' || currentUser.role === 'VICE_DIRECTOR') {
+        content.innerHTML = `
+          <div class="official-card p-6 rounded-2xl border border-slate-200 space-y-3">
+            <div class="flex items-center gap-3 border-b border-slate-100 pb-3">
+              <div class="w-10 h-10 bg-amber-50 text-amber-700 rounded-xl flex items-center justify-center text-lg">
+                <i class="fa-solid fa-user-tie"></i>
               </div>
               <div>
-                <label class="text-[11px] font-semibold text-slate-600 mb-1 block">ลงวันที่</label>
-                <input type="date" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-1 focus:ring-[#0f2b48] focus:bg-white outline-none">
+                <h3 class="text-base font-bold text-slate-800">ฝ่ายบริหาร</h3>
+                <p class="text-xs text-slate-500">ส่วนพิจารณาและกำกับการปฏิบัติงาน</p>
               </div>
             </div>
-
-            <div>
-              <label class="text-[11px] font-semibold text-slate-600 mb-1 block">จาก (หน่วยงานเจ้าของเรื่อง)</label>
-              <input type="text" required placeholder="สำนักงานเขตพื้นที่การศึกษามัธยมศึกษา..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-1 focus:ring-[#0f2b48] focus:bg-white outline-none">
-            </div>
-
-            <div>
-              <label class="text-[11px] font-semibold text-slate-600 mb-1 block">เรื่อง</label>
-              <input type="text" required placeholder="ระบุชื่อเรื่องหนังสือ..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-1 focus:ring-[#0f2b48] focus:bg-white outline-none">
-            </div>
-
-            <div>
-              <label class="text-[11px] font-semibold text-slate-600 mb-1 block">แนบไฟล์ PDF หนังสือเข้า</label>
-              <input type="file" accept="application/pdf" required class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-[#0f2b48] hover:file:bg-slate-200 cursor-pointer border border-slate-200 rounded-xl bg-slate-50 p-1">
-            </div>
-
-            <button type="submit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl text-xs shadow-md transition flex items-center justify-center gap-2 mt-2">
-              <i class="fa-solid fa-stamp"></i>
-              <span>ลงรับและประทับตราหนังสือ</span>
-            </button>
-          </form>
-        </div>
-
-        <!-- 4. RECENT BOOKS LIST -->
-        <div class="space-y-2.5">
-          <div class="flex items-center justify-between px-1">
-            <h3 class="text-xs font-bold text-slate-700">รายการหนังสือรับล่าสุด</h3>
-            <span class="text-[10px] text-[#1a5276] font-medium cursor-pointer">ดูทั้งหมด <i class="fa-solid fa-chevron-right text-[8px]"></i></span>
-          </div>
-
-          <!-- Item Card 1 -->
-          <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between gap-3">
-            <div class="flex items-center gap-3 overflow-hidden">
-              <div class="w-10 h-10 bg-blue-50 text-[#0f2b48] rounded-xl flex items-center justify-center text-sm shrink-0 border border-blue-100">
-                <i class="fa-solid fa-file-pdf"></i>
-              </div>
-              <div class="truncate">
-                <div class="flex items-center gap-2">
-                  <span class="text-[10px] font-bold text-amber-600 bg-amber-50 px-1.5 py-0.2 rounded border border-amber-200">เลขรับ 103/2569</span>
-                  <span class="text-[10px] text-slate-400">11 ส.ค. 69</span>
-                </div>
-                <h4 class="text-xs font-semibold text-slate-800 truncate mt-0.5">การประชุมการจัดทำแผนพัฒนาคุณภาพการศึกษาประจำปี</h4>
-                <p class="text-[10px] text-slate-500 truncate">จาก: สพม. สตูล</p>
-              </div>
-            </div>
-            <span class="text-[9px] font-semibold px-2 py-1 bg-amber-100 text-amber-800 rounded-full shrink-0">รอ ผอ. พิจารณา</span>
-          </div>
-
-        </div>
-
-      </div>
-    `;
-  } else {
+            <p class="text-slate-600 text-xs leading-relaxed">รายการหนังสือรอการเกษียณและสั่งการ</p>
+          </div>`;
+      } else {
         content.innerHTML = `
           <div class="official-card p-6 rounded-2xl border border-slate-200 space-y-3">
             <div class="flex items-center gap-3 border-b border-slate-100 pb-3">
@@ -595,13 +504,195 @@ function loadRoleDashboard() {
       }
     }
 
+    // ฟังก์ชันวาดหน้า Dashboard สำหรับงานสารบรรณ
+    function renderSarabunDashboard() {
+      const content = document.getElementById('roleContent');
+      const nextNumber = 104 + incomingBooks.length; // เลขรับคำนวณถัดไป
+
+      content.innerHTML = `
+        <div class="space-y-5 page-transition">
+          
+          <!-- 1. STATS & QUICK ACTIONS -->
+          <div class="grid grid-cols-3 gap-2.5">
+            <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm text-center">
+              <span class="text-[10px] font-medium text-slate-500 block mb-0.5">รับวันนี้</span>
+              <span id="statToday" class="text-lg font-bold text-[#0f2b48]">${todayCount}</span>
+              <span class="text-[9px] text-emerald-600 font-medium block">ฉบับ</span>
+            </div>
+            <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm text-center">
+              <span class="text-[10px] font-medium text-slate-500 block mb-0.5">รอเสนอ ผอ.</span>
+              <span id="statPending" class="text-lg font-bold text-amber-600">${pendingCount}</span>
+              <span class="text-[9px] text-amber-600 font-medium block">รายการ</span>
+            </div>
+            <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm text-center">
+              <span class="text-[10px] font-medium text-slate-500 block mb-0.5">เสร็จสิ้น</span>
+              <span id="statTotal" class="text-lg font-bold text-slate-700">${totalCount}</span>
+              <span class="text-[9px] text-slate-400 font-medium block">ทั้งหมด</span>
+            </div>
+          </div>
+
+          <!-- 2. FORM ACTION BUTTON -->
+          <button onclick="toggleRegisterForm()" 
+                  class="w-full py-3.5 px-4 bg-[#0f2b48] hover:bg-[#1a4366] active:scale-[0.98] text-white font-semibold rounded-2xl shadow-lg flex items-center justify-between transition-all border border-amber-400/30">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 bg-white/10 rounded-xl flex items-center justify-center text-amber-300">
+                <i class="fa-solid fa-file-circle-plus text-base"></i>
+              </div>
+              <div class="text-left">
+                <div class="text-sm font-bold">ลงรับหนังสือเข้าใหม่</div>
+                <div class="text-[10px] text-amber-200/80 font-light">กรอกรายละเอียดและอัปโหลด PDF</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-chevron-down text-xs text-amber-300 transition-transform duration-300" id="formToggleIcon"></i>
+          </button>
+
+          <!-- 3. INCOMING BOOK FORM (COLLAPSIBLE) -->
+          <div id="registerFormContainer" class="hidden bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                <i class="fa-solid fa-pen-to-square text-[#0f2b48]"></i>
+                ฟอร์มลงรับหนังสือ
+              </h3>
+              <span class="text-[11px] font-semibold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
+                เลขรับอัตโนมัติ: ${nextNumber}/2569
+              </span>
+            </div>
+
+            <form id="sarabunRegisterForm" onsubmit="handleRegisterBook(event)" class="space-y-3.5">
+              <input type="hidden" id="bookRecNo" value="${nextNumber}">
+              
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="text-[11px] font-semibold text-slate-600 mb-1 block">เลขที่หนังสือต้นทาง</label>
+                  <input type="text" id="bookNo" required placeholder="ศธ 1234/2569" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-1 focus:ring-[#0f2b48] focus:bg-white outline-none">
+                </div>
+                <div>
+                  <label class="text-[11px] font-semibold text-slate-600 mb-1 block">ลงวันที่</label>
+                  <input type="date" id="bookDate" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-1 focus:ring-[#0f2b48] focus:bg-white outline-none">
+                </div>
+              </div>
+
+              <div>
+                <label class="text-[11px] font-semibold text-slate-600 mb-1 block">จาก (หน่วยงานเจ้าของเรื่อง)</label>
+                <input type="text" id="bookFrom" required placeholder="สำนักงานเขตพื้นที่การศึกษามัธยมศึกษา..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-1 focus:ring-[#0f2b48] focus:bg-white outline-none">
+              </div>
+
+              <div>
+                <label class="text-[11px] font-semibold text-slate-600 mb-1 block">เรื่อง</label>
+                <input type="text" id="bookTitle" required placeholder="ระบุชื่อเรื่องหนังสือ..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-1 focus:ring-[#0f2b48] focus:bg-white outline-none">
+              </div>
+
+              <div>
+                <label class="text-[11px] font-semibold text-slate-600 mb-1 block">แนบไฟล์ PDF หนังสือเข้า</label>
+                <input type="file" id="bookPdf" accept="application/pdf" required class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-[#0f2b48] hover:file:bg-slate-200 cursor-pointer border border-slate-200 rounded-xl bg-slate-50 p-1">
+              </div>
+
+              <button type="submit" id="btnSubmitBook" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-semibold rounded-xl text-xs shadow-md transition flex items-center justify-center gap-2 mt-2">
+                <i class="fa-solid fa-stamp"></i>
+                <span>ลงรับและประทับตราหนังสือ</span>
+              </button>
+            </form>
+          </div>
+
+          <!-- 4. RECENT BOOKS LIST -->
+          <div class="space-y-2.5">
+            <div class="flex items-center justify-between px-1">
+              <h3 class="text-xs font-bold text-slate-700">รายการหนังสือรับล่าสุด</h3>
+              <span class="text-[10px] text-[#1a5276] font-medium cursor-pointer">ทั้งหมด (${incomingBooks.length})</span>
+            </div>
+
+            <div id="booksListContainer">
+              ${renderBooksList()}
+            </div>
+          </div>
+
+        </div>
+      `;
+    }
+
+    // ฟังก์ชันสร้างรายการหนังสือ (กรณีไม่มี จะแสดง Empty State)
+    function renderBooksList() {
+      if (incomingBooks.length === 0) {
+        return `
+          <div class="bg-white p-8 rounded-2xl border border-slate-200 text-center space-y-2 shadow-sm">
+            <div class="w-12 h-12 bg-slate-100 text-slate-400 rounded-2xl flex items-center justify-center text-xl mx-auto mb-1">
+              <i class="fa-solid fa-folder-open"></i>
+            </div>
+            <p class="text-xs font-semibold text-slate-600">ยังไม่มีรายการหนังสือรับในระบบ</p>
+            <p class="text-[11px] text-slate-400 font-light">กดปุ่ม "ลงรับหนังสือเข้าใหม่" ด้านบนเพื่อเพิ่มรายการแรก</p>
+          </div>
+        `;
+      }
+
+      return incomingBooks.map(book => `
+        <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between gap-3 mb-2.5 page-transition">
+          <div class="flex items-center gap-3 overflow-hidden">
+            <div class="w-10 h-10 bg-emerald-50 text-emerald-700 rounded-xl flex items-center justify-center text-sm shrink-0 border border-emerald-100">
+              <i class="fa-solid fa-file-circle-check"></i>
+            </div>
+            <div class="truncate">
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] font-bold text-amber-700 bg-amber-50 px-1.5 py-0.2 rounded border border-amber-200">เลขรับ ${book.recNo}/2569</span>
+                <span class="text-[10px] text-slate-400">${book.time}</span>
+              </div>
+              <h4 class="text-xs font-semibold text-slate-800 truncate mt-0.5">${book.title}</h4>
+              <p class="text-[10px] text-slate-500 truncate">จาก: ${book.from} | เลขที่: ${book.no}</p>
+            </div>
+          </div>
+          <div class="flex flex-col items-end gap-1 shrink-0">
+            <span class="text-[9px] font-semibold px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full">รอ ผอ. พิจารณา</span>
+            <span class="text-[9px] text-emerald-600 font-medium"><i class="fa-solid fa-stamp text-[8px]"></i> ประทับตราแล้ว</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
     // ฟังก์ชันเปิด/ปิด ฟอร์มลงรับ
-function toggleRegisterForm() {
-  const form = document.getElementById('registerFormContainer');
-  const icon = document.getElementById('formToggleIcon');
-  form.classList.toggle('hidden');
-  icon.classList.toggle('rotate-180');
-}
+    function toggleRegisterForm() {
+      const form = document.getElementById('registerFormContainer');
+      const icon = document.getElementById('formToggleIcon');
+      if (form && icon) {
+        form.classList.toggle('hidden');
+        icon.classList.toggle('rotate-180');
+      }
+    }
+
+    // ฟังก์ชันลงรับและประทับตราหนังสือ
+    function handleRegisterBook(e) {
+      e.preventDefault();
+      
+      const btn = document.getElementById('btnSubmitBook');
+      btn.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin"></i> กำลังประทับตราดิจิทัล...`;
+      btn.disabled = true;
+
+      setTimeout(() => {
+        const now = new Date();
+        const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')} น.`;
+
+        const newBook = {
+          recNo: document.getElementById('bookRecNo').value,
+          no: document.getElementById('bookNo').value,
+          date: document.getElementById('bookDate').value,
+          from: document.getElementById('bookFrom').value,
+          title: document.getElementById('bookTitle').value,
+          time: timeStr
+        };
+
+        // เพิ่มรายการลงอาร์เรย์
+        incomingBooks.unshift(newBook);
+        
+        // คำนวณสถิติเพิ่ม
+        todayCount++;
+        pendingCount++;
+        totalCount++;
+
+        // วาด Dashboard ใหม่
+        renderSarabunDashboard();
+
+        // แจ้งเตือนความสำเร็จ
+        showAlert(`ลงรับหนังสือเลขที่ ${newBook.recNo}/2569 และประทับตรามุมขวาบนเรียบร้อยแล้ว`, "ลงรับสำเร็จ", "success");
+      }, 800);
+    }
 
     function logout() {
       currentUser = null;
@@ -610,6 +701,6 @@ function toggleRegisterForm() {
       document.body.className = "bg-[#f4f6f9] min-h-full text-slate-800 flex flex-col justify-between antialiased";
       document.getElementById('portalSection').classList.remove('hidden');
     }
-  </script>
+</script>
 </body>
 </html>
