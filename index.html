@@ -675,14 +675,14 @@
             <div class="truncate">
               <div class="flex items-center gap-2">
                 <span class="text-[10px] font-bold text-amber-700 bg-amber-50 px-1.5 py-0.2 rounded border border-amber-200">เลขรับ ${book.recNo}/2569</span>
-                <span class="text-[10px] text-slate-400">${book.time}</span>
+                <span class="text-[10px] text-slate-400">${book.time || ''}</span>
               </div>
               <h4 class="text-xs font-semibold text-slate-800 truncate mt-0.5">${book.title}</h4>
               <p class="text-[10px] text-slate-500 truncate">จาก: ${book.from} | เลขที่: ${book.no}</p>
             </div>
           </div>
           <div class="flex flex-col items-end gap-1 shrink-0">
-            ${book.fileUrl ? `<a href="${book.fileUrl}" target="_blank" class="text-[10px] font-semibold text-blue-600 hover:underline"><i class="fa-solid fa-file-pdf"></i> ดูเอกสาร</a>` : ''}
+            ${book.fileUrl ? `<a href="${book.fileUrl}" target="_blank" rel="noopener noreferrer" class="text-[10px] font-semibold text-blue-600 hover:underline"><i class="fa-solid fa-file-pdf"></i> ดูเอกสาร</a>` : ''}
             <span class="text-[9px] font-semibold px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full">รอ ผอ. พิจารณา</span>
             <span class="text-[9px] text-emerald-600 font-medium"><i class="fa-solid fa-stamp text-[8px]"></i> ประทับตราแล้ว</span>
           </div>
@@ -710,7 +710,7 @@
       });
     }
 
-    // ฟังก์ชันลงรับและประทับตราหนังสือ (เชื่อมต่อ Google Apps Script จริง)
+    // ฟังก์ชันลงรับและประทับตราหนังสือ (เชื่อมต่อ Google Apps Script)
     async function handleRegisterBook(e) {
       e.preventDefault();
       
