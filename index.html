@@ -456,6 +456,7 @@
           document.getElementById('mainDashboard').classList.remove('hidden');
           document.getElementById('userInfo').innerText = `${currentUser.name} • ${currentUser.position}`;
           
+          await loadDocsData();
           loadRoleDashboard();
         } else {
           showAlert(res.message || "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง", "เข้าสู่ระบบไม่สำเร็จ", "error");
@@ -466,6 +467,47 @@
       } finally {
         btn.innerHTML = `<span>ยืนยันเข้าสู่ระบบ</span> <i class="fa-solid fa-arrow-right-to-bracket text-xs text-amber-300"></i>`;
         btn.disabled = false;
+      }
+    }
+
+    // ฟังก์ชันดึงรายการหนังสือจากเซิร์ฟเวอร์
+    async function loadDocsData() {
+      if (!currentUser) return;
+      try {
+        const payload = {
+          action: 'GET_DOCS_BY_ROLE',
+          data: {
+            role: currentUser.role,
+            userId: currentUser.userId
+          }
+        };
+        const response = await fetch(GAS_URL, {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        });
+        const res = await response.json();
+        
+        if (res.success && res.docs) {
+          incomingBooks = res.docs.map(doc => ({
+            recNo: doc.receiveNo,
+            no: doc.bookNo,
+            date: doc.receiveDate,
+            from: doc.fromDept,
+            title: doc.title,
+            fileUrl: doc.fileUrl,
+            status: doc.status,
+            time: doc.receiveDate
+          }));
+
+          // คำนวณยอดสถิติ
+          totalCount = incomingBooks.length;
+          pendingCount = incomingBooks.filter(b => b.status === 'PENDING_DIRECTOR').length;
+          
+          const todayStr = new Date().toISOString().split('T')[0];
+          todayCount = incomingBooks.filter(b => b.date === todayStr).length;
+        }
+      } catch (err) {
+        console.error("Error loading docs:", err);
       }
     }
 
@@ -640,6 +682,7 @@
             </div>
           </div>
           <div class="flex flex-col items-end gap-1 shrink-0">
+            ${book.fileUrl ? `<a href="${book.fileUrl}" target="_blank" class="text-[10px] font-semibold text-blue-600 hover:underline"><i class="fa-solid fa-file-pdf"></i> ดูเอกสาร</a>` : ''}
             <span class="text-[9px] font-semibold px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full">รอ ผอ. พิจารณา</span>
             <span class="text-[9px] text-emerald-600 font-medium"><i class="fa-solid fa-stamp text-[8px]"></i> ประทับตราแล้ว</span>
           </div>
@@ -657,41 +700,78 @@
       }
     }
 
-    // ฟังก์ชันลงรับและประทับตราหนังสือ
-    function handleRegisterBook(e) {
+    // ฟังก์ชันช่วยแปลงไฟล์เป็น Base64
+    function readFileAsBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // ฟังก์ชันลงรับและประทับตราหนังสือ (เชื่อมต่อ Google Apps Script จริง)
+    async function handleRegisterBook(e) {
       e.preventDefault();
       
       const btn = document.getElementById('btnSubmitBook');
-      btn.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin"></i> กำลังประทับตราดิจิทัล...`;
+      btn.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin"></i> กำลังประทับตราดิจิทัลและอัปโหลด...`;
       btn.disabled = true;
 
-      setTimeout(() => {
-        const now = new Date();
-        const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')} น.`;
+      try {
+        const fileInput = document.getElementById('bookPdf');
+        if (!fileInput.files || fileInput.files.length === 0) {
+          showAlert("กรุณาเลือกไฟล์ PDF หนังสือเข้า", "แจ้งเตือน", "warning");
+          btn.innerHTML = `<i class="fa-solid fa-stamp"></i> <span>ลงรับและประทับตราหนังสือ</span>`;
+          btn.disabled = false;
+          return;
+        }
 
-        const newBook = {
-          recNo: document.getElementById('bookRecNo').value,
-          no: document.getElementById('bookNo').value,
-          date: document.getElementById('bookDate').value,
-          from: document.getElementById('bookFrom').value,
-          title: document.getElementById('bookTitle').value,
-          time: timeStr
+        const file = fileInput.files[0];
+        const base64File = await readFileAsBase64(file);
+
+        const recNo = document.getElementById('bookRecNo').value;
+        const bookNo = document.getElementById('bookNo').value;
+        const bookDate = document.getElementById('bookDate').value;
+        const bookFrom = document.getElementById('bookFrom').value;
+        const bookTitle = document.getElementById('bookTitle').value;
+
+        const payload = {
+          action: 'SAVE_NEW_DOC',
+          data: {
+            receiveNo: recNo,
+            bookNo: bookNo,
+            receiveDate: bookDate,
+            fromDept: bookFrom,
+            title: bookTitle,
+            fileData: base64File
+          }
         };
 
-        // เพิ่มรายการลงอาร์เรย์
-        incomingBooks.unshift(newBook);
-        
-        // คำนวณสถิติเพิ่ม
-        todayCount++;
-        pendingCount++;
-        totalCount++;
+        const response = await fetch(GAS_URL, {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        });
 
-        // วาด Dashboard ใหม่
-        renderSarabunDashboard();
+        const res = await response.json();
 
-        // แจ้งเตือนความสำเร็จ
-        showAlert(`ลงรับหนังสือเลขที่ ${newBook.recNo}/2569 และประทับตรามุมขวาบนเรียบร้อยแล้ว`, "ลงรับสำเร็จ", "success");
-      }, 800);
+        if (res.success) {
+          // โหลดข้อมูลล่าสุดและวาดหน้าจอใหม่
+          await loadDocsData();
+          renderSarabunDashboard();
+
+          showAlert(`ลงรับหนังสือเลขที่ ${recNo}/2569 และประทับตรามุมขวาบนเรียบร้อยแล้ว`, "ลงรับสำเร็จ", "success");
+        } else {
+          showAlert(res.message || "เกิดข้อผิดพลาดในการบันทึกข้อมูล", "บันทึกไม่สำเร็จ", "error");
+        }
+
+      } catch (err) {
+        console.error(err);
+        showAlert("เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์ กรุณาลองใหม่อีกครั้ง", "เกิดข้อผิดพลาด", "error");
+      } finally {
+        btn.innerHTML = `<i class="fa-solid fa-stamp"></i> <span>ลงรับและประทับตราหนังสือ</span>`;
+        btn.disabled = false;
+      }
     }
 
     function logout() {
