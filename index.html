@@ -69,19 +69,9 @@
 
     <div class="container mx-auto px-5 pt-safe py-8 flex-grow flex flex-col justify-between items-center relative z-10 max-w-md lg:max-w-4xl">
       
-      <!-- Header & School Logo -->
+      <!-- Header & School Logo (ถอดรูปภาพและแสงพื้นหลังออกแล้ว) -->
       <div class="w-full text-center mt-2 mb-6 relative overflow-hidden rounded-3xl bg-slate-900/80 border border-white/15 p-6 backdrop-blur-xl shadow-2xl">
         
-        <!-- รูปภาพพื้นหลังส่วนหัว -->
-        <img id="headerBgImg" 
-             src="https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?q=80&w=1200&auto=format&fit=crop" 
-             alt="Header Background" 
-             class="absolute inset-0 w-full h-full object-cover opacity-20 pointer-events-none mix-blend-overlay">
-        
-        <!-- Overlay แสงฟุ้งไล่เฉดสีเพิ่มมิติ -->
-        <div class="absolute -top-24 -left-24 w-48 h-48 bg-amber-500/20 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute -bottom-24 -right-24 w-48 h-48 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
-
         <!-- Content ด้านใน Header -->
         <div class="relative z-10">
           <div class="inline-flex items-center gap-2 bg-white/10 border border-white/20 px-4 py-1.5 rounded-full text-xs font-medium text-amber-200 mb-4 backdrop-blur-md shadow-inner">
@@ -108,7 +98,7 @@
 
       </div>
 
-      <!-- Action Cards (เอาภาพพื้นหลังการ์ดออก) -->
+      <!-- Action Cards -->
       <div class="w-full space-y-4 lg:space-y-0 lg:grid lg:grid-cols-3 lg:gap-5 my-auto">
         
         <!-- Card 1: งานสารบรรณโรงเรียน -->
@@ -339,20 +329,14 @@
     
     // ตั้งค่า URL โลโก้โรงเรียน
     const SCHOOL_LOGO_URL = "https://raw.githubusercontent.com/joodami/school-assets/main/logo.png";
-    
-    // ตั้งค่า URL รูปภาพพื้นหลังส่วนหัว
-    const HEADER_BG_URL = "https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?q=80&w=1200&auto=format&fit=crop";
 
     let currentUser = null;
     let targetRoleGroup = null;
 
-    // อัปเดตโลโก้และภาพพื้นหลังทุกจุดเมื่อเริ่มโหลด
+    // อัปเดตโลโก้ทุกจุดเมื่อเริ่มโหลด
     document.addEventListener("DOMContentLoaded", () => {
       const portalLogo = document.getElementById('portalSchoolLogo');
       if (portalLogo) portalLogo.src = SCHOOL_LOGO_URL;
-
-      const bgImg = document.getElementById('headerBgImg');
-      if (bgImg) bgImg.src = HEADER_BG_URL;
 
       document.querySelectorAll('.modalSchoolLogo, .headerSchoolLogo').forEach(img => {
         img.src = SCHOOL_LOGO_URL;
