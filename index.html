@@ -410,112 +410,107 @@
       document.getElementById('loginForm').reset();
     }
 
-    // 2. ปรับปรุง handleLogin (ฟังก์ชันเข้าสู่ระบบ)
-async function handleLogin(e) {
-  e.preventDefault();
-  const btn = document.getElementById('btnLogin');
-  btn.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin"></i> กำลังตรวจสอบ...`;
-  btn.disabled = true;
+    async function handleLogin(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnLogin');
+      btn.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin"></i> กำลังตรวจสอบ...`;
+      btn.disabled = true;
 
-  const payload = {
-    action: 'LOGIN',
-    data: {
-      username: document.getElementById('username').value,
-      password: document.getElementById('password').value
-    }
-  };
+      const payload = {
+        action: 'LOGIN',
+        data: {
+          username: document.getElementById('username').value,
+          password: document.getElementById('password').value
+        }
+      };
 
-  try {
-    const response = await fetch(GAS_URL, {
-      method: 'POST',
-      body: JSON.stringify(payload)
-    });
-    
-    const textData = await response.text();
-    const res = JSON.parse(textData);
+      try {
+        const response = await fetch(GAS_URL, {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        });
+        const res = await response.json();
 
-    if (res.success) {
-      const userRole = res.user.role;
-      let hasPermission = false;
-      
-      if (targetRoleGroup === 'SARABUN' && userRole === 'SARABUN') {
-        hasPermission = true;
-      } else if (targetRoleGroup === 'EXEC' && (userRole === 'DIRECTOR' || userRole === 'VICE_DIRECTOR')) {
-        hasPermission = true;
-      } else if (targetRoleGroup === 'TEACHER' && (userRole === 'TEACHER' || userRole === 'STAFF')) {
-        hasPermission = true;
-      }
+        if (res.success) {
+          const userRole = res.user.role;
+          let hasPermission = false;
+          
+          if (targetRoleGroup === 'SARABUN' && userRole === 'SARABUN') {
+            hasPermission = true;
+          } else if (targetRoleGroup === 'EXEC' && (userRole === 'DIRECTOR' || userRole === 'VICE_DIRECTOR')) {
+            hasPermission = true;
+          } else if (targetRoleGroup === 'TEACHER' && (userRole === 'TEACHER' || userRole === 'STAFF')) {
+            hasPermission = true;
+          }
 
-      if (!hasPermission) {
-        showAlert("คุณไม่มีสิทธิ์เข้าใช้งานในส่วนนี้ กรุณาเลือกระบบเข้าใช้งานให้ตรงกับสิทธิ์ของคุณ", "ไม่มีสิทธิ์เข้าถึงระบบ", "error");
+          if (!hasPermission) {
+            showAlert("คุณไม่มีสิทธิ์เข้าใช้งานในส่วนนี้ กรุณาเลือกระบบเข้าใช้งานให้ตรงกับสิทธิ์ของคุณ", "ไม่มีสิทธิ์เข้าถึงระบบ", "error");
+            btn.innerHTML = `<span>ยืนยันเข้าสู่ระบบ</span> <i class="fa-solid fa-arrow-right-to-bracket text-xs text-amber-300"></i>`;
+            btn.disabled = false;
+            return;
+          }
+
+          currentUser = res.user;
+          closeLoginModal();
+          document.getElementById('portalSection').classList.add('hidden');
+          document.body.className = "bg-[#f4f6f9] min-h-full text-slate-800 flex flex-col justify-between antialiased";
+          document.getElementById('mainDashboard').classList.remove('hidden');
+          document.getElementById('userInfo').innerText = `${currentUser.name} • ${currentUser.position}`;
+          
+          await loadDocsData();
+          loadRoleDashboard();
+        } else {
+          showAlert(res.message || "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง", "เข้าสู่ระบบไม่สำเร็จ", "error");
+        }
+      } catch (err) {
+        showAlert("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้ กรุณาตรวจสอบอินเทอร์เน็ตแล้วลองใหม่อีกครั้ง", "เกิดข้อผิดพลาด", "error");
+        console.error(err);
+      } finally {
         btn.innerHTML = `<span>ยืนยันเข้าสู่ระบบ</span> <i class="fa-solid fa-arrow-right-to-bracket text-xs text-amber-300"></i>`;
         btn.disabled = false;
-        return;
       }
-
-      currentUser = res.user;
-      closeLoginModal();
-      document.getElementById('portalSection').classList.add('hidden');
-      document.body.className = "bg-[#f4f6f9] min-h-full text-slate-800 flex flex-col justify-between antialiased";
-      document.getElementById('mainDashboard').classList.remove('hidden');
-      document.getElementById('userInfo').innerText = `${currentUser.name} • ${currentUser.position}`;
-      
-      await loadDocsData();
-      loadRoleDashboard();
-    } else {
-      showAlert(res.message || "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง", "เข้าสู่ระบบไม่สำเร็จ", "error");
     }
-  } catch (err) {
-    showAlert("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้ กรุณาตรวจสอบอินเทอร์เน็ตแล้วลองใหม่อีกครั้ง", "เกิดข้อผิดพลาด", "error");
-    console.error(err);
-  } finally {
-    btn.innerHTML = `<span>ยืนยันเข้าสู่ระบบ</span> <i class="fa-solid fa-arrow-right-to-bracket text-xs text-amber-300"></i>`;
-    btn.disabled = false;
-  }
-}
 
-    // 3. ปรับปรุง loadDocsData (ฟังก์ชันดึงรายการหนังสือ)
-async function loadDocsData() {
-  if (!currentUser) return;
-  try {
-    const payload = {
-      action: 'GET_DOCS_BY_ROLE',
-      data: {
-        role: currentUser.role,
-        userId: currentUser.userId
+    // ฟังก์ชันดึงรายการหนังสือจากเซิร์ฟเวอร์
+    async function loadDocsData() {
+      if (!currentUser) return;
+      try {
+        const payload = {
+          action: 'GET_DOCS_BY_ROLE',
+          data: {
+            role: currentUser.role,
+            userId: currentUser.userId || currentUser.username || currentUser.id || ''
+          }
+        };
+        const response = await fetch(GAS_URL, {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        });
+        const res = await response.json();
+        
+        if (res.success && res.docs) {
+          incomingBooks = res.docs.map(doc => ({
+            recNo: doc.receiveNo || doc.recNo || '',
+            no: doc.bookNo || doc.no || '',
+            date: doc.receiveDate || doc.date || '',
+            from: doc.fromDept || doc.from || '',
+            title: doc.title || '',
+            fileUrl: doc.fileUrl || doc.url || '',
+            status: doc.status || 'PENDING_DIRECTOR',
+            time: doc.receiveTime || doc.time || doc.receiveDate || ''
+          }));
+
+          // คำนวณยอดสถิติ
+          totalCount = incomingBooks.length;
+          pendingCount = incomingBooks.filter(b => b.status === 'PENDING_DIRECTOR' || !b.status).length;
+          
+          const todayStr = new Date().toISOString().split('T')[0];
+          todayCount = incomingBooks.filter(b => b.date && String(b.date).includes(todayStr)).length;
+        }
+      } catch (err) {
+        console.error("Error loading docs:", err);
       }
-    };
-    const response = await fetch(GAS_URL, {
-      method: 'POST',
-      body: JSON.stringify(payload)
-    });
-    
-    const textData = await response.text();
-    const res = JSON.parse(textData);
-    
-    if (res.success && res.docs) {
-      incomingBooks = res.docs.map(doc => ({
-        recNo: doc.receiveNo,
-        no: doc.bookNo,
-        date: doc.receiveDate,
-        from: doc.fromDept,
-        title: doc.title,
-        fileUrl: doc.fileUrl,
-        status: doc.status,
-        time: doc.receiveDate
-      }));
-
-      // คำนวณยอดสถิติ
-      totalCount = incomingBooks.length;
-      pendingCount = incomingBooks.filter(b => b.status === 'PENDING_DIRECTOR').length;
-      
-      const todayStr = new Date().toISOString().split('T')[0];
-      todayCount = incomingBooks.filter(b => b.date === todayStr).length;
     }
-  } catch (err) {
-    console.error("Error loading docs:", err);
-  }
-}
 
     function loadRoleDashboard() {
       const content = document.getElementById('roleContent');
@@ -774,7 +769,7 @@ async function stampPdfOnClient(file, receiveNo, receiveDate) {
   return 'data:application/pdf;base64,' + btoa(binary);
 }
 
-// 1. ปรับปรุง handleRegisterBook (ฟังก์ชันลงรับหนังสือ)
+// ปรับปรุงฟังก์ชัน handleRegisterBook
 async function handleRegisterBook(e) {
   e.preventDefault();
   
@@ -818,14 +813,7 @@ async function handleRegisterBook(e) {
       body: JSON.stringify(payload)
     });
 
-    // อ่านค่าเป็น Text ก่อนแปลงเป็น JSON
-    const textData = await response.text();
-    let res;
-    try {
-      res = JSON.parse(textData);
-    } catch (parseErr) {
-      throw new Error("การตอบกลับจากเซิร์ฟเวอร์ไม่ถูกต้อง");
-    }
+    const res = await response.json();
 
     if (res.success) {
       await loadDocsData();
