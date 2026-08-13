@@ -722,7 +722,7 @@
       }
     }
 
-   // ฟังก์ชันสำหรับประทับตราภาษาไทยลง PDF บนเบราว์เซอร์ของผู้ใช้ (ใช้วันที่ ณ ปัจจุบัน)
+  // ฟังก์ชันประทับตราตามรูปแบบงานสารบรรณ (หมึกน้ำเงิน/เลขไทย/เส้นประ)
     async function stampPdfOnClient(file, receiveNo, receiveDate) {
       const arrayBuffer = await file.arrayBuffer();
       const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
@@ -731,41 +731,85 @@
       const fontBytes = await fetch("https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/sarabun/Sarabun-Bold.ttf").then(res => res.arrayBuffer());
       const customFont = await pdfDoc.embedFont(fontBytes);
 
-      // 1. ดึงวันและเวลา ณ ปัจจุบันสำหรับตราประทับ
-      const now = new Date();
-      const timeStr = String(now.getHours()).padStart(2, '0') + ":" + String(now.getMinutes()).padStart(2, '0') + " น.";
-      
-      const day = String(now.getDate()).padStart(2, '0');
-      const month = String(now.getMonth() + 1).padStart(2, '0');
-      const yearTH = now.getFullYear() + 543; // แปลงปี ค.ศ. เป็น พ.ศ.
-      const formattedToday = `${day}/${month}/${yearTH}`;
+      // ฟังก์ชันแปลงตัวเลขเป็นเลขไทย (๐-๙)
+      const toThaiNum = (str) => String(str).replace(/[0-9]/g, m => ['๐','๑','๒','๓','๔','๕','๖','๗','๘','๙'][m]);
 
-      // 2. วาดตราประทับ
+      // รายชื่อเดือนภาษาไทยเต็ม
+      const thaiMonths = [
+        'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+        'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+      ];
+
+      // คำนวณวันและเวลา ณ ปัจจุบัน
+      const now = new Date();
+      const thaiDay = toThaiNum(now.getDate());
+      const thaiMonth = thaiMonths[now.getMonth()];
+      const thaiYear = toThaiNum(now.getFullYear() + 543);
+      const formattedToday = `${thaiDay} ${thaiMonth} ${thaiYear}`;
+
+      const hh = String(now.getHours()).padStart(2, '0');
+      const mm = String(now.getMinutes()).padStart(2, '0');
+      const ss = String(now.getSeconds()).padStart(2, '0');
+      const formattedTime = toThaiNum(`${hh}:${mm}:${ss}`);
+
+      const thaiReceiveNo = toThaiNum(receiveNo);
+
+      // สีหมึกตราประทับ (สีน้ำเงินกรมท่า)
+      const inkColor = PDFLib.rgb(0.08, 0.18, 0.52);
+
       const pages = pdfDoc.getPages();
       const firstPage = pages[0];
       const { width, height } = firstPage.getSize();
 
-      const stampWidth = 145;
-      const stampHeight = 60;
+      const stampWidth = 175;
+      const stampHeight = 78;
       const margin = 15;
       const x = width - stampWidth - margin;
       const y = height - stampHeight - margin;
 
+      // 1. กรอบสี่เหลี่ยมตราประทับ
       firstPage.drawRectangle({
         x: x, y: y,
         width: stampWidth, height: stampHeight,
-        borderColor: PDFLib.rgb(0.85, 0.2, 0.2),
-        borderWidth: 1.5,
-        color: PDFLib.rgb(1, 0.96, 0.96)
+        borderColor: inkColor,
+        borderWidth: 1.5
       });
 
-      firstPage.drawText("โรงเรียนพิมานพิทยาสรรค์", { x: x + 10, y: y + 44, size: 9, font: customFont, color: PDFLib.rgb(0.8, 0.1, 0.1) });
-      firstPage.drawText(`เลขรับ: ${receiveNo}/2569`, { x: x + 10, y: y + 31, size: 8.5, font: customFont, color: PDFLib.rgb(0, 0, 0) });
-      firstPage.drawText(`วันที่: ${formattedToday}`, { x: x + 10, y: y + 18, size: 8.5, font: customFont, color: PDFLib.rgb(0, 0, 0) });
-      firstPage.drawText(`เวลา: ${timeStr}`, { x: x + 10, y: y + 5, size: 8.5, font: customFont, color: PDFLib.rgb(0, 0, 0) });
+      // 2. ชื่อหน่วยงาน
+      firstPage.drawText("โรงเรียนพิมานพิทยาสรรค์", {
+        x: x + 10, y: y + 58,
+        size: 11, font: customFont, color: inkColor
+      });
+
+      // 3. แถว "รับที่" + เส้นประ + ข้อมูล
+      firstPage.drawText("รับที่", { x: x + 10, y: y + 40, size: 10, font: customFont, color: inkColor });
+      firstPage.drawLine({
+        start: { x: x + 42, y: y + 40 },
+        end: { x: x + 165, y: y + 40 },
+        thickness: 0.8, color: inkColor, dashArray: [1, 2]
+      });
+      firstPage.drawText(thaiReceiveNo, { x: x + 48, y: y + 41, size: 10, font: customFont, color: inkColor });
+
+      // 4. แถว "วันที่" + เส้นประ + ข้อมูล
+      firstPage.drawText("วันที่", { x: x + 10, y: y + 23, size: 10, font: customFont, color: inkColor });
+      firstPage.drawLine({
+        start: { x: x + 42, y: y + 23 },
+        end: { x: x + 165, y: y + 23 },
+        thickness: 0.8, color: inkColor, dashArray: [1, 2]
+      });
+      firstPage.drawText(formattedToday, { x: x + 48, y: y + 24, size: 10, font: customFont, color: inkColor });
+
+      // 5. แถว "เวลา" + เส้นประ + ข้อมูล
+      firstPage.drawText("เวลา", { x: x + 10, y: y + 6, size: 10, font: customFont, color: inkColor });
+      firstPage.drawLine({
+        start: { x: x + 42, y: y + 6 },
+        end: { x: x + 165, y: y + 6 },
+        thickness: 0.8, color: inkColor, dashArray: [1, 2]
+      });
+      firstPage.drawText(formattedTime, { x: x + 48, y: y + 7, size: 10, font: customFont, color: inkColor });
 
       const stampedPdfBytes = await pdfDoc.save();
-      
+
       let binary = '';
       const bytes = new Uint8Array(stampedPdfBytes);
       for (let i = 0; i < bytes.byteLength; i++) {
