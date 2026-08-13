@@ -352,8 +352,19 @@
     let pendingCount = 0;
     let totalCount = 0;
 
-    // อัปเดตโลโก้ทุกจุดเมื่อเริ่มโหลด
+    // ฟังก์ชันปลุกเซิร์ฟเวอร์ (Warm-up) ลดความล่าช้าจาก Cold Start
+    function warmupServer() {
+      fetch(GAS_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: JSON.stringify({ action: 'PING' })
+      }).catch(() => {});
+    }
+
+    // อัปเดตโลโก้และส่ง Warm-up ปลุกเซิร์ฟเวอร์ทันทีเมื่อโหลดหน้าเว็บ
     document.addEventListener("DOMContentLoaded", () => {
+      warmupServer();
+
       const portalLogo = document.getElementById('portalSchoolLogo');
       if (portalLogo) portalLogo.src = SCHOOL_LOGO_URL;
 
@@ -411,84 +422,83 @@
     }
 
     async function handleLogin(e) {
-  e.preventDefault();
-  const btn = document.getElementById('btnLogin');
-  btn.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin"></i> กำลังตรวจสอบ...`;
-  btn.disabled = true;
+      e.preventDefault();
+      const btn = document.getElementById('btnLogin');
+      btn.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin"></i> กำลังตรวจสอบ...`;
+      btn.disabled = true;
 
-  const payload = {
-    action: 'LOGIN',
-    data: {
-      username: document.getElementById('username').value,
-      password: document.getElementById('password').value
-    }
-  };
+      const payload = {
+        action: 'LOGIN',
+        data: {
+          username: document.getElementById('username').value,
+          password: document.getElementById('password').value
+        }
+      };
 
-  // ตั้งเวลาดัก Timeout 15 วินาที
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 15000);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 35000);
 
-  try {
-    const response = await fetch(GAS_URL, {
-      method: 'POST',
-      body: JSON.stringify(payload),
-      signal: controller.signal
-    });
-    
-    clearTimeout(timeoutId);
+      try {
+        const response = await fetch(GAS_URL, {
+          method: 'POST',
+          body: JSON.stringify(payload),
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
 
-    const rawText = await response.text();
-    let res = {};
-    try {
-      res = JSON.parse(rawText);
-    } catch(pErr) {
-      throw new Error("เซิร์ฟเวอร์ระบบสารบรรณกำลังประมวลผลช้า กรุณาลองใหม่อีกครั้ง");
-    }
+        const rawText = await response.text();
+        let res = {};
+        try {
+          res = JSON.parse(rawText);
+        } catch(pErr) {
+          throw new Error("เซิร์ฟเวอร์ระบบสารบรรณกำลังประมวลผลช้า กรุณาลองใหม่อีกครั้ง");
+        }
 
-    if (res.success) {
-      const userRole = res.user.role;
-      let hasPermission = false;
-      
-      if (targetRoleGroup === 'SARABUN' && userRole === 'SARABUN') {
-        hasPermission = true;
-      } else if (targetRoleGroup === 'EXEC' && (userRole === 'DIRECTOR' || userRole === 'VICE_DIRECTOR')) {
-        hasPermission = true;
-      } else if (targetRoleGroup === 'TEACHER' && (userRole === 'TEACHER' || userRole === 'STAFF')) {
-        hasPermission = true;
-      }
+        if (res.success) {
+          const userRole = res.user.role;
+          let hasPermission = false;
+          
+          if (targetRoleGroup === 'SARABUN' && userRole === 'SARABUN') {
+            hasPermission = true;
+          } else if (targetRoleGroup === 'EXEC' && (userRole === 'DIRECTOR' || userRole === 'VICE_DIRECTOR')) {
+            hasPermission = true;
+          } else if (targetRoleGroup === 'TEACHER' && (userRole === 'TEACHER' || userRole === 'STAFF')) {
+            hasPermission = true;
+          }
 
-      if (!hasPermission) {
-        showAlert("คุณไม่มีสิทธิ์เข้าใช้งานในส่วนนี้ กรุณาเลือกระบบเข้าใช้งานให้ตรงกับสิทธิ์ของคุณ", "ไม่มีสิทธิ์เข้าถึงระบบ", "error");
+          if (!hasPermission) {
+            showAlert("คุณไม่มีสิทธิ์เข้าใช้งานในส่วนนี้ กรุณาเลือกระบบเข้าใช้งานให้ตรงกับสิทธิ์ของคุณ", "ไม่มีสิทธิ์เข้าถึงระบบ", "error");
+            btn.innerHTML = `<span>ยืนยันเข้าสู่ระบบ</span> <i class="fa-solid fa-arrow-right-to-bracket text-xs text-amber-300"></i>`;
+            btn.disabled = false;
+            return;
+          }
+
+          currentUser = res.user;
+          closeLoginModal();
+          document.getElementById('portalSection').classList.add('hidden');
+          document.body.className = "bg-[#f4f6f9] min-h-full text-slate-800 flex flex-col justify-between antialiased";
+          document.getElementById('mainDashboard').classList.remove('hidden');
+          document.getElementById('userInfo').innerText = `${currentUser.name} • ${currentUser.position}`;
+          
+          await loadDocsData();
+          loadRoleDashboard();
+        } else {
+          showAlert(res.message || "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง", "เข้าสู่ระบบไม่สำเร็จ", "error");
+        }
+      } catch (err) {
+        if (err.name === 'AbortError') {
+          showAlert("การเชื่อมต่อกับเซิร์ฟเวอร์ Google Apps Script ใช้เวลานานเกินไป กรุณากดเข้าสู่ระบบใหม่อีกครั้ง", "เซิร์ฟเวอร์ตอบสนองช้า", "warning");
+        } else {
+          showAlert(err.message || "ไม่สามารถเชื่อมต่อกับระบบได้ กรุณาลองใหม่อีกครั้ง", "เกิดข้อผิดพลาด", "error");
+        }
+        console.error(err);
+      } finally {
+        clearTimeout(timeoutId);
         btn.innerHTML = `<span>ยืนยันเข้าสู่ระบบ</span> <i class="fa-solid fa-arrow-right-to-bracket text-xs text-amber-300"></i>`;
         btn.disabled = false;
-        return;
       }
-
-      currentUser = res.user;
-      closeLoginModal();
-      document.getElementById('portalSection').classList.add('hidden');
-      document.body.className = "bg-[#f4f6f9] min-h-full text-slate-800 flex flex-col justify-between antialiased";
-      document.getElementById('mainDashboard').classList.remove('hidden');
-      document.getElementById('userInfo').innerText = `${currentUser.name} • ${currentUser.position}`;
-      
-      await loadDocsData();
-      loadRoleDashboard();
-    } else {
-      showAlert(res.message || "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง", "เข้าสู่ระบบไม่สำเร็จ", "error");
     }
-  } catch (err) {
-    if (err.name === 'AbortError') {
-      showAlert("การเชื่อมต่อกับเซิร์ฟเวอร์ Google Apps Script ใช้เวลานานเกินไป กรุณากดเข้าสู่ระบบใหม่อีกครั้ง", "เซิร์ฟเวอร์ตอบสนองช้า", "warning");
-    } else {
-      showAlert(err.message || "ไม่สามารถเชื่อมต่อกับระบบได้ กรุณาลองใหม่อีกครั้ง", "เกิดข้อผิดพลาด", "error");
-    }
-    console.error(err);
-  } finally {
-    clearTimeout(timeoutId);
-    btn.innerHTML = `<span>ยืนยันเข้าสู่ระบบ</span> <i class="fa-solid fa-arrow-right-to-bracket text-xs text-amber-300"></i>`;
-    btn.disabled = false;
-  }
-}
 
     // ฟังก์ชันดึงรายการหนังสือจากเซิร์ฟเวอร์
     async function loadDocsData() {
@@ -519,7 +529,6 @@
             time: doc.receiveTime || doc.time || doc.receiveDate || ''
           }));
 
-          // คำนวณยอดสถิติ
           totalCount = incomingBooks.length;
           pendingCount = incomingBooks.filter(b => b.status === 'PENDING_DIRECTOR' || !b.status).length;
           
@@ -566,15 +575,13 @@
       }
     }
 
-    // ฟังก์ชันวาดหน้า Dashboard สำหรับงานสารบรรณ
     function renderSarabunDashboard() {
       const content = document.getElementById('roleContent');
-      const nextNumber = 1 + incomingBooks.length; // เริ่มต้นเลขอัตโนมัติที่เลข 1
+      const nextNumber = 1 + incomingBooks.length;
 
       content.innerHTML = `
         <div class="space-y-5 page-transition">
           
-          <!-- 1. STATS & QUICK ACTIONS -->
           <div class="grid grid-cols-3 gap-2.5">
             <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm text-center">
               <span class="text-[10px] font-medium text-slate-500 block mb-0.5">รับวันนี้</span>
@@ -593,7 +600,6 @@
             </div>
           </div>
 
-          <!-- 2. FORM ACTION BUTTON -->
           <button onclick="toggleRegisterForm()" 
                   class="w-full py-3.5 px-4 bg-[#0f2b48] hover:bg-[#1a4366] active:scale-[0.98] text-white font-semibold rounded-2xl shadow-lg flex items-center justify-between transition-all border border-amber-400/30">
             <div class="flex items-center gap-3">
@@ -608,7 +614,6 @@
             <i class="fa-solid fa-chevron-down text-xs text-amber-300 transition-transform duration-300" id="formToggleIcon"></i>
           </button>
 
-          <!-- 3. INCOMING BOOK FORM (COLLAPSIBLE) -->
           <div id="registerFormContainer" class="hidden bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
               <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
@@ -656,7 +661,6 @@
             </form>
           </div>
 
-          <!-- 4. RECENT BOOKS LIST -->
           <div class="space-y-2.5">
             <div class="flex items-center justify-between px-1">
               <h3 class="text-xs font-bold text-slate-700">รายการหนังสือรับล่าสุด</h3>
@@ -672,7 +676,6 @@
       `;
     }
 
-    // ฟังก์ชันสร้างรายการหนังสือ (กรณีไม่มี จะแสดง Empty State)
     function renderBooksList() {
       if (incomingBooks.length === 0) {
         return `
@@ -710,7 +713,6 @@
       `).join('');
     }
 
-    // ฟังก์ชันเปิด/ปิด ฟอร์มลงรับ
     function toggleRegisterForm() {
       const form = document.getElementById('registerFormContainer');
       const icon = document.getElementById('formToggleIcon');
@@ -720,136 +722,119 @@
       }
     }
 
-    // ฟังก์ชันช่วยแปลงไฟล์เป็น Base64
-    function readFileAsBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = error => reject(error);
-        reader.readAsDataURL(file);
-      });
-    }
+    async function stampPdfOnClient(file, receiveNo, receiveDate) {
+      const arrayBuffer = await file.arrayBuffer();
+      const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
+      pdfDoc.registerFontkit(fontkit);
 
-   // ฟังก์ชันสำหรับประทับตราภาษาไทยลง PDF บนเบราว์เซอร์ของผู้ใช้
-async function stampPdfOnClient(file, receiveNo, receiveDate) {
-  const arrayBuffer = await file.arrayBuffer();
-  const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
-  pdfDoc.registerFontkit(fontkit);
+      const fontBytes = await fetch("https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/sarabun/Sarabun-Bold.ttf").then(res => res.arrayBuffer());
+      const customFont = await pdfDoc.embedFont(fontBytes);
 
-  // ดึงฟอนต์ Sarabun
-  const fontBytes = await fetch("https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/sarabun/Sarabun-Bold.ttf").then(res => res.arrayBuffer());
-  const customFont = await pdfDoc.embedFont(fontBytes);
-
-  // จัดการวันเวลา
-  const now = new Date();
-  const timeStr = String(now.getHours()).padStart(2, '0') + ":" + String(now.getMinutes()).padStart(2, '0') + " น.";
-  
-  let formattedDate = receiveDate;
-  if (receiveDate && receiveDate.includes('-')) {
-    const parts = receiveDate.split('-');
-    if (parts.length === 3) {
-      const yearTH = parseInt(parts[0]) > 2500 ? parts[0] : parseInt(parts[0]) + 543;
-      formattedDate = `${parts[2]}/${parts[1]}/${yearTH}`;
-    }
-  }
-
-  // วาดตราประทับ
-  const pages = pdfDoc.getPages();
-  const firstPage = pages[0];
-  const { width, height } = firstPage.getSize();
-
-  const stampWidth = 145;
-  const stampHeight = 60;
-  const margin = 15;
-  const x = width - stampWidth - margin;
-  const y = height - stampHeight - margin;
-
-  firstPage.drawRectangle({
-    x: x, y: y,
-    width: stampWidth, height: stampHeight,
-    borderColor: PDFLib.rgb(0.85, 0.2, 0.2),
-    borderWidth: 1.5,
-    color: PDFLib.rgb(1, 0.96, 0.96)
-  });
-
-  firstPage.drawText("โรงเรียนพิมานพิทยาสรรค์", { x: x + 10, y: y + 44, size: 9, font: customFont, color: PDFLib.rgb(0.8, 0.1, 0.1) });
-  firstPage.drawText(`เลขรับ: ${receiveNo}/2569`, { x: x + 10, y: y + 31, size: 8.5, font: customFont, color: PDFLib.rgb(0, 0, 0) });
-  firstPage.drawText(`วันที่: ${formattedDate}`, { x: x + 10, y: y + 18, size: 8.5, font: customFont, color: PDFLib.rgb(0, 0, 0) });
-  firstPage.drawText(`เวลา: ${timeStr}`, { x: x + 10, y: y + 5, size: 8.5, font: customFont, color: PDFLib.rgb(0, 0, 0) });
-
-  const stampedPdfBytes = await pdfDoc.save();
-  
-  // แปลงกลับเป็น Base64 Data URL
-  let binary = '';
-  const bytes = new Uint8Array(stampedPdfBytes);
-  for (let i = 0; i < bytes.byteLength; i++) {
-    binary += String.fromCharCode(bytes[i]);
-  }
-  return 'data:application/pdf;base64,' + btoa(binary);
-}
-
-// ปรับปรุงฟังก์ชัน handleRegisterBook
-async function handleRegisterBook(e) {
-  e.preventDefault();
-  
-  const btn = document.getElementById('btnSubmitBook');
-  btn.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin"></i> กำลังประทับตราดิจิทัลและอัปโหลด...`;
-  btn.disabled = true;
-
-  try {
-    const fileInput = document.getElementById('bookPdf');
-    if (!fileInput.files || fileInput.files.length === 0) {
-      showAlert("กรุณาเลือกไฟล์ PDF หนังสือเข้า", "แจ้งเตือน", "warning");
-      btn.innerHTML = `<i class="fa-solid fa-stamp"></i> <span>ลงรับและประทับตราหนังสือ</span>`;
-      btn.disabled = false;
-      return;
-    }
-
-    const file = fileInput.files[0];
-    const recNo = document.getElementById('bookRecNo').value;
-    const bookNo = document.getElementById('bookNo').value;
-    const bookDate = document.getElementById('bookDate').value;
-    const bookFrom = document.getElementById('bookFrom').value;
-    const bookTitle = document.getElementById('bookTitle').value;
-
-    // ประทับตราที่เบราว์เซอร์ก่อน
-    const stampedBase64 = await stampPdfOnClient(file, recNo, bookDate);
-
-    const payload = {
-      action: 'SAVE_NEW_DOC',
-      data: {
-        receiveNo: recNo,
-        bookNo: bookNo,
-        receiveDate: bookDate,
-        fromDept: bookFrom,
-        title: bookTitle,
-        fileData: stampedBase64
+      const now = new Date();
+      const timeStr = String(now.getHours()).padStart(2, '0') + ":" + String(now.getMinutes()).padStart(2, '0') + " น.";
+      
+      let formattedDate = receiveDate;
+      if (receiveDate && receiveDate.includes('-')) {
+        const parts = receiveDate.split('-');
+        if (parts.length === 3) {
+          const yearTH = parseInt(parts[0]) > 2500 ? parts[0] : parseInt(parts[0]) + 543;
+          formattedDate = `${parts[2]}/${parts[1]}/${yearTH}`;
+        }
       }
-    };
 
-    const response = await fetch(GAS_URL, {
-      method: 'POST',
-      body: JSON.stringify(payload)
-    });
+      const pages = pdfDoc.getPages();
+      const firstPage = pages[0];
+      const { width, height } = firstPage.getSize();
 
-    const res = await response.json();
+      const stampWidth = 145;
+      const stampHeight = 60;
+      const margin = 15;
+      const x = width - stampWidth - margin;
+      const y = height - stampHeight - margin;
 
-    if (res.success) {
-      await loadDocsData();
-      renderSarabunDashboard();
-      showAlert(`ลงรับหนังสือเลขที่ ${recNo}/2569 และประทับตรามุมขวาบนเรียบร้อยแล้ว`, "ลงรับสำเร็จ", "success");
-    } else {
-      showAlert(res.message || "เกิดข้อผิดพลาดในการบันทึกข้อมูล", "บันทึกไม่สำเร็จ", "error");
+      firstPage.drawRectangle({
+        x: x, y: y,
+        width: stampWidth, height: stampHeight,
+        borderColor: PDFLib.rgb(0.85, 0.2, 0.2),
+        borderWidth: 1.5,
+        color: PDFLib.rgb(1, 0.96, 0.96)
+      });
+
+      firstPage.drawText("โรงเรียนพิมานพิทยาสรรค์", { x: x + 10, y: y + 44, size: 9, font: customFont, color: PDFLib.rgb(0.8, 0.1, 0.1) });
+      firstPage.drawText(`เลขรับ: ${receiveNo}/2569`, { x: x + 10, y: y + 31, size: 8.5, font: customFont, color: PDFLib.rgb(0, 0, 0) });
+      firstPage.drawText(`วันที่: ${formattedDate}`, { x: x + 10, y: y + 18, size: 8.5, font: customFont, color: PDFLib.rgb(0, 0, 0) });
+      firstPage.drawText(`เวลา: ${timeStr}`, { x: x + 10, y: y + 5, size: 8.5, font: customFont, color: PDFLib.rgb(0, 0, 0) });
+
+      const stampedPdfBytes = await pdfDoc.save();
+      
+      let binary = '';
+      const bytes = new Uint8Array(stampedPdfBytes);
+      for (let i = 0; i < bytes.byteLength; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      return 'data:application/pdf;base64,' + btoa(binary);
     }
 
-  } catch (err) {
-    console.error(err);
-    showAlert("เกิดข้อผิดพลาด: " + err.message, "เกิดข้อผิดพลาด", "error");
-  } finally {
-    btn.innerHTML = `<i class="fa-solid fa-stamp"></i> <span>ลงรับและประทับตราหนังสือ</span>`;
-    btn.disabled = false;
-  }
-}
+    async function handleRegisterBook(e) {
+      e.preventDefault();
+      
+      const btn = document.getElementById('btnSubmitBook');
+      btn.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin"></i> กำลังประทับตราดิจิทัลและอัปโหลด...`;
+      btn.disabled = true;
+
+      try {
+        const fileInput = document.getElementById('bookPdf');
+        if (!fileInput.files || fileInput.files.length === 0) {
+          showAlert("กรุณาเลือกไฟล์ PDF หนังสือเข้า", "แจ้งเตือน", "warning");
+          btn.innerHTML = `<i class="fa-solid fa-stamp"></i> <span>ลงรับและประทับตราหนังสือ</span>`;
+          btn.disabled = false;
+          return;
+        }
+
+        const file = fileInput.files[0];
+        const recNo = document.getElementById('bookRecNo').value;
+        const bookNo = document.getElementById('bookNo').value;
+        const bookDate = document.getElementById('bookDate').value;
+        const bookFrom = document.getElementById('bookFrom').value;
+        const bookTitle = document.getElementById('bookTitle').value;
+
+        const stampedBase64 = await stampPdfOnClient(file, recNo, bookDate);
+
+        const payload = {
+          action: 'SAVE_NEW_DOC',
+          data: {
+            receiveNo: recNo,
+            bookNo: bookNo,
+            receiveDate: bookDate,
+            fromDept: bookFrom,
+            title: bookTitle,
+            fileData: stampedBase64
+          }
+        };
+
+        const response = await fetch(GAS_URL, {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        });
+
+        const res = await response.json();
+
+        if (res.success) {
+          await loadDocsData();
+          renderSarabunDashboard();
+          showAlert(`ลงรับหนังสือเลขที่ ${recNo}/2569 และประทับตรามุมขวาบนเรียบร้อยแล้ว`, "ลงรับสำเร็จ", "success");
+        } else {
+          showAlert(res.message || "เกิดข้อผิดพลาดในการบันทึกข้อมูล", "บันทึกไม่สำเร็จ", "error");
+        }
+
+      } catch (err) {
+        console.error(err);
+        showAlert("เกิดข้อผิดพลาด: " + err.message, "เกิดข้อผิดพลาด", "error");
+      } finally {
+        btn.innerHTML = `<i class="fa-solid fa-stamp"></i> <span>ลงรับและประทับตราหนังสือ</span>`;
+        btn.disabled = false;
+      }
+    }
 
     function logout() {
       currentUser = null;
