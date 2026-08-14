@@ -72,7 +72,7 @@
   <!-- ================= 1. หน้าแรก LANDING PAGE ================= -->
   <div id="portalSection" class="min-h-screen w-full flex flex-col justify-between relative z-10 overflow-x-hidden">
     
-    <div class="container mx-auto px-4 pt-safe py-6 flex-grow flex flex-col justify-between items-center max-w-md md:max-w-4xl">
+    <div class="container mx-auto px-4 pt-safe py-6 flex-grow flex flex-col justify-between items-center max-w-md md:max-w-5xl">
       
       <!-- App Bar / Header Card -->
       <div class="w-full text-center mt-1 mb-4 md:mb-6 rounded-3xl bg-white border-2 border-sky-300/80 p-5 md:p-8 shadow-xl shadow-sky-200/60 relative overflow-hidden transition-all">
@@ -135,113 +135,146 @@
 
       </div>
 
-      <!-- Action Cards (ใช้ SVG Graphics แท้ 100% เพื่อให้แสดงผลแน่นอน) -->
+      <!-- Action Cards (ปรับปรุง: ขอบหนา ชัดเจน แยกธีมพื้นหลัง และไอคอนประจำระบบอย่างชัดเจน) -->
       <div class="w-full grid grid-cols-3 md:grid-cols-3 gap-3 md:gap-6 my-auto">
         
-        <!-- Card 1: งานสารบรรณโรงเรียน -->
+        <!-- Card 1: งานสารบรรณโรงเรียน (ธีมสีฟ้าเข้ม/เอกสาร) -->
         <div onclick="openLoginModal('SARABUN', 'ระบบงานสารบรรณโรงเรียน', 'bg-[#0f2b48]', 'fa-folder-open')" 
-             class="p-3 md:p-6 rounded-2xl md:rounded-3xl bg-white border-2 border-sky-200 shadow-lg shadow-sky-100 hover:shadow-2xl hover:border-sky-500 cursor-pointer group transition-all duration-300 active:scale-95 md:hover:-translate-y-1.5 flex flex-col items-center md:items-stretch justify-between text-center md:text-left relative overflow-hidden">
+             class="p-3 md:p-6 rounded-2xl md:rounded-3xl bg-gradient-to-b from-sky-50/90 via-white to-sky-100/60 border-2 border-sky-400 shadow-lg shadow-sky-200/50 hover:shadow-2xl hover:border-sky-600 cursor-pointer group transition-all duration-300 active:scale-95 md:hover:-translate-y-1.5 flex flex-col items-center md:items-stretch justify-between text-center md:text-left relative overflow-hidden">
           
-          <div class="absolute top-0 left-0 right-0 h-1.5 bg-sky-500 group-hover:h-2 transition-all"></div>
+          <!-- แถบสีหัวการ์ด -->
+          <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-sky-400 to-indigo-500"></div>
 
-          <!-- SVG Graphic 1: Folder/Document -->
-          <div class="w-full flex items-center justify-center md:justify-between pt-1">
-            <div class="relative w-12 h-12 md:w-20 md:h-20 flex items-center justify-center bg-sky-100/70 rounded-2xl p-2.5 group-hover:bg-sky-200/80 transition-colors shadow-inner">
-              <svg class="w-full h-full text-sky-600 drop-shadow group-hover:scale-110 transition-transform duration-300" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M8 16C8 12.6863 10.6863 10 14 10H24L30 18H50C53.3137 18 56 20.6863 56 24V48C56 51.3137 53.3137 54 50 54H14C10.6863 54 8 51.3137 8 48V16Z" fill="#38BDF8"/>
+          <!-- Pattern Background 1: Dot Grid -->
+          <div class="absolute inset-0 bg-[radial-gradient(#0284c7_1.5px,transparent_1.5px)] [background-size:12px_12px] opacity-[0.08] pointer-events-none"></div>
+
+          <div class="w-full flex items-center justify-center md:justify-between pt-1 relative z-10">
+            <!-- Graphic Icon Container -->
+            <div class="relative w-14 h-14 md:w-20 md:h-20 flex items-center justify-center bg-sky-500 text-white rounded-2xl p-2.5 shadow-md shadow-sky-300 group-hover:scale-110 group-hover:bg-sky-600 transition-all duration-300 border-2 border-white">
+              <svg class="w-full h-full filter drop-shadow" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 16C8 12.6863 10.6863 10 14 10H24L30 18H50C53.3137 18 56 20.6863 56 24V48C56 51.3137 53.3137 54 50 54H14C10.6863 54 8 51.3137 8 48V16Z" fill="#7DD3FC"/>
                 <path d="M12 22C12 18.6863 14.6863 16 18 16H46C49.3137 16 52 18.6863 52 22V48C52 51.3137 49.3137 54 46 54H18C14.6863 54 12 51.3137 12 48V22Z" fill="#0284C7"/>
                 <rect x="20" y="26" width="24" height="4" rx="2" fill="white"/>
                 <rect x="20" y="34" width="16" height="4" rx="2" fill="white"/>
               </svg>
             </div>
-            <span class="hidden md:inline-block text-[10px] font-bold px-3 py-1 bg-sky-100 text-sky-800 rounded-full border border-sky-300">
-              Admin
+            <span class="hidden md:inline-flex items-center gap-1 text-[11px] font-black px-3 py-1 bg-sky-600 text-white rounded-full shadow-sm border border-sky-700">
+              <i class="fa-solid fa-folder"></i> สารบรรณ
             </span>
           </div>
 
-          <div class="mt-2 md:mt-4">
-            <h2 class="text-xs md:text-lg font-bold text-slate-800 group-hover:text-sky-600 transition-colors leading-snug">สารบรรณ</h2>
-            <p class="hidden md:block text-slate-500 text-xs font-normal mt-1 line-clamp-2 leading-relaxed">
-              ลงรับหนังสือเข้า ประทับตรา และเสนอหนังสือ
+          <div class="mt-3 md:mt-4 relative z-10">
+            <span class="md:hidden inline-block text-[9px] font-black px-2 py-0.5 bg-sky-600 text-white rounded-md mb-1 shadow-xs">
+              สารบรรณ
+            </span>
+            <h2 class="text-xs md:text-xl font-extrabold text-slate-900 group-hover:text-sky-700 transition-colors leading-tight">
+              งานสารบรรณ
+            </h2>
+            <p class="hidden md:block text-slate-600 text-xs font-medium mt-1.5 line-clamp-2 leading-relaxed">
+              ลงรับหนังสือเข้า ประทับตรา และเสนอหนังสือสั่งการ
             </p>
           </div>
 
-          <div class="hidden md:flex items-center justify-between mt-4 pt-3 border-t border-sky-100 text-xs text-sky-600 font-bold">
+          <div class="hidden md:flex items-center justify-between mt-4 pt-3 border-t-2 border-sky-200/80 text-xs text-sky-700 font-extrabold relative z-10">
             <span>เข้าสู่ระบบ</span>
-            <i class="fa-solid fa-arrow-right group-hover:translate-x-1.5 transition-transform"></i>
+            <div class="w-6 h-6 rounded-full bg-sky-100 flex items-center justify-center group-hover:bg-sky-600 group-hover:text-white transition-all">
+              <i class="fa-solid fa-arrow-right text-[10px]"></i>
+            </div>
           </div>
         </div>
 
-        <!-- Card 2: ฝ่ายบริหาร -->
+        <!-- Card 2: ฝ่ายบริหาร (ธีมสีน้ำเงินเข้ม Royal Blue/ตราประทับ) -->
         <div onclick="openLoginModal('EXEC', 'ระบบฝ่ายบริหาร (ผอ. / รอง ผอ.)', 'bg-[#0f2b48]', 'fa-user-tie')" 
-             class="p-3 md:p-6 rounded-2xl md:rounded-3xl bg-white border-2 border-sky-200 shadow-lg shadow-sky-100 hover:shadow-2xl hover:border-blue-600 cursor-pointer group transition-all duration-300 active:scale-95 md:hover:-translate-y-1.5 flex flex-col items-center md:items-stretch justify-between text-center md:text-left relative overflow-hidden">
+             class="p-3 md:p-6 rounded-2xl md:rounded-3xl bg-gradient-to-b from-blue-50/90 via-white to-blue-100/60 border-2 border-blue-500 shadow-lg shadow-blue-200/50 hover:shadow-2xl hover:border-blue-700 cursor-pointer group transition-all duration-300 active:scale-95 md:hover:-translate-y-1.5 flex flex-col items-center md:items-stretch justify-between text-center md:text-left relative overflow-hidden">
           
-          <div class="absolute top-0 left-0 right-0 h-1.5 bg-blue-600 group-hover:h-2 transition-all"></div>
+          <!-- แถบสีหัวการ์ด -->
+          <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-blue-600 to-indigo-700"></div>
 
-          <!-- SVG Graphic 2: Executive Approval Stamp -->
-          <div class="w-full flex items-center justify-center md:justify-between pt-1">
-            <div class="relative w-12 h-12 md:w-20 md:h-20 flex items-center justify-center bg-blue-100/70 rounded-2xl p-2.5 group-hover:bg-blue-200/80 transition-colors shadow-inner">
-              <svg class="w-full h-full text-blue-600 drop-shadow group-hover:scale-110 transition-transform duration-300" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="14" y="8" width="36" height="48" rx="6" fill="#60A5FA"/>
+          <!-- Pattern Background 2: Diagonal Stripes -->
+          <div class="absolute inset-0 opacity-[0.05] pointer-events-none bg-[linear-gradient(45deg,#1e40af_25%,transparent_25%,transparent_50%,#1e40af_50%,#1e40af_75%,transparent_75%,transparent)] [background-size:16px_16px]"></div>
+
+          <div class="w-full flex items-center justify-center md:justify-between pt-1 relative z-10">
+            <!-- Graphic Icon Container -->
+            <div class="relative w-14 h-14 md:w-20 md:h-20 flex items-center justify-center bg-blue-700 text-white rounded-2xl p-2.5 shadow-md shadow-blue-400 group-hover:scale-110 group-hover:bg-blue-800 transition-all duration-300 border-2 border-white">
+              <svg class="w-full h-full filter drop-shadow" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="14" y="8" width="36" height="48" rx="6" fill="#93C5FD"/>
                 <rect x="18" y="12" width="28" height="40" rx="4" fill="white"/>
-                <path d="M22 20H42M22 28H36" stroke="#93C5FD" stroke-width="3" stroke-linecap="round"/>
-                <circle cx="38" cy="40" r="10" fill="#2563EB"/>
+                <path d="M22 20H42M22 28H36" stroke="#3B82F6" stroke-width="3" stroke-linecap="round"/>
+                <circle cx="38" cy="40" r="10" fill="#1D4ED8"/>
                 <path d="M33 40L36.5 43.5L43 37" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </div>
-            <span class="hidden md:inline-block text-[10px] font-bold px-3 py-1 bg-blue-100 text-blue-800 rounded-full border border-blue-300">
-              Executive
+            <span class="hidden md:inline-flex items-center gap-1 text-[11px] font-black px-3 py-1 bg-blue-700 text-white rounded-full shadow-sm border border-blue-800">
+              <i class="fa-solid fa-crown"></i> ฝ่ายบริหาร
             </span>
           </div>
 
-          <div class="mt-2 md:mt-4">
-            <h2 class="text-xs md:text-lg font-bold text-slate-800 group-hover:text-blue-600 transition-colors leading-snug">ฝ่ายบริหาร</h2>
-            <p class="hidden md:block text-slate-500 text-xs font-normal mt-1 line-clamp-2 leading-relaxed">
-              สำหรับ ผอ. และ รอง ผอ. พิจารณา เกษียณสั่งการ
+          <div class="mt-3 md:mt-4 relative z-10">
+            <span class="md:hidden inline-block text-[9px] font-black px-2 py-0.5 bg-blue-700 text-white rounded-md mb-1 shadow-xs">
+              บริหาร
+            </span>
+            <h2 class="text-xs md:text-xl font-extrabold text-slate-900 group-hover:text-blue-800 transition-colors leading-tight">
+              ฝ่ายบริหาร
+            </h2>
+            <p class="hidden md:block text-slate-600 text-xs font-medium mt-1.5 line-clamp-2 leading-relaxed">
+              สำหรับ ผอ. และ รอง ผอ. พิจารณา เกษียณสั่งการเอกสาร
             </p>
           </div>
 
-          <div class="hidden md:flex items-center justify-between mt-4 pt-3 border-t border-sky-100 text-xs text-blue-600 font-bold">
+          <div class="hidden md:flex items-center justify-between mt-4 pt-3 border-t-2 border-blue-200/80 text-xs text-blue-800 font-extrabold relative z-10">
             <span>เข้าสู่ระบบ</span>
-            <i class="fa-solid fa-arrow-right group-hover:translate-x-1.5 transition-transform"></i>
+            <div class="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center group-hover:bg-blue-700 group-hover:text-white transition-all">
+              <i class="fa-solid fa-arrow-right text-[10px]"></i>
+            </div>
           </div>
         </div>
 
-        <!-- Card 3: ครูและบุคลากร -->
+        <!-- Card 3: ครูและบุคลากร (ธีมสีฟ้าสดใส Cyan/Checklist) -->
         <div onclick="openLoginModal('TEACHER', 'ระบบครูและบุคลากร', 'bg-[#0f2b48]', 'fa-chalkboard-user')" 
-             class="p-3 md:p-6 rounded-2xl md:rounded-3xl bg-white border-2 border-sky-200 shadow-lg shadow-sky-100 hover:shadow-2xl hover:border-sky-600 cursor-pointer group transition-all duration-300 active:scale-95 md:hover:-translate-y-1.5 flex flex-col items-center md:items-stretch justify-between text-center md:text-left relative overflow-hidden">
+             class="p-3 md:p-6 rounded-2xl md:rounded-3xl bg-gradient-to-b from-cyan-50/90 via-white to-cyan-100/60 border-2 border-cyan-500 shadow-lg shadow-cyan-200/50 hover:shadow-2xl hover:border-cyan-700 cursor-pointer group transition-all duration-300 active:scale-95 md:hover:-translate-y-1.5 flex flex-col items-center md:items-stretch justify-between text-center md:text-left relative overflow-hidden">
           
-          <div class="absolute top-0 left-0 right-0 h-1.5 bg-sky-600 group-hover:h-2 transition-all"></div>
+          <!-- แถบสีหัวการ์ด -->
+          <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-cyan-500 to-blue-500"></div>
 
-          <!-- SVG Graphic 3: Checklist / Task -->
-          <div class="w-full flex items-center justify-center md:justify-between pt-1">
-            <div class="relative w-12 h-12 md:w-20 md:h-20 flex items-center justify-center bg-cyan-100/70 rounded-2xl p-2.5 group-hover:bg-cyan-200/80 transition-colors shadow-inner">
-              <svg class="w-full h-full text-cyan-600 drop-shadow group-hover:scale-110 transition-transform duration-300" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="12" y="10" width="40" height="46" rx="6" fill="#38BDF8"/>
+          <!-- Pattern Background 3: Circles Wave -->
+          <div class="absolute inset-0 bg-[radial-gradient(#0891b2_1.5px,transparent_1.5px)] [background-size:16px_16px] opacity-[0.07] pointer-events-none"></div>
+
+          <div class="w-full flex items-center justify-center md:justify-between pt-1 relative z-10">
+            <!-- Graphic Icon Container -->
+            <div class="relative w-14 h-14 md:w-20 md:h-20 flex items-center justify-center bg-cyan-600 text-white rounded-2xl p-2.5 shadow-md shadow-cyan-300 group-hover:scale-110 group-hover:bg-cyan-700 transition-all duration-300 border-2 border-white">
+              <svg class="w-full h-full filter drop-shadow" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="12" y="10" width="40" height="46" rx="6" fill="#67E8F9"/>
                 <rect x="16" y="14" width="32" height="38" rx="4" fill="white"/>
-                <circle cx="23" cy="24" r="3" fill="#0284C7"/>
-                <rect x="30" y="22" width="14" height="4" rx="2" fill="#0284C7"/>
-                <circle cx="23" cy="34" r="3" fill="#0284C7"/>
-                <rect x="30" y="32" width="14" height="4" rx="2" fill="#0284C7"/>
-                <circle cx="23" cy="44" r="3" fill="#0284C7"/>
-                <rect x="30" y="42" width="14" height="4" rx="2" fill="#0284C7"/>
+                <circle cx="23" cy="24" r="3" fill="#0891B2"/>
+                <rect x="30" y="22" width="14" height="4" rx="2" fill="#0891B2"/>
+                <circle cx="23" cy="34" r="3" fill="#0891B2"/>
+                <rect x="30" y="32" width="14" height="4" rx="2" fill="#0891B2"/>
+                <circle cx="23" cy="44" r="3" fill="#0891B2"/>
+                <rect x="30" y="42" width="14" height="4" rx="2" fill="#0891B2"/>
               </svg>
             </div>
-            <span class="hidden md:inline-block text-[10px] font-bold px-3 py-1 bg-sky-100 text-sky-800 rounded-full border border-sky-300">
-              Staff
+            <span class="hidden md:inline-flex items-center gap-1 text-[11px] font-black px-3 py-1 bg-cyan-700 text-white rounded-full shadow-sm border border-cyan-800">
+              <i class="fa-solid fa-users"></i> ครู/บุคลากร
             </span>
           </div>
 
-          <div class="mt-2 md:mt-4">
-            <h2 class="text-xs md:text-lg font-bold text-slate-800 group-hover:text-sky-600 transition-colors leading-snug">ครู/บุคลากร</h2>
-            <p class="hidden md:block text-slate-500 text-xs font-normal mt-1 line-clamp-2 leading-relaxed">
-              ตรวจสอบหนังสือที่ได้รับมอบหมาย และรับทราบงาน
+          <div class="mt-3 md:mt-4 relative z-10">
+            <span class="md:hidden inline-block text-[9px] font-black px-2 py-0.5 bg-cyan-700 text-white rounded-md mb-1 shadow-xs">
+              ครู/บุคลากร
+            </span>
+            <h2 class="text-xs md:text-xl font-extrabold text-slate-900 group-hover:text-cyan-800 transition-colors leading-tight">
+              ครู/บุคลากร
+            </h2>
+            <p class="hidden md:block text-slate-600 text-xs font-medium mt-1.5 line-clamp-2 leading-relaxed">
+              ตรวจสอบหนังสือที่ได้รับมอบหมาย และรับทราบปฏิบัติงาน
             </p>
           </div>
 
-          <div class="hidden md:flex items-center justify-between mt-4 pt-3 border-t border-sky-100 text-xs text-sky-600 font-bold">
+          <div class="hidden md:flex items-center justify-between mt-4 pt-3 border-t-2 border-cyan-200/80 text-xs text-cyan-800 font-extrabold relative z-10">
             <span>เข้าสู่ระบบ</span>
-            <i class="fa-solid fa-arrow-right group-hover:translate-x-1.5 transition-transform"></i>
+            <div class="w-6 h-6 rounded-full bg-cyan-100 flex items-center justify-center group-hover:bg-cyan-700 group-hover:text-white transition-all">
+              <i class="fa-solid fa-arrow-right text-[10px]"></i>
+            </div>
           </div>
         </div>
 
