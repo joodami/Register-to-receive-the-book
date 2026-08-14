@@ -940,6 +940,43 @@
       }
     }
 
+function switchSystemTab(roleGroup, roleTitle, headerBgClass, iconClass) {
+      // 1. อัปเดตค่า selectedRoleGroup
+      document.getElementById('selectedRoleGroup').value = roleGroup;
+
+      // 2. ปรับไฮไลท์ของปุ่มแท็บ
+      document.querySelectorAll('.system-tab-button').forEach(btn => {
+        btn.classList.remove('system-tab-active');
+      });
+      const activeBtn = document.getElementById('tab-' + roleGroup);
+      if (activeBtn) activeBtn.classList.add('system-tab-active');
+
+      // 3. ปรับข้อความแสดงชื่อระบบที่เลือก
+      const display = document.getElementById('activeSystemNameDisplay');
+      if (display) {
+        let cleanTitle = roleTitle.replace('ระบบ', '');
+        display.innerHTML = 'ระบบที่เลือก: <span class="text-sky-700 font-extrabold">' + cleanTitle + '</span>';
+      }
+
+      // 4. อัปเดตข้อมูลของ Modal เดิม (เพื่อรองรับ JS ชุดเดิม)
+      const modalTitle = document.getElementById('modalTitle');
+      if (modalTitle) modalTitle.innerText = roleTitle;
+      
+      const modalHeaderBg = document.getElementById('modalHeaderBg');
+      if (modalHeaderBg) modalHeaderBg.className = 'px-6 py-5 text-white text-center relative ' + headerBgClass;
+    }
+
+    // ฟังก์ชัน openLoginModal เดิมเพื่อความปลอดภัยของสคริปต์
+    function openLoginModal(roleGroup, roleTitle, headerBgClass, iconClass) {
+      switchSystemTab(roleGroup, roleTitle, headerBgClass, iconClass);
+    }
+
+    function closeLoginModal() {
+      const modal = document.getElementById('loginModal');
+      if (modal) modal.classList.add('hidden');
+    }
+  
+
     function logout() {
       currentUser = null;
       targetRoleGroup = null;
