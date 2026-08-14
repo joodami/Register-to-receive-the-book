@@ -318,27 +318,24 @@
         ตกลง
       </button>
     </div>
-  </div
-  
-<script>
+  </div>
+
+  <!-- ================= JavaScript ================= -->
+  <script>
     const GAS_URL = "https://script.google.com/macros/s/AKfycbxauMbrEeIaDNAN_U0DvffmUVN5vfbUqpNOpmVSPvtMZ9qbl0WfTcxB2JnvcRxkOfQm/exec"; 
-    
-    // ตั้งค่า URL โลโก้โรงเรียน
     const SCHOOL_LOGO_URL = "https://raw.githubusercontent.com/joodami/school-assets/main/logo.png";
 
     let currentUser = null;
-    let targetRoleGroup = 'SARABUN'; // กำหนดค่าเริ่มต้นเป็น SARABUN
+    let targetRoleGroup = 'SARABUN';
+    let currentSarabunTab = 'folderIn'; // 'folderIn', 'registered', 'returned'
 
-    // ตัวแปรสำหรับเก็บรายการหนังสือรับ
     let incomingBooks = [];
-    let todayCount = 0;
-    let pendingCount = 0;
-    let totalCount = 0;
+    let filteredBooks = [];
+    let currentPage = 1;
+    const pageSize = 20;
 
-    // ตัวแปรสำหรับ Caching ฟอนต์ภาษาไทย
     let cachedFontBytes = null;
 
-    // ฟังก์ชันปลุกเซิร์ฟเวอร์ (Warm-up) ลดความล่าช้าจาก Cold Start
     function warmupServer() {
       fetch(GAS_URL, {
         method: 'POST',
@@ -347,7 +344,6 @@
       }).catch(() => {});
     }
 
-    // อัปเดตโลโก้ ปลุกเซิร์ฟเวอร์ และตรวจสอบเซสชันเดิมเมื่อโหลดหน้าเว็บ
     document.addEventListener("DOMContentLoaded", async () => {
       warmupServer();
 
@@ -358,7 +354,6 @@
         img.src = SCHOOL_LOGO_URL;
       });
 
-      // ตรวจสอบข้อมูลการล็อกอินเดิมที่บันทึกไว้
       const savedUser = localStorage.getItem('currentUser');
       const savedRoleGroup = localStorage.getItem('targetRoleGroup');
 
@@ -367,7 +362,6 @@
           currentUser = JSON.parse(savedUser);
           if (savedRoleGroup) targetRoleGroup = savedRoleGroup;
 
-          // แสดงหน้า Dashboard ทันที
           document.getElementById('portalSection').classList.add('hidden');
           document.body.className = "bg-[#f4f6f9] min-h-full text-slate-800 flex flex-col justify-between antialiased";
           document.getElementById('mainDashboard').classList.remove('hidden');
@@ -382,7 +376,6 @@
       }
     });
 
-    // --- ฟังก์ชันแสดง Alert Modal ---
     function showAlert(message, title = 'แจ้งเตือน', type = 'error') {
       const modal = document.getElementById('alertModal');
       const iconContainer = document.getElementById('alertIconContainer');
@@ -404,7 +397,7 @@
       } else if (type === 'warning') {
         iconContainer.className = "w-14 h-14 bg-amber-50 text-amber-600 border border-amber-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-sm";
         icon.className = "fa-solid fa-circle-exclamation";
-      } else { // info
+      } else {
         iconContainer.className = "w-14 h-14 bg-blue-50 text-[#0f2b48] border border-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-sm";
         icon.className = "fa-solid fa-circle-info";
       }
@@ -418,51 +411,28 @@
     }
 
     function switchSystemTab(roleGroup, roleTitle, headerBgClass, iconClass) {
-      // 1. อัปเดตค่า selectedRoleGroup และ targetRoleGroup
       const selectedInput = document.getElementById('selectedRoleGroup');
       if (selectedInput) selectedInput.value = roleGroup;
       targetRoleGroup = roleGroup;
 
-      // 2. ปรับไฮไลท์ของปุ่มแท็บ
       document.querySelectorAll('.system-tab-button').forEach(btn => {
         btn.classList.remove('system-tab-active');
       });
       const activeBtn = document.getElementById('tab-' + roleGroup);
       if (activeBtn) activeBtn.classList.add('system-tab-active');
 
-      // 3. ปรับข้อความแสดงชื่อระบบที่เลือก
       const display = document.getElementById('activeSystemNameDisplay');
       if (display) {
         let cleanTitle = roleTitle.replace('ระบบ', '');
         display.innerHTML = 'ระบบที่เลือก: <span class="text-sky-700 font-extrabold">' + cleanTitle + '</span>';
       }
-
-      // 4. อัปเดตข้อมูลของ Modal เดิม (เพื่อรองรับ JS ชุดเดิม)
-      const modalTitle = document.getElementById('modalTitle');
-      if (modalTitle) modalTitle.innerText = roleTitle;
-      
-      const modalHeaderBg = document.getElementById('modalHeaderBg');
-      if (modalHeaderBg) modalHeaderBg.className = 'px-6 py-5 text-white text-center relative ' + headerBgClass;
-    }
-
-    function openLoginModal(roleGroup, roleTitle, headerBgClass, iconClass) {
-      switchSystemTab(roleGroup, roleTitle, headerBgClass, iconClass);
-    }
-
-    function closeLoginModal() {
-      const modal = document.getElementById('loginModal');
-      if (modal) modal.classList.add('hidden');
-      const form = document.getElementById('loginForm');
-      if (form) form.reset();
     }
 
     async function handleLogin(e) {
-      // ตรวจสอบและป้องกัน Form submit ตามปกติเพื่อไม่ให้รีเฟรชหน้า
       if (e && typeof e.preventDefault === 'function') {
         e.preventDefault();
       }
 
-      // การันตีการดึงค่าแท็บที่เลือกใช้งาน
       const selectedInput = document.getElementById('selectedRoleGroup');
       if (selectedInput && selectedInput.value) {
         targetRoleGroup = selectedInput.value;
@@ -480,37 +450,21 @@
         }
       };
 
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 35000);
-
       try {
         const response = await fetch(GAS_URL, {
           method: 'POST',
-          body: JSON.stringify(payload),
-          signal: controller.signal
+          body: JSON.stringify(payload)
         });
-        
-        clearTimeout(timeoutId);
 
-        const rawText = await response.text();
-        let res = {};
-        try {
-          res = JSON.parse(rawText);
-        } catch(pErr) {
-          throw new Error("เซิร์ฟเวอร์ระบบสารบรรณกำลังประมวลผลช้า กรุณาลองใหม่อีกครั้ง");
-        }
+        const res = await response.json();
 
         if (res.success) {
           const userRole = res.user.role;
           let hasPermission = false;
           
-          if (targetRoleGroup === 'SARABUN' && userRole === 'SARABUN') {
-            hasPermission = true;
-          } else if (targetRoleGroup === 'EXEC' && (userRole === 'DIRECTOR' || userRole === 'VICE_DIRECTOR')) {
-            hasPermission = true;
-          } else if (targetRoleGroup === 'TEACHER' && (userRole === 'TEACHER' || userRole === 'STAFF')) {
-            hasPermission = true;
-          }
+          if (targetRoleGroup === 'SARABUN' && userRole === 'SARABUN') hasPermission = true;
+          else if (targetRoleGroup === 'EXEC' && (userRole === 'DIRECTOR' || userRole === 'VICE_DIRECTOR')) hasPermission = true;
+          else if (targetRoleGroup === 'TEACHER' && (userRole === 'TEACHER' || userRole === 'STAFF')) hasPermission = true;
 
           if (!hasPermission) {
             showAlert("คุณไม่มีสิทธิ์เข้าใช้งานในส่วนนี้ กรุณาเลือกระบบเข้าใช้งานให้ตรงกับสิทธิ์ของคุณ", "ไม่มีสิทธิ์เข้าถึงระบบ", "error");
@@ -520,12 +474,9 @@
           }
 
           currentUser = res.user;
-
-          // บันทึกสถานะการล็อกอินลง localStorage
           localStorage.setItem('currentUser', JSON.stringify(currentUser));
           localStorage.setItem('targetRoleGroup', targetRoleGroup);
 
-          closeLoginModal();
           document.getElementById('portalSection').classList.add('hidden');
           document.body.className = "bg-[#f4f6f9] min-h-full text-slate-800 flex flex-col justify-between antialiased";
           document.getElementById('mainDashboard').classList.remove('hidden');
@@ -537,20 +488,14 @@
           showAlert(res.message || "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง", "เข้าสู่ระบบไม่สำเร็จ", "error");
         }
       } catch (err) {
-        if (err.name === 'AbortError') {
-          showAlert("การเชื่อมต่อกับเซิร์ฟเวอร์ Google Apps Script ใช้เวลานานเกินไป กรุณากดเข้าสู่ระบบใหม่อีกครั้ง", "เซิร์ฟเวอร์ตอบสนองช้า", "warning");
-        } else {
-          showAlert(err.message || "ไม่สามารถเชื่อมต่อกับระบบได้ กรุณาลองใหม่อีกครั้ง", "เกิดข้อผิดพลาด", "error");
-        }
+        showAlert("ไม่สามารถเชื่อมต่อกับระบบได้ กรุณาลองใหม่อีกครั้ง", "เกิดข้อผิดพลาด", "error");
         console.error(err);
       } finally {
-        clearTimeout(timeoutId);
         btn.innerHTML = `<span>เข้าสู่ระบบ</span> <i class="fa-solid fa-right-to-bracket text-xs"></i>`;
         btn.disabled = false;
       }
     }
 
-    // ฟังก์ชันช่วยแปลง String/ISO เป็นวัตถุ Date แบบไม่โดนผลกระทบ Timezone
     function parseLocalDate(dateStr) {
       if (!dateStr) return null;
       if (typeof dateStr === 'string' && dateStr.includes('-')) {
@@ -564,7 +509,14 @@
       return isNaN(d.getTime()) ? null : d;
     }
 
-    // ฟังก์ชันดึงรายการหนังสือจากเซิร์ฟเวอร์
+    function formatDisplayDate(dateStr) {
+      if (!dateStr) return '-';
+      const d = parseLocalDate(dateStr);
+      if (!d) return String(dateStr).split('T')[0];
+      const thaiMonths = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+      return `${d.getDate()} ${thaiMonths[d.getMonth()]} ${d.getFullYear() + 543}`;
+    }
+
     async function loadDocsData() {
       if (!currentUser) return;
       try {
@@ -592,41 +544,11 @@
             status: doc.status || 'PENDING_DIRECTOR',
             time: doc.receiveTime || doc.time || doc.receiveDate || ''
           }));
-
-          totalCount = incomingBooks.length;
-          pendingCount = incomingBooks.filter(b => b.status === 'PENDING_DIRECTOR' || !b.status).length;
-          
-          const now = new Date();
-          const todayY = now.getFullYear();
-          const todayM = now.getMonth();
-          const todayD = now.getDate();
-
-          todayCount = incomingBooks.filter(b => {
-            const d = parseLocalDate(b.date || b.time);
-            if (!d) return false;
-            
-            return d.getFullYear() === todayY && 
-                   d.getMonth() === todayM && 
-                   d.getDate() === todayD;
-          }).length;
+          filteredBooks = [...incomingBooks];
         }
       } catch (err) {
         console.error("Error loading docs:", err);
       }
-    }
-
-    // ฟังก์ชันแปลงวันที่ ISO/String ให้เป็นวันที่ไทยสั้น (เช่น 14 ส.ค. 2569)
-    function formatDisplayDate(dateStr) {
-      if (!dateStr) return '-';
-      const d = parseLocalDate(dateStr);
-      if (!d) {
-        return String(dateStr).split('T')[0];
-      }
-      const thaiMonths = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
-      const day = d.getDate();
-      const month = thaiMonths[d.getMonth()];
-      const year = d.getFullYear() + 543;
-      return `${day} ${month} ${year}`;
     }
 
     function loadRoleDashboard() {
@@ -634,267 +556,311 @@
       if (!content) return;
 
       if (currentUser.role === 'SARABUN') {
-        renderSarabunDashboard();
-      } else if (currentUser.role === 'DIRECTOR' || currentUser.role === 'VICE_DIRECTOR') {
-        content.innerHTML = `
-          <div class="space-y-4 page-transition">
-            <div class="official-card p-6 rounded-2xl border border-slate-200 space-y-3">
-              <div class="flex items-center gap-3 border-b border-slate-100 pb-3">
-                <div class="w-10 h-10 bg-amber-50 text-amber-700 rounded-xl flex items-center justify-center text-lg">
-                  <i class="fa-solid fa-user-tie"></i>
-                </div>
-                <div>
-                  <h3 class="text-base font-bold text-slate-800">ฝ่ายบริหาร</h3>
-                  <p class="text-xs text-slate-500">ส่วนพิจารณาและกำกับการปฏิบัติงาน</p>
-                </div>
-              </div>
-              <p class="text-slate-600 text-xs leading-relaxed">รายการหนังสือรอการเกษียณและสั่งการ (${incomingBooks.length} รายการ)</p>
-            </div>
-
-            <div class="space-y-2.5">
-              <div class="flex items-center justify-between px-1">
-                <h3 class="text-xs font-bold text-slate-700">รายการหนังสือที่เสนอพิจารณา</h3>
-              </div>
-              <div id="booksListContainer">
-                ${renderBooksList()}
-              </div>
-            </div>
-          </div>`;
+        renderSarabunLayout();
       } else {
-        content.innerHTML = `
-          <div class="space-y-4 page-transition">
-            <div class="official-card p-6 rounded-2xl border border-slate-200 space-y-3">
-              <div class="flex items-center gap-3 border-b border-slate-100 pb-3">
-                <div class="w-10 h-10 bg-emerald-50 text-emerald-700 rounded-xl flex items-center justify-center text-lg">
-                  <i class="fa-solid fa-chalkboard-user"></i>
-                </div>
-                <div>
-                  <h3 class="text-base font-bold text-slate-800">ครูและบุคลากร</h3>
-                  <p class="text-xs text-slate-500">ส่วนรับทราบและติดตามงาน</p>
-                </div>
-              </div>
-              <p class="text-slate-600 text-xs leading-relaxed">รายการหนังสือที่ได้รับมอบหมายปฏิบัติงาน (${incomingBooks.length} รายการ)</p>
-            </div>
-
-            <div class="space-y-2.5">
-              <div class="flex items-center justify-between px-1">
-                <h3 class="text-xs font-bold text-slate-700">รายการหนังสือรับแจ้งปฏิบัติ</h3>
-              </div>
-              <div id="booksListContainer">
-                ${renderBooksList()}
-              </div>
-            </div>
-          </div>`;
+        renderUserDashboard();
       }
     }
 
-    function renderSarabunDashboard() {
+    function renderSarabunLayout() {
       const content = document.getElementById('roleContent');
-      if (!content) return;
-
-      // ค้นหาเลขรับถัดไปอัตโนมัติ โดยหาจากค่าเลขรับสูงสุดในระบบป้องกันเลขซ้ำ
       const maxRecNo = incomingBooks.reduce((max, b) => {
         const num = parseInt(String(b.recNo).replace(/[^0-9]/g, ''), 10);
         return !isNaN(num) && num > max ? num : max;
       }, 0);
       const nextNumber = maxRecNo + 1;
-
-      const now = new Date();
-      const yyyy = now.getFullYear();
-      const mm = String(now.getMonth() + 1).padStart(2, '0');
-      const dd = String(now.getDate()).padStart(2, '0');
-      const todayStr = `${yyyy}-${mm}-${dd}`;
+      const todayStr = new Date().toISOString().split('T')[0];
 
       content.innerHTML = `
-        <div class="space-y-5 page-transition">
-          
-          <div class="grid grid-cols-3 gap-2.5">
-            <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm text-center">
-              <span class="text-[10px] font-medium text-slate-500 block mb-0.5">รับวันนี้</span>
-              <span id="statToday" class="text-lg font-bold text-[#0f2b48]">${todayCount}</span>
-              <span class="text-[9px] text-emerald-600 font-medium block">ฉบับ</span>
-            </div>
-            <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm text-center">
-              <span class="text-[10px] font-medium text-slate-500 block mb-0.5">รอเสนอ ผอ.</span>
-              <span id="statPending" class="text-lg font-bold text-amber-600">${pendingCount}</span>
-              <span class="text-[9px] text-amber-600 font-medium block">รายการ</span>
-            </div>
-            <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm text-center">
-              <span class="text-[10px] font-medium text-slate-500 block mb-0.5">เสร็จสิ้น</span>
-              <span id="statTotal" class="text-lg font-bold text-slate-700">${totalCount}</span>
-              <span class="text-[9px] text-slate-400 font-medium block">ทั้งหมด</span>
-            </div>
-          </div>
-
-          <button onclick="toggleRegisterForm()" 
-                  class="w-full py-3.5 px-4 bg-[#0f2b48] hover:bg-[#1a4366] active:scale-[0.98] text-white font-semibold rounded-2xl shadow-lg flex items-center justify-between transition-all border border-amber-400/30">
-            <div class="flex items-center gap-3">
-              <div class="w-9 h-9 bg-white/10 rounded-xl flex items-center justify-center text-amber-300">
-                <i class="fa-solid fa-file-circle-plus text-base"></i>
+        <div class="flex flex-col md:flex-row gap-5 page-transition">
+          <!-- SIDEBAR -->
+          <aside class="w-full md:w-64 shrink-0">
+            <div class="bg-white border-2 border-sky-200 rounded-2xl p-3 shadow-sm sticky top-20">
+              <div class="px-3 py-2 text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 mb-2">
+                เมนูสารบรรณ
               </div>
-              <div class="text-left">
-                <div class="text-sm font-bold">ลงรับหนังสือเข้าใหม่</div>
-                <div class="text-[10px] text-amber-200/80 font-light">กรอกรายละเอียดและอัปโหลด PDF</div>
-              </div>
+              <nav class="space-y-1.5">
+                <button id="menuFolderIn" onclick="switchSarabunMenu('folderIn')" class="sidebar-menu-btn ${currentSarabunTab === 'folderIn' ? 'active' : ''} w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs md:text-sm text-slate-700 hover:bg-sky-50 transition text-left">
+                  <i class="fa-solid fa-folder-plus text-sky-600 w-5 text-center"></i>
+                  <span>นำหนังสือรับเข้าแฟ้ม</span>
+                </button>
+
+                <button id="menuRegisteredDocs" onclick="switchSarabunMenu('registered')" class="sidebar-menu-btn ${currentSarabunTab === 'registered' ? 'active' : ''} w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs md:text-sm text-slate-700 hover:bg-sky-50 transition text-left">
+                  <i class="fa-solid fa-book-bookmark text-sky-600 w-5 text-center"></i>
+                  <span>หนังสือรับที่ลงทะเบียนแล้ว</span>
+                </button>
+
+                <button id="menuReturnedDocs" onclick="switchSarabunMenu('returned')" class="sidebar-menu-btn ${currentSarabunTab === 'returned' ? 'active' : ''} w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs md:text-sm text-slate-700 hover:bg-sky-50 transition text-left">
+                  <i class="fa-solid fa-reply-all text-sky-600 w-5 text-center"></i>
+                  <span>หนังสือส่งกลับจากฝ่ายบริหาร</span>
+                </button>
+              </nav>
             </div>
-            <i class="fa-solid fa-chevron-down text-xs text-amber-300 transition-transform duration-300" id="formToggleIcon"></i>
-          </button>
+          </aside>
 
-          <div id="registerFormContainer" class="hidden bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
-                <i class="fa-solid fa-pen-to-square text-[#0f2b48]"></i>
-                ฟอร์มลงรับหนังสือ
-              </h3>
-              <span class="text-[11px] font-semibold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
-                เลขรับอัตโนมัติ: ${nextNumber}/2569
-              </span>
-            </div>
-
-            <form id="sarabunRegisterForm" onsubmit="handleRegisterBook(event)" class="space-y-3.5">
-              <input type="hidden" id="bookRecNo" value="${nextNumber}">
-              
-              <div>
-                <label class="text-[11px] font-semibold text-slate-600 mb-1 block">เลขที่หนังสือต้นทาง</label>
-                <input type="text" id="bookNo" required placeholder="ศธ 1234/2569" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-1 focus:ring-[#0f2b48] focus:bg-white outline-none">
-              </div>
-
-              <div class="grid grid-cols-2 gap-3">
-                <div>
-                  <label class="text-[11px] font-semibold text-slate-600 mb-1 block">วันที่ลงรับระบบ</label>
-                  <input type="date" id="receiveDateInput" value="${todayStr}" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-1 focus:ring-[#0f2b48] focus:bg-white outline-none">
+          <!-- MAIN CONTENT AREA -->
+          <section class="flex-1 min-w-0 space-y-4">
+            
+            <!-- FORM TOGGLE SECTION -->
+            <div class="bg-white p-4 rounded-2xl border-2 border-sky-200 shadow-sm space-y-3">
+              <button onclick="toggleRegisterForm()" class="w-full py-3 px-4 bg-[#0f2b48] hover:bg-[#1a4366] text-white font-semibold rounded-xl shadow flex items-center justify-between transition">
+                <div class="flex items-center gap-3">
+                  <i class="fa-solid fa-file-circle-plus text-amber-300 text-lg"></i>
+                  <span class="text-sm font-bold">ลงรับหนังสือเข้าใหม่ (เลขรับถัดไป: ${nextNumber}/2569)</span>
                 </div>
-                <div>
-                  <label class="text-[11px] font-semibold text-slate-600 mb-1 block">ลงวันที่ (ในหนังสือ)</label>
-                  <input type="date" id="bookDate" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-1 focus:ring-[#0f2b48] focus:bg-white outline-none">
-                </div>
-              </div>
-
-              <div>
-                <label class="text-[11px] font-semibold text-slate-600 mb-1 block">จาก (หน่วยงานเจ้าของเรื่อง)</label>
-                <input type="text" id="bookFrom" required placeholder="สำนักงานเขตพื้นที่การศึกษามัธยมศึกษา..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-1 focus:ring-[#0f2b48] focus:bg-white outline-none">
-              </div>
-
-              <div>
-                <label class="text-[11px] font-semibold text-slate-600 mb-1 block">เรื่อง</label>
-                <input type="text" id="bookTitle" required placeholder="ระบุชื่อเรื่องหนังสือ..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-1 focus:ring-[#0f2b48] focus:bg-white outline-none">
-              </div>
-
-              <div>
-                <label class="text-[11px] font-semibold text-slate-600 mb-1 block">แนบไฟล์ PDF หนังสือเข้า</label>
-                <input type="file" id="bookPdf" accept="application/pdf" required class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-[#0f2b48] hover:file:bg-slate-200 cursor-pointer border border-slate-200 rounded-xl bg-slate-50 p-1">
-              </div>
-
-              <button type="submit" id="btnSubmitBook" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-semibold rounded-xl text-xs shadow-md transition flex items-center justify-center gap-2 mt-2">
-                <i class="fa-solid fa-stamp"></i>
-                <span>ลงรับและประทับตราหนังสือ</span>
+                <i class="fa-solid fa-chevron-down text-xs text-amber-300 transition-transform" id="formToggleIcon"></i>
               </button>
-            </form>
-          </div>
 
-          <div class="space-y-2.5">
-            <div class="flex items-center justify-between px-1">
-              <h3 class="text-xs font-bold text-slate-700">รายการหนังสือรับล่าสุด</h3>
-              <span class="text-[10px] text-[#1a5276] font-medium cursor-pointer">ทั้งหมด (${incomingBooks.length})</span>
+              <div id="registerFormContainer" class="hidden pt-3 border-t border-slate-100">
+                <form id="sarabunRegisterForm" onsubmit="handleRegisterBook(event)" class="space-y-3">
+                  <input type="hidden" id="bookRecNo" value="${nextNumber}">
+                  <div>
+                    <label class="text-[11px] font-semibold text-slate-600 mb-1 block">เลขที่หนังสือต้นทาง</label>
+                    <input type="text" id="bookNo" required placeholder="ศธ 1234/2569" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-sky-500">
+                  </div>
+                  <div class="grid grid-cols-2 gap-3">
+                    <div>
+                      <label class="text-[11px] font-semibold text-slate-600 mb-1 block">วันที่ลงรับระบบ</label>
+                      <input type="date" id="receiveDateInput" value="${todayStr}" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-sky-500">
+                    </div>
+                    <div>
+                      <label class="text-[11px] font-semibold text-slate-600 mb-1 block">ลงวันที่ (ในหนังสือ)</label>
+                      <input type="date" id="bookDate" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-sky-500">
+                    </div>
+                  </div>
+                  <div>
+                    <label class="text-[11px] font-semibold text-slate-600 mb-1 block">จาก (หน่วยงานเจ้าของเรื่อง)</label>
+                    <input type="text" id="bookFrom" required placeholder="สำนักงานเขตพื้นที่การศึกษา..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-sky-500">
+                  </div>
+                  <div>
+                    <label class="text-[11px] font-semibold text-slate-600 mb-1 block">เรื่อง</label>
+                    <input type="text" id="bookTitle" required placeholder="ระบุชื่อเรื่องหนังสือ..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-sky-500">
+                  </div>
+                  <div>
+                    <label class="text-[11px] font-semibold text-slate-600 mb-1 block">แนบไฟล์ PDF หนังสือเข้า</label>
+                    <input type="file" id="bookPdf" accept="application/pdf" required class="w-full text-xs text-slate-500 border border-slate-200 rounded-xl bg-slate-50 p-1">
+                  </div>
+                  <button type="submit" id="btnSubmitBook" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl text-xs shadow transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-stamp"></i>
+                    <span>ลงรับและประทับตราหนังสือ</span>
+                  </button>
+                </form>
+              </div>
             </div>
 
-            <div id="booksListContainer">
-              ${renderBooksList()}
-            </div>
-          </div>
+            <!-- TABLE & CARDS SECTION -->
+            <div class="bg-white border-2 border-sky-200 rounded-2xl p-4 shadow-sm">
+              <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 mb-4 pb-3 border-b border-slate-100">
+                <div>
+                  <h3 id="sarabunSectionTitle" class="text-base font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-list-check text-sky-600"></i>
+                    <span>รายการหนังสือรับทั้งหมด</span>
+                  </h3>
+                </div>
+                <div class="relative w-full md:w-72">
+                  <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                    <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                  </span>
+                  <input type="text" id="searchInput" onkeyup="filterDocs()" placeholder="ค้นหาเลขที่หนังสือ, เรื่อง, ผู้ส่ง..." 
+                         class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-sky-500 outline-none">
+                </div>
+              </div>
 
+              <!-- DESKTOP TABLE VIEW -->
+              <div class="hidden md:block overflow-x-auto rounded-xl border border-slate-200">
+                <table class="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr class="bg-sky-900 text-white font-semibold">
+                      <th class="p-3 w-12 text-center">ลำดับ</th>
+                      <th class="p-3 w-28">เลขรับ</th>
+                      <th class="p-3 w-32">เลขที่หนังสือ</th>
+                      <th class="p-3">เรื่อง</th>
+                      <th class="p-3 w-36">จาก</th>
+                      <th class="p-3 w-28 text-center">วันที่ลงรับ</th>
+                      <th class="p-3 w-24 text-center">จัดการ</th>
+                    </tr>
+                  </thead>
+                  <tbody id="desktopTableView" class="divide-y divide-slate-100"></tbody>
+                </table>
+              </div>
+
+              <!-- MOBILE CARDS VIEW -->
+              <div id="mobileCardView" class="block md:hidden space-y-3"></div>
+
+              <!-- PAGINATION -->
+              <div class="flex items-center justify-between mt-4 pt-3 border-t border-slate-100 text-xs text-slate-600">
+                <span id="pageInfo">แสดง 0 จาก 0 รายการ</span>
+                <div class="flex items-center gap-1">
+                  <button onclick="changePage(-1)" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg font-medium transition">ก่อนหน้า</button>
+                  <span id="currentPageNum" class="px-3 py-1 bg-sky-100 text-sky-800 font-bold rounded-lg">1</span>
+                  <button onclick="changePage(1)" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg font-medium transition">ถัดไป</button>
+                </div>
+              </div>
+
+            </div>
+          </section>
         </div>
       `;
+
+      renderTableAndCards();
     }
 
-    function renderBooksList() {
-      if (incomingBooks.length === 0) {
-        return `
-          <div class="bg-white p-8 rounded-2xl border border-slate-200 text-center space-y-2 shadow-sm">
-            <div class="w-12 h-12 bg-slate-100 text-slate-400 rounded-2xl flex items-center justify-center text-xl mx-auto mb-1">
-              <i class="fa-solid fa-folder-open"></i>
-            </div>
-            <p class="text-xs font-semibold text-slate-600">ยังไม่มีรายการหนังสือรับในระบบ</p>
-            <p class="text-[11px] text-slate-400 font-light">กดปุ่ม "ลงรับหนังสือเข้าใหม่" ด้านบนเพื่อเพิ่มรายการแรก</p>
-          </div>
-        `;
+    function switchSarabunMenu(tabName) {
+      currentSarabunTab = tabName;
+      currentPage = 1;
+      
+      document.querySelectorAll('.sidebar-menu-btn').forEach(btn => btn.classList.remove('active'));
+      
+      if (tabName === 'folderIn') {
+        document.getElementById('menuFolderIn')?.classList.add('active');
+        filteredBooks = [...incomingBooks];
+      } else if (tabName === 'registered') {
+        document.getElementById('menuRegisteredDocs')?.classList.add('active');
+        filteredBooks = incomingBooks.filter(b => b.status === 'COMPLETED' || b.status === 'REGISTERED');
+      } else if (tabName === 'returned') {
+        document.getElementById('menuReturnedDocs')?.classList.add('active');
+        filteredBooks = incomingBooks.filter(b => b.status === 'RETURNED' || b.status === 'EXECUTED');
+      }
+      
+      renderTableAndCards();
+    }
+
+    function filterDocs() {
+      const q = (document.getElementById('searchInput')?.value || '').toLowerCase();
+      filteredBooks = incomingBooks.filter(b => 
+        (b.recNo && String(b.recNo).toLowerCase().includes(q)) ||
+        (b.no && String(b.no).toLowerCase().includes(q)) ||
+        (b.title && String(b.title).toLowerCase().includes(q)) ||
+        (b.from && String(b.from).toLowerCase().includes(q))
+      );
+      currentPage = 1;
+      renderTableAndCards();
+    }
+
+    function renderTableAndCards() {
+      const desktopBody = document.getElementById('desktopTableView');
+      const mobileBody = document.getElementById('mobileCardView');
+      const pageInfo = document.getElementById('pageInfo');
+      const pageNumEl = document.getElementById('currentPageNum');
+
+      if (!desktopBody || !mobileBody) return;
+
+      const total = filteredBooks.length;
+      const totalPages = Math.ceil(total / pageSize) || 1;
+      if (currentPage > totalPages) currentPage = totalPages;
+
+      const startIdx = (currentPage - 1) * pageSize;
+      const endIdx = Math.min(startIdx + pageSize, total);
+      const pageData = filteredBooks.slice(startIdx, endIdx);
+
+      if (pageInfo) pageInfo.innerText = `แสดง ${total > 0 ? startIdx + 1 : 0} - ${endIdx} จากทั้งหมด ${total} รายการ`;
+      if (pageNumEl) pageNumEl.innerText = currentPage;
+
+      if (pageData.length === 0) {
+        const emptyHtml = `<tr class="text-center text-slate-400"><td colspan="7" class="p-6">ไม่พบรายการหนังสือ</td></tr>`;
+        desktopBody.innerHTML = emptyHtml;
+        mobileBody.innerHTML = `<div class="p-6 text-center text-slate-400 bg-white rounded-xl border border-dashed border-slate-200">ไม่พบรายการหนังสือ</div>`;
+        return;
       }
 
-      return incomingBooks.map(book => `
-        <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between gap-3 mb-2.5 page-transition">
-          <div class="flex items-center gap-3 overflow-hidden">
-            <div class="w-10 h-10 bg-emerald-50 text-emerald-700 rounded-xl flex items-center justify-center text-sm shrink-0 border border-emerald-100">
-              <i class="fa-solid fa-file-circle-check"></i>
-            </div>
-            <div class="truncate">
-              <div class="flex items-center gap-2">
-                <span class="text-[10px] font-bold text-amber-700 bg-amber-50 px-1.5 py-0.2 rounded border border-amber-200">เลขรับ ${book.recNo}/2569</span>
-                <span class="text-[10px] text-slate-400">${formatDisplayDate(book.date || book.time)}</span>
-              </div>
-              <h4 class="text-xs font-semibold text-slate-800 truncate mt-0.5">${book.title}</h4>
-              <p class="text-[10px] text-slate-500 truncate">จาก: ${book.from} | เลขที่: ${book.no}</p>
-            </div>
+      // Render Desktop Table
+      desktopBody.innerHTML = pageData.map((b, i) => `
+        <tr class="hover:bg-sky-50/50 transition">
+          <td class="p-3 text-center font-medium text-slate-500">${startIdx + i + 1}</td>
+          <td class="p-3 font-bold text-amber-700">${b.recNo}/2569</td>
+          <td class="p-3 font-semibold text-slate-700">${b.no || '-'}</td>
+          <td class="p-3 font-medium text-slate-800">${b.title}</td>
+          <td class="p-3 text-slate-600">${b.from}</td>
+          <td class="p-3 text-center text-slate-500">${formatDisplayDate(b.date || b.time)}</td>
+          <td class="p-3 text-center">
+            ${b.fileUrl ? `<a href="${b.fileUrl}" target="_blank" class="px-2.5 py-1 bg-sky-100 hover:bg-sky-200 text-sky-800 font-semibold rounded-lg text-[11px] transition inline-flex items-center gap-1"><i class="fa-solid fa-file-pdf"></i> เอกสาร</a>` : '-'}
+          </td>
+        </tr>
+      `).join('');
+
+      // Render Mobile Cards
+      mobileBody.innerHTML = pageData.map(b => `
+        <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+            <span class="text-[10px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">เลขรับ ${b.recNo}/2569</span>
+            <span class="text-[10px] text-slate-400">${formatDisplayDate(b.date || b.time)}</span>
           </div>
-          <div class="flex flex-col items-end gap-1 shrink-0">
-            ${book.fileUrl ? `<a href="${book.fileUrl}" target="_blank" rel="noopener noreferrer" class="text-[10px] font-semibold text-blue-600 hover:underline"><i class="fa-solid fa-file-pdf"></i> ดูเอกสาร</a>` : ''}
-            <span class="text-[9px] font-semibold px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full">รอ ผอ. พิจารณา</span>
-            <span class="text-[9px] text-emerald-600 font-medium"><i class="fa-solid fa-stamp text-[8px]"></i> ประทับตราแล้ว</span>
+          <h4 class="text-xs font-bold text-slate-800">${b.title}</h4>
+          <p class="text-[11px] text-slate-500">จาก: ${b.from} | เลขที่: ${b.no}</p>
+          <div class="flex items-center justify-between pt-1">
+            <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md"><i class="fa-solid fa-stamp"></i> ประทับตราแล้ว</span>
+            ${b.fileUrl ? `<a href="${b.fileUrl}" target="_blank" class="text-xs font-bold text-blue-600 hover:underline"><i class="fa-solid fa-file-pdf"></i> ดู PDF</a>` : ''}
           </div>
         </div>
       `).join('');
     }
-   
+
+    function changePage(direction) {
+      const totalPages = Math.ceil(filteredBooks.length / pageSize) || 1;
+      currentPage += direction;
+      if (currentPage < 1) currentPage = 1;
+      if (currentPage > totalPages) currentPage = totalPages;
+      renderTableAndCards();
+    }
+
     function toggleRegisterForm() {
       const form = document.getElementById('registerFormContainer');
       const icon = document.getElementById('formToggleIcon');
       if (form && icon) {
         form.classList.toggle('hidden');
         icon.classList.toggle('rotate-180');
-
-        if (!form.classList.contains('hidden')) {
-          const recInput = document.getElementById('receiveDateInput');
-          if (recInput && !recInput.value) {
-            const today = new Date().toISOString().split('T')[0];
-            recInput.value = today;
-          }
-        }
       }
+    }
+
+    function openRegisterModal() {
+      const form = document.getElementById('registerFormContainer');
+      if (form) {
+        form.classList.remove('hidden');
+        form.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    function renderUserDashboard() {
+      const content = document.getElementById('roleContent');
+      content.innerHTML = `
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 space-y-3">
+          <h3 class="text-base font-bold text-slate-800">รายการหนังสือสำหรับ ${currentUser.name}</h3>
+          <p class="text-xs text-slate-500">รวมรายการหนังสือรับเข้าปฏิบัติงานทั้งหมด (${incomingBooks.length} รายการ)</p>
+          <div class="space-y-2 mt-4">
+            ${incomingBooks.map(b => `
+              <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex justify-between items-center text-xs">
+                <div>
+                  <div class="font-bold text-slate-800">${b.title}</div>
+                  <div class="text-[11px] text-slate-500">จาก: ${b.from} | เลขที่: ${b.no}</div>
+                </div>
+                ${b.fileUrl ? `<a href="${b.fileUrl}" target="_blank" class="text-blue-600 font-bold hover:underline">ดู PDF</a>` : ''}
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
     }
 
     async function stampPdfOnClient(file, receiveNo, receiveDate) {
       if (typeof PDFLib === 'undefined' || typeof fontkit === 'undefined') {
-        throw new Error("ไม่พบไลบรารี PDF-Lib หรือ fontkit กรุณารีโหลดหน้าเว็บแล้วลองใหม่อีกครั้ง");
+        throw new Error("ไม่พบไลบรารี PDF-Lib หรือ fontkit");
       }
 
       const arrayBuffer = await file.arrayBuffer();
       const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
       pdfDoc.registerFontkit(fontkit);
 
-      // ใช้ Caching ดึงฟอนต์เพียงครั้งเดียว
       if (!cachedFontBytes) {
         cachedFontBytes = await fetch("https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/sarabun/Sarabun-Bold.ttf")
-          .then(res => {
-            if (!res.ok) throw new Error("ไม่สามารถดาวน์โหลดฟอนต์ภาษาไทยสำหรับประทับตราได้");
-            return res.arrayBuffer();
-          });
+          .then(res => res.arrayBuffer());
       }
 
       const customFont = await pdfDoc.embedFont(cachedFontBytes);
-
       const toThaiNum = (str) => String(str).replace(/[0-9]/g, m => ['๐','๑','๒','๓','๔','๕','๖','๗','๘','๙'][m]);
-
-      const thaiMonths = [
-        'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
-        'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
-      ];
+      const thaiMonths = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
 
       const now = new Date();
-
-      let targetDate = now;
-      if (receiveDate) {
-        const parsed = parseLocalDate(receiveDate);
-        if (parsed) targetDate = parsed;
-      }
+      let targetDate = parseLocalDate(receiveDate) || now;
 
       const thaiDay = toThaiNum(targetDate.getDate());
       const thaiMonth = thaiMonths[targetDate.getMonth()];
@@ -905,11 +871,9 @@
       const mm = String(now.getMinutes()).padStart(2, '0');
       const ss = String(now.getSeconds()).padStart(2, '0');
       const formattedTime = toThaiNum(`${hh}:${mm}:${ss}`);
-
       const thaiReceiveNo = toThaiNum(receiveNo);
 
       const inkColor = PDFLib.rgb(0.08, 0.18, 0.52);
-
       const pages = pdfDoc.getPages();
       const firstPage = pages[0];
       const { width, height } = firstPage.getSize();
@@ -920,49 +884,16 @@
       const x = width - stampWidth - margin;
       const y = height - stampHeight - margin;
 
-      const lineStartX = x + 32;
-      const textStartX = x + 36;
-      const lineEndX = x + 150; // ปรับไม่ให้เกินขอบตราประทับ
-
-      firstPage.drawRectangle({
-        x: x, y: y,
-        width: stampWidth, height: stampHeight,
-        borderColor: inkColor,
-        borderWidth: 1.5
-      });
-
-      firstPage.drawText("โรงเรียนพิมานพิทยาสรรค์", {
-        x: x + 10, y: y + 58,
-        size: 11, font: customFont, color: inkColor
-      });
-
+      firstPage.drawRectangle({ x, y, width: stampWidth, height: stampHeight, borderColor: inkColor, borderWidth: 1.5 });
+      firstPage.drawText("โรงเรียนพิมานพิทยาสรรค์", { x: x + 10, y: y + 58, size: 11, font: customFont, color: inkColor });
       firstPage.drawText("รับที่", { x: x + 10, y: y + 40, size: 10, font: customFont, color: inkColor });
-      firstPage.drawLine({
-        start: { x: lineStartX, y: y + 40 },
-        end: { x: lineEndX, y: y + 40 },
-        thickness: 0.8, color: inkColor, dashArray: [1, 2]
-      });
-      firstPage.drawText(thaiReceiveNo, { x: textStartX, y: y + 41, size: 10, font: customFont, color: inkColor });
-
+      firstPage.drawText(thaiReceiveNo, { x: x + 36, y: y + 41, size: 10, font: customFont, color: inkColor });
       firstPage.drawText("วันที่", { x: x + 10, y: y + 23, size: 10, font: customFont, color: inkColor });
-      firstPage.drawLine({
-        start: { x: lineStartX, y: y + 23 },
-        end: { x: lineEndX, y: y + 23 },
-        thickness: 0.8, color: inkColor, dashArray: [1, 2]
-      });
-      firstPage.drawText(formattedToday, { x: textStartX, y: y + 24, size: 10, font: customFont, color: inkColor });
-
+      firstPage.drawText(formattedToday, { x: x + 36, y: y + 24, size: 10, font: customFont, color: inkColor });
       firstPage.drawText("เวลา", { x: x + 10, y: y + 6, size: 10, font: customFont, color: inkColor });
-      firstPage.drawLine({
-        start: { x: lineStartX, y: y + 6 },
-        end: { x: lineEndX, y: y + 6 },
-        thickness: 0.8, color: inkColor, dashArray: [1, 2]
-      });
-      firstPage.drawText(formattedTime, { x: textStartX, y: y + 7, size: 10, font: customFont, color: inkColor });
+      firstPage.drawText(formattedTime, { x: x + 36, y: y + 7, size: 10, font: customFont, color: inkColor });
 
       const stampedPdfBytes = await pdfDoc.save();
-
-      // แปลง ArrayBuffer เป็น Base64 แบบ Chunk เพื่อป้องกัน Stack Overflow บนไฟล์ใหญ่
       let binary = '';
       const bytes = new Uint8Array(stampedPdfBytes);
       const chunkSize = 0x8000;
@@ -972,13 +903,11 @@
       return 'data:application/pdf;base64,' + btoa(binary);
     }
 
-    async function handleRegisterBook(e) {
-      if (e && typeof e.preventDefault === 'function') {
-        e.preventDefault();
-      }
+   async function handleRegisterBook(e) {
+      if (e && typeof e.preventDefault === 'function') e.preventDefault();
       
       const btn = document.getElementById('btnSubmitBook');
-      btn.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin"></i> กำลังประทับตราดิจิทัลและอัปโหลด...`;
+      btn.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin"></i> กำลังประทับตราและบันทึก...`;
       btn.disabled = true;
 
       try {
@@ -998,6 +927,7 @@
         const bookFrom = document.getElementById('bookFrom').value;
         const bookTitle = document.getElementById('bookTitle').value;
 
+        // ประทับตรา PDF บนฝั่ง Client
         const stampedBase64 = await stampPdfOnClient(file, recNo, receiveDate);
 
         const payload = {
@@ -1021,30 +951,25 @@
         const res = await response.json();
 
         if (res.success) {
-          // เคลียร์ฟอร์มหลังลงรับสำเร็จ
           document.getElementById('sarabunRegisterForm').reset();
-          
           await loadDocsData();
-          renderSarabunDashboard();
-          showAlert(`ลงรับหนังสือเลขที่ ${recNo}/2569 และประทับตรามุมขวาบนเรียบร้อยแล้ว`, "ลงรับสำเร็จ", "success");
+          renderSarabunLayout();
+          showAlert(`ลงรับหนังสือเลขที่ ${recNo}/2569 และประทับตราเรียบร้อยแล้ว`, "ลงรับสำเร็จ", "success");
         } else {
           showAlert(res.message || "เกิดข้อผิดพลาดในการบันทึกข้อมูล", "บันทึกไม่สำเร็จ", "error");
         }
-
       } catch (err) {
         console.error(err);
         showAlert("เกิดข้อผิดพลาด: " + err.message, "เกิดข้อผิดพลาด", "error");
-      } finally {
+      } finally { //  แก้ไขเป็น finally เรียบร้อยครับ
         btn.innerHTML = `<i class="fa-solid fa-stamp"></i> <span>ลงรับและประทับตราหนังสือ</span>`;
         btn.disabled = false;
       }
     }
-
+    
     function logout() {
       currentUser = null;
       targetRoleGroup = 'SARABUN';
-
-      // ล้างข้อมูลการล็อกอินออกจากเครื่อง
       localStorage.removeItem('currentUser');
       localStorage.removeItem('targetRoleGroup');
 
@@ -1052,6 +977,6 @@
       document.body.className = "bg-[#f4f6f9] min-h-full text-slate-800 flex flex-col justify-between antialiased";
       document.getElementById('portalSection').classList.remove('hidden');
     }
-</script>
+  </script>
 </body>
 </html>
