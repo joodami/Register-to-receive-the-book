@@ -340,7 +340,7 @@
     const SCHOOL_LOGO_URL = "https://raw.githubusercontent.com/joodami/school-assets/main/logo.png";
 
     let currentUser = null;
-    let targetRoleGroup = null;
+    let targetRoleGroup = 'SARABUN'; // กำหนดค่าเริ่มต้นเป็น SARABUN
 
     // ตัวแปรสำหรับเก็บรายการหนังสือรับ
     let incomingBooks = [];
@@ -401,24 +401,52 @@
       document.getElementById('alertModal').classList.add('hidden');
     }
 
-    function openLoginModal(roleGroup, title, colorBg, iconClass) {
-      targetRoleGroup = roleGroup;
+    function switchSystemTab(roleGroup, roleTitle, headerBgClass, iconClass) {
+      // 1. อัปเดตค่า selectedRoleGroup และ targetRoleGroup
       document.getElementById('selectedRoleGroup').value = roleGroup;
-      document.getElementById('modalTitle').innerText = title;
-      
-      const headerBg = document.getElementById('modalHeaderBg');
-      headerBg.className = `px-6 py-5 text-white text-center relative ${colorBg} border-b border-amber-400/30`;
+      targetRoleGroup = roleGroup;
 
-      document.getElementById('loginModal').classList.remove('hidden');
+      // 2. ปรับไฮไลท์ของปุ่มแท็บ
+      document.querySelectorAll('.system-tab-button').forEach(btn => {
+        btn.classList.remove('system-tab-active');
+      });
+      const activeBtn = document.getElementById('tab-' + roleGroup);
+      if (activeBtn) activeBtn.classList.add('system-tab-active');
+
+      // 3. ปรับข้อความแสดงชื่อระบบที่เลือก
+      const display = document.getElementById('activeSystemNameDisplay');
+      if (display) {
+        let cleanTitle = roleTitle.replace('ระบบ', '');
+        display.innerHTML = 'ระบบที่เลือก: <span class="text-sky-700 font-extrabold">' + cleanTitle + '</span>';
+      }
+
+      // 4. อัปเดตข้อมูลของ Modal เดิม (เพื่อรองรับ JS ชุดเดิม)
+      const modalTitle = document.getElementById('modalTitle');
+      if (modalTitle) modalTitle.innerText = roleTitle;
+      
+      const modalHeaderBg = document.getElementById('modalHeaderBg');
+      if (modalHeaderBg) modalHeaderBg.className = 'px-6 py-5 text-white text-center relative ' + headerBgClass;
+    }
+
+    function openLoginModal(roleGroup, roleTitle, headerBgClass, iconClass) {
+      switchSystemTab(roleGroup, roleTitle, headerBgClass, iconClass);
     }
 
     function closeLoginModal() {
-      document.getElementById('loginModal').classList.add('hidden');
+      const modal = document.getElementById('loginModal');
+      if (modal) modal.classList.add('hidden');
       document.getElementById('loginForm').reset();
     }
 
     async function handleLogin(e) {
       e.preventDefault();
+
+      // การันตีการดึงค่าแท็บที่เลือกใช้งาน
+      const selectedInput = document.getElementById('selectedRoleGroup');
+      if (selectedInput && selectedInput.value) {
+        targetRoleGroup = selectedInput.value;
+      }
+
       const btn = document.getElementById('btnLogin');
       btn.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin"></i> กำลังตรวจสอบ...`;
       btn.disabled = true;
@@ -465,7 +493,7 @@
 
           if (!hasPermission) {
             showAlert("คุณไม่มีสิทธิ์เข้าใช้งานในส่วนนี้ กรุณาเลือกระบบเข้าใช้งานให้ตรงกับสิทธิ์ของคุณ", "ไม่มีสิทธิ์เข้าถึงระบบ", "error");
-            btn.innerHTML = `<span>ยืนยันเข้าสู่ระบบ</span> <i class="fa-solid fa-arrow-right-to-bracket text-xs text-amber-300"></i>`;
+            btn.innerHTML = `<span>เข้าสู่ระบบ</span> <i class="fa-solid fa-right-to-bracket text-xs"></i>`;
             btn.disabled = false;
             return;
           }
@@ -491,12 +519,12 @@
         console.error(err);
       } finally {
         clearTimeout(timeoutId);
-        btn.innerHTML = `<span>ยืนยันเข้าสู่ระบบ</span> <i class="fa-solid fa-arrow-right-to-bracket text-xs text-amber-300"></i>`;
+        btn.innerHTML = `<span>เข้าสู่ระบบ</span> <i class="fa-solid fa-right-to-bracket text-xs"></i>`;
         btn.disabled = false;
       }
     }
 
-   // ฟังก์ชันดึงรายการหนังสือจากเซิร์ฟเวอร์
+    // ฟังก์ชันดึงรายการหนังสือจากเซิร์ฟเวอร์
     async function loadDocsData() {
       if (!currentUser) return;
       try {
@@ -528,7 +556,6 @@
           totalCount = incomingBooks.length;
           pendingCount = incomingBooks.filter(b => b.status === 'PENDING_DIRECTOR' || !b.status).length;
           
-          // คำนวณวันที่วันนี้ตามเวลาเครื่องผู้ใช้ (ป้องกันปัญหาเรื่อง ISO/UTC เหลื่อมวัน)
           const now = new Date();
           const todayY = now.getFullYear();
           const todayM = now.getMonth();
@@ -549,7 +576,7 @@
       }
     }
 
-  // ฟังก์ชันแปลงวันที่ ISO/String ให้เป็นวันที่ไทยสั้น (เช่น 14 ส.ค. 2569)
+    // ฟังก์ชันแปลงวันที่ ISO/String ให้เป็นวันที่ไทยสั้น (เช่น 14 ส.ค. 2569)
     function formatDisplayDate(dateStr) {
       if (!dateStr) return '-';
       const d = new Date(dateStr);
@@ -602,7 +629,6 @@
       const content = document.getElementById('roleContent');
       const nextNumber = 1 + incomingBooks.length;
 
-      // หาวันที่ปัจจุบันในรูปแบบ YYYY-MM-DD ตามเวลาท้องถิ่น
       const now = new Date();
       const yyyy = now.getFullYear();
       const mm = String(now.getMonth() + 1).padStart(2, '0');
@@ -711,7 +737,6 @@
       `;
     }
 
-  // ฟังก์ชันแสดงรายการหนังสือ
     function renderBooksList() {
       if (incomingBooks.length === 0) {
         return `
@@ -756,7 +781,6 @@
         form.classList.toggle('hidden');
         icon.classList.toggle('rotate-180');
 
-        // กำหนดวันที่ปัจจุบันเป็นค่าเริ่มต้นให้อัตโนมัติเมื่อเปิดฟอร์ม
         if (!form.classList.contains('hidden')) {
           const recInput = document.getElementById('receiveDateInput');
           if (recInput && !recInput.value) {
@@ -767,7 +791,6 @@
       }
     }
 
- // ฟังก์ชันประทับตราตามรูปแบบงานสารบรรณ (หมึกน้ำเงิน/เลขไทย/เส้นประ)
     async function stampPdfOnClient(file, receiveNo, receiveDate) {
       const arrayBuffer = await file.arrayBuffer();
       const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
@@ -776,10 +799,8 @@
       const fontBytes = await fetch("https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/sarabun/Sarabun-Bold.ttf").then(res => res.arrayBuffer());
       const customFont = await pdfDoc.embedFont(fontBytes);
 
-      // ฟังก์ชันแปลงตัวเลขเป็นเลขไทย (๐-๙)
       const toThaiNum = (str) => String(str).replace(/[0-9]/g, m => ['๐','๑','๒','๓','๔','๕','๖','๗','๘','๙'][m]);
 
-      // รายชื่อเดือนภาษาไทยเต็ม
       const thaiMonths = [
         'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
         'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
@@ -787,7 +808,6 @@
 
       const now = new Date();
 
-      // คำนวณวันที่ลงรับระบบ (หากระบุวันที่มาให้อยู่ในรูปแบบ YYYY-MM-DD จะแปลงใช้วันนั้น ถ้าไม่มีใช้ปัจจุบัน)
       let targetDate = now;
       if (receiveDate) {
         const parts = receiveDate.split('-');
@@ -808,7 +828,6 @@
 
       const thaiReceiveNo = toThaiNum(receiveNo);
 
-      // สีหมึกตราประทับ (สีน้ำเงินกรมท่า)
       const inkColor = PDFLib.rgb(0.08, 0.18, 0.52);
 
       const pages = pdfDoc.getPages();
@@ -821,11 +840,9 @@
       const x = width - stampWidth - margin;
       const y = height - stampHeight - margin;
 
-      // ปรับระยะจุดเริ่มต้นเส้นประและข้อความให้ขยับมาชิดกับคำว่า "รับที่", "วันที่", "เวลา" มากขึ้น
       const lineStartX = x + 32;
       const textStartX = x + 36;
 
-      // 1. กรอบสี่เหลี่ยมตราประทับ
       firstPage.drawRectangle({
         x: x, y: y,
         width: stampWidth, height: stampHeight,
@@ -833,13 +850,11 @@
         borderWidth: 1.5
       });
 
-      // 2. ชื่อหน่วยงาน
       firstPage.drawText("โรงเรียนพิมานพิทยาสรรค์", {
         x: x + 10, y: y + 58,
         size: 11, font: customFont, color: inkColor
       });
 
-      // 3. แถว "รับที่" + เส้นประ + ข้อมูล
       firstPage.drawText("รับที่", { x: x + 10, y: y + 40, size: 10, font: customFont, color: inkColor });
       firstPage.drawLine({
         start: { x: lineStartX, y: y + 40 },
@@ -848,7 +863,6 @@
       });
       firstPage.drawText(thaiReceiveNo, { x: textStartX, y: y + 41, size: 10, font: customFont, color: inkColor });
 
-      // 4. แถว "วันที่" + เส้นประ + ข้อมูล
       firstPage.drawText("วันที่", { x: x + 10, y: y + 23, size: 10, font: customFont, color: inkColor });
       firstPage.drawLine({
         start: { x: lineStartX, y: y + 23 },
@@ -857,7 +871,6 @@
       });
       firstPage.drawText(formattedToday, { x: textStartX, y: y + 24, size: 10, font: customFont, color: inkColor });
 
-      // 5. แถว "เวลา" + เส้นประ + ข้อมูล
       firstPage.drawText("เวลา", { x: x + 10, y: y + 6, size: 10, font: customFont, color: inkColor });
       firstPage.drawLine({
         start: { x: lineStartX, y: y + 6 },
@@ -876,7 +889,7 @@
       return 'data:application/pdf;base64,' + btoa(binary);
     }
 
-   async function handleRegisterBook(e) {
+    async function handleRegisterBook(e) {
       e.preventDefault();
       
       const btn = document.getElementById('btnSubmitBook');
@@ -895,12 +908,11 @@
         const file = fileInput.files[0];
         const recNo = document.getElementById('bookRecNo').value;
         const bookNo = document.getElementById('bookNo').value;
-        const bookDate = document.getElementById('bookDate').value; // วันที่ในหนังสือ
-        const receiveDate = document.getElementById('receiveDateInput').value; // วันที่ลงรับระบบ
+        const bookDate = document.getElementById('bookDate').value;
+        const receiveDate = document.getElementById('receiveDateInput').value;
         const bookFrom = document.getElementById('bookFrom').value;
         const bookTitle = document.getElementById('bookTitle').value;
 
-        // ส่งวันที่ลงรับระบบไปประทับตราลง PDF
         const stampedBase64 = await stampPdfOnClient(file, recNo, receiveDate);
 
         const payload = {
@@ -940,46 +952,9 @@
       }
     }
 
-function switchSystemTab(roleGroup, roleTitle, headerBgClass, iconClass) {
-      // 1. อัปเดตค่า selectedRoleGroup
-      document.getElementById('selectedRoleGroup').value = roleGroup;
-
-      // 2. ปรับไฮไลท์ของปุ่มแท็บ
-      document.querySelectorAll('.system-tab-button').forEach(btn => {
-        btn.classList.remove('system-tab-active');
-      });
-      const activeBtn = document.getElementById('tab-' + roleGroup);
-      if (activeBtn) activeBtn.classList.add('system-tab-active');
-
-      // 3. ปรับข้อความแสดงชื่อระบบที่เลือก
-      const display = document.getElementById('activeSystemNameDisplay');
-      if (display) {
-        let cleanTitle = roleTitle.replace('ระบบ', '');
-        display.innerHTML = 'ระบบที่เลือก: <span class="text-sky-700 font-extrabold">' + cleanTitle + '</span>';
-      }
-
-      // 4. อัปเดตข้อมูลของ Modal เดิม (เพื่อรองรับ JS ชุดเดิม)
-      const modalTitle = document.getElementById('modalTitle');
-      if (modalTitle) modalTitle.innerText = roleTitle;
-      
-      const modalHeaderBg = document.getElementById('modalHeaderBg');
-      if (modalHeaderBg) modalHeaderBg.className = 'px-6 py-5 text-white text-center relative ' + headerBgClass;
-    }
-
-    // ฟังก์ชัน openLoginModal เดิมเพื่อความปลอดภัยของสคริปต์
-    function openLoginModal(roleGroup, roleTitle, headerBgClass, iconClass) {
-      switchSystemTab(roleGroup, roleTitle, headerBgClass, iconClass);
-    }
-
-    function closeLoginModal() {
-      const modal = document.getElementById('loginModal');
-      if (modal) modal.classList.add('hidden');
-    }
-  
-
     function logout() {
       currentUser = null;
-      targetRoleGroup = null;
+      targetRoleGroup = 'SARABUN';
       document.getElementById('mainDashboard').classList.add('hidden');
       document.body.className = "bg-[#f4f6f9] min-h-full text-slate-800 flex flex-col justify-between antialiased";
       document.getElementById('portalSection').classList.remove('hidden');
