@@ -119,10 +119,17 @@
         </div>
       </div>
 
-      <!-- ข้อความแจ้งเตือนให้คลิกเลือกแท็บระบบก่อน -->
-      <div class="w-full bg-amber-50 border-2 border-amber-300 rounded-2xl p-3 text-center shadow-sm flex items-center justify-center gap-2 mb-3 animate-pulse">
-        <i class="fa-solid fa-hand-pointer text-amber-600 text-base animate-bounce"></i>
-        <span class="text-xs md:text-sm font-bold text-amber-900">ขั้นตอนที่ 1: คลิกเลือกระบบงานที่ต้องการเข้าใช้งานด้านล่างก่อนกรอกรหัสผ่าน</span>
+     <!-- ข้อความแจ้งเตือนให้คลิกเลือกแท็บระบบก่อน -->
+      <div class="flex items-center justify-center my-3">
+        <div class="inline-flex items-center gap-2 px-4 py-2 bg-slate-100/80 text-slate-700 rounded-full text-xs md:text-sm font-medium border border-slate-200/80 shadow-sm transition-all">
+          <!-- จุดกะพริบสไตล์ Modern UI -->
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+          </span>
+          
+          <span>ขั้นตอนที่ 1 : โปรดเลือกระบบเข้าใช้งานตามบทบาทของคุณก่อนลงชื่อเข้าใช้</span>
+        </div>
       </div>
 
       <!-- แผงแท็บเลือกระบบ + ฟอร์มกรอกรหัสเข้าใช้งาน -->
