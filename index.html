@@ -19,8 +19,8 @@
       --primary: #0f2b48;
       --primary-light: #1a5276;
       --accent-gold: #d4af37;
-      --bg: #f4f6f9;
-      --main-gradient: linear-gradient(135deg, #0a1f35 0%, #0f2b48 50%, #1a4366 100%);
+      --bg: #e0f2fe;
+      --main-gradient: linear-gradient(135deg, #0c2340 0%, #0f2b48 50%, #1e3a8a 100%);
     }
     
     body { 
@@ -34,8 +34,8 @@
 
     .official-card {
       background: rgba(255, 255, 255, 0.98);
-      border: 1px solid #e2e8f0;
-      box-shadow: 0 4px 20px -2px rgba(15, 43, 72, 0.05);
+      border: 1px solid #cbd5e1;
+      box-shadow: 0 4px 20px -2px rgba(15, 43, 72, 0.08);
       transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
@@ -57,9 +57,18 @@
 
     .pb-safe { padding-bottom: max(1.25rem, env(safe-area-inset-bottom)); }
     .pt-safe { padding-top: max(1rem, env(safe-area-inset-top)); }
+
+    /* Custom Style สำหรับ Tab Activation */
+    .system-tab-active {
+      background-color: #ffffff !important;
+      color: #0369a1 !important;
+      font-weight: 800 !important;
+      border-bottom: 3px solid #0284c7 !important;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+    }
   </style>
 </head>
-<body class="bg-sky-50 min-h-full text-slate-800 flex flex-col justify-between selection:bg-sky-500 selection:text-white antialiased relative overflow-x-hidden">
+<body class="bg-sky-100/60 min-h-full text-slate-800 flex flex-col justify-between selection:bg-sky-500 selection:text-white antialiased relative overflow-x-hidden">
 
   <!-- ================= BACKGROUND GRAPHICS ================= -->
   <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
@@ -69,212 +78,143 @@
     <div class="absolute inset-0 bg-[radial-gradient(#0284c7_1px,transparent_1px)] [background-size:24px_24px] opacity-[0.07]"></div>
   </div>
 
-  <!-- ================= 1. หน้าแรก LANDING PAGE ================= -->
+  <!-- ================= 1. หน้าแรก LANDING PAGE (ปรับสไตล์ Banner & Tab เหมือนในรูป) ================= -->
   <div id="portalSection" class="min-h-screen w-full flex flex-col justify-between relative z-10 overflow-x-hidden">
     
-    <div class="container mx-auto px-4 pt-safe py-6 flex-grow flex flex-col justify-between items-center max-w-md md:max-w-5xl">
+    <div class="container mx-auto px-2 md:px-4 pt-safe py-4 flex-grow flex flex-col items-center max-w-5xl">
       
-      <!-- App Bar / Header Card -->
-      <div class="w-full text-center mt-1 mb-4 md:mb-6 rounded-3xl bg-gradient-to-br from-[#0c2340] via-[#0f2b48] to-[#1e3a8a] border-2 border-sky-400/80 p-5 md:p-8 shadow-2xl shadow-sky-900/40 relative overflow-hidden transition-all text-white">
-        <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-sky-300 via-cyan-400 to-blue-400"></div>
+      <!-- Banner แถบหัวข้อหลัก (สไตล์ระบบสารบรรณจังหวัด) -->
+      <div class="w-full rounded-2xl md:rounded-3xl bg-gradient-to-r from-[#0a1f35] via-[#0f2b48] to-[#1e3a8a] border-2 border-sky-400/80 p-4 md:p-6 shadow-xl relative overflow-hidden text-white mb-3">
+        <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-sky-300 via-cyan-400 to-blue-400"></div>
         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-sky-400/20 via-transparent to-transparent pointer-events-none"></div>
-        <div class="absolute inset-0 bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none"></div>
 
-        <div class="flex md:flex-row items-center justify-between md:justify-around gap-4 relative z-10">
-          <div class="flex items-center md:items-start md:flex-col gap-3 md:gap-1 text-left">
-            <div class="hidden md:inline-flex items-center gap-2 bg-sky-950/80 border border-sky-400/50 px-3.5 py-1 rounded-full text-xs font-bold text-sky-200 mb-2 shadow-inner">
-              <i class="fa-solid fa-shield-halved text-cyan-400"></i>
-              <span>ระบบงานสารบรรณอิเล็กทรอนิกส์</span>
+        <div class="flex flex-col md:flex-row items-center justify-between gap-3 relative z-10">
+          <div class="flex items-center gap-3.5 text-center md:text-left">
+            <div class="w-14 h-14 md:w-16 md:h-16 p-1.5 bg-white/95 rounded-2xl border-2 border-sky-300 shadow-md flex items-center justify-center shrink-0">
+              <img id="portalSchoolLogo" 
+                   src="https://raw.githubusercontent.com/joodami/school-assets/main/logo.png" 
+                   alt="ตราโรงเรียนพิมานพิทยาสรรค์" 
+                   class="w-full h-full object-contain filter drop-shadow">
             </div>
 
-            <div class="flex items-center gap-3.5">
-              <div class="w-14 h-14 md:w-20 md:h-20 p-1.5 bg-white/95 rounded-2xl border-2 border-sky-300 shadow-xl flex items-center justify-center shrink-0">
-                <img id="portalSchoolLogo" 
-                     src="https://raw.githubusercontent.com/joodami/school-assets/main/logo.png" 
-                     alt="ตราโรงเรียนพิมานพิทยาสรรค์" 
-                     class="w-full h-full object-contain filter drop-shadow">
-              </div>
-
-              <div>
-                <h1 class="text-lg md:text-2xl font-black text-white tracking-tight leading-tight drop-shadow-sm">
-                  ระบบรับหนังสือเข้า
-                </h1>
-                <p class="text-sky-200 text-xs md:text-sm font-semibold tracking-wide mt-0.5">
-                  โรงเรียนพิมานพิทยาสรรค์
-                </p>
-              </div>
+            <div>
+              <h1 class="text-base md:text-2xl font-black text-white tracking-tight leading-tight">
+                ระบบสารบรรณอิเล็กทรอนิกส์
+              </h1>
+              <p class="text-sky-200 text-xs md:text-sm font-semibold tracking-wide">
+                โรงเรียนพิมานพิทยาสรรค์
+              </p>
             </div>
           </div>
 
-          <div class="hidden md:flex items-center justify-center shrink-0">
-            <div class="w-36 h-24 bg-sky-950/60 border border-sky-400/40 backdrop-blur-md rounded-2xl p-3 shadow-lg flex flex-col justify-between text-white relative overflow-hidden group">
-              <i class="fa-solid fa-file-invoice text-5xl opacity-15 absolute -right-2 -bottom-2 text-sky-300 group-hover:scale-110 transition-transform"></i>
-              <div class="flex items-center justify-between">
-                <span class="text-[10px] bg-sky-400/20 text-sky-200 border border-sky-400/40 backdrop-blur px-2 py-0.5 rounded-md font-bold">E-DOCUMENT</span>
-                <i class="fa-solid fa-circle text-[8px] text-emerald-400 animate-pulse"></i>
-              </div>
-              <div>
-                <p class="text-xs font-bold text-white">Smart Sarabun</p>
-                <p class="text-[9px] text-sky-300">Piman Phityasan School</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="md:hidden shrink-0">
-            <span class="inline-flex items-center gap-1.5 bg-sky-900/90 border border-sky-400/60 px-3 py-1 rounded-full text-[11px] font-bold text-sky-100 shadow-md">
-              <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
-              สารบรรณ
-            </span>
+          <div class="hidden md:flex items-center gap-2 bg-sky-950/80 border border-sky-400/50 px-4 py-2 rounded-xl text-xs font-bold text-sky-200 shadow-inner">
+            <i class="fa-solid fa-shield-halved text-cyan-400 text-sm"></i>
+            <span>ระบบรับหนังสือเข้าออนไลน์</span>
           </div>
         </div>
       </div>
 
-      <!-- Action Cards ทั้ง 3 ใบ (ปรับปรุงใหม่: สไตล์เข้ม โดดเด่น พรีเมียม) -->
-      <div class="w-full grid grid-cols-3 md:grid-cols-3 gap-3 md:gap-6 my-auto">
+      <!-- แผงแท็บเลือกระบบ + ฟอร์มกรอกรหัสเข้าใช้งาน (สไตล์หน้าแรกตามรูปแนบ) -->
+      <div class="w-full bg-white rounded-2xl border-2 border-sky-300 shadow-xl overflow-hidden mb-6">
         
-        <!-- Card 1: งานสารบรรณโรงเรียน (ธีม Dark Sky Blue) -->
-        <div onclick="openLoginModal('SARABUN', 'ระบบงานสารบรรณโรงเรียน', 'bg-[#0f2b48]', 'fa-folder-open')" 
-             class="p-3 md:p-6 rounded-2xl md:rounded-3xl bg-gradient-to-b from-[#0c2847] via-[#0f3156] to-[#133c66] border-2 border-sky-400/80 shadow-xl shadow-sky-950/30 hover:shadow-2xl hover:border-sky-300 cursor-pointer group transition-all duration-300 active:scale-95 md:hover:-translate-y-2 flex flex-col items-center md:items-stretch justify-between text-center md:text-left relative overflow-hidden text-white">
+        <!-- แท็บเลือกระบบ 3 ฝ่าย -->
+        <div class="grid grid-cols-3 bg-slate-200/80 border-b border-sky-200 text-xs md:text-sm font-bold text-slate-600">
+          <button type="button" id="tab-SARABUN" onclick="switchSystemTab('SARABUN', 'ระบบงานสารบรรณโรงเรียน', 'bg-[#0f2b48]', 'fa-folder-open')" 
+                  class="system-tab-button system-tab-active py-3 px-2 flex flex-col md:flex-row items-center justify-center gap-1.5 transition-all hover:text-sky-700">
+            <i class="fa-solid fa-folder-open text-base text-sky-600"></i>
+            <span class="text-center">งานสารบรรณโรงเรียน</span>
+          </button>
           
-          <!-- แถบสีหัวการ์ด -->
-          <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-cyan-400 via-sky-400 to-blue-500"></div>
+          <button type="button" id="tab-EXEC" onclick="switchSystemTab('EXEC', 'ระบบฝ่ายบริหาร (ผอ. / รอง ผอ.)', 'bg-[#0f2b48]', 'fa-user-tie')" 
+                  class="system-tab-button py-3 px-2 flex flex-col md:flex-row items-center justify-center gap-1.5 transition-all hover:text-sky-700">
+            <i class="fa-solid fa-user-tie text-base text-blue-600"></i>
+            <span class="text-center">ฝ่ายบริหาร</span>
+          </button>
+          
+          <button type="button" id="tab-TEACHER" onclick="switchSystemTab('TEACHER', 'ระบบครูและบุคลากร', 'bg-[#0f2b48]', 'fa-chalkboard-user')" 
+                  class="system-tab-button py-3 px-2 flex flex-col md:flex-row items-center justify-center gap-1.5 transition-all hover:text-sky-700">
+            <i class="fa-solid fa-chalkboard-user text-base text-teal-600"></i>
+            <span class="text-center">ครูและบุคลากร</span>
+          </button>
+        </div>
 
-          <!-- Light & Grid Overlay -->
-          <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-sky-400/20 via-transparent to-transparent pointer-events-none"></div>
-          <div class="absolute inset-0 bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-[size:12px_12px] pointer-events-none"></div>
-
-          <div class="w-full flex items-center justify-center md:justify-between pt-1 relative z-10">
-            <!-- Icon Box -->
-            <div class="relative w-14 h-14 md:w-20 md:h-20 flex items-center justify-center bg-gradient-to-br from-sky-400 to-blue-600 rounded-2xl p-2.5 shadow-lg shadow-sky-900/60 group-hover:scale-110 transition-all duration-300 border border-sky-300">
-              <svg class="w-full h-full filter drop-shadow" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M8 16C8 12.6863 10.6863 10 14 10H24L30 18H50C53.3137 18 56 20.6863 56 24V48C56 51.3137 53.3137 54 50 54H14C10.6863 54 8 51.3137 8 48V16Z" fill="#7DD3FC"/>
-                <path d="M12 22C12 18.6863 14.6863 16 18 16H46C49.3137 16 52 18.6863 52 22V48C52 51.3137 49.3137 54 46 54H18C14.6863 54 12 51.3137 12 48V22Z" fill="#0284C7"/>
-                <rect x="20" y="26" width="24" height="4" rx="2" fill="white"/>
-                <rect x="20" y="34" width="16" height="4" rx="2" fill="white"/>
-              </svg>
+        <!-- ฟอร์มเข้าสู่ระบบ (หน้าแรกแบบกรอกรหัสได้ทันที) -->
+        <div class="p-4 md:p-6 bg-gradient-to-b from-sky-50/50 to-white">
+          
+          <div class="flex items-center justify-between mb-4 pb-2 border-b border-slate-200">
+            <div class="flex items-center gap-2">
+              <span id="activeSystemBadge" class="w-3 h-3 rounded-full bg-sky-500 animate-pulse"></span>
+              <span id="activeSystemNameDisplay" class="text-xs md:text-sm font-bold text-slate-800">
+                ระบบที่เลือก: <span class="text-sky-700 font-extrabold">งานสารบรรณโรงเรียน</span>
+              </span>
             </div>
-            <span class="hidden md:inline-flex items-center gap-1 text-[11px] font-black px-3 py-1 bg-sky-950/80 text-sky-200 border border-sky-400/50 rounded-full shadow-inner">
-              <i class="fa-solid fa-folder text-sky-400"></i> สารบรรณ
-            </span>
+            <span class="text-[11px] text-slate-500 font-medium hidden md:inline">ระบุชื่อผู้ใช้และรหัสผ่านเพื่อเข้าสู่ระบบ</span>
           </div>
 
-          <div class="mt-3 md:mt-4 relative z-10">
-            <span class="md:hidden inline-block text-[9px] font-black px-2 py-0.5 bg-sky-500/20 text-sky-300 border border-sky-400/40 rounded-md mb-1">
-              สารบรรณ
-            </span>
-            <h2 class="text-xs md:text-xl font-extrabold text-white group-hover:text-sky-300 transition-colors leading-tight">
-              งานสารบรรณ
-            </h2>
-            <p class="hidden md:block text-sky-200/80 text-xs font-medium mt-1.5 line-clamp-2 leading-relaxed">
-              ลงรับหนังสือเข้า ประทับตรา และเสนอหนังสือสั่งการ
-            </p>
-          </div>
+          <!-- ฟอร์มส่งเข้าระบบ (ใช้ ID และโครงสร้างเดิมทั้งหมด) -->
+          <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+            <input type="hidden" id="selectedRoleGroup" value="SARABUN">
+            
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-3 items-center">
+              
+              <!-- User Input -->
+              <div class="md:col-span-2 space-y-1">
+                <label class="text-xs font-bold text-slate-700 ml-1">ชื่อผู้ใช้ :</label>
+                <div class="relative">
+                  <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-sky-600">
+                    <i class="fa-solid fa-user text-sm"></i>
+                  </span>
+                  <input type="text" id="username" required placeholder="ระบุชื่อผู้ใช้งาน..." 
+                         class="w-full pl-10 pr-4 py-2.5 bg-white border-2 border-sky-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-sm outline-none transition-all text-slate-800 font-medium shadow-sm">
+                </div>
+              </div>
 
-          <div class="hidden md:flex items-center justify-between mt-4 pt-3 border-t border-sky-400/30 text-xs text-sky-300 font-extrabold relative z-10">
-            <span>เข้าสู่ระบบ</span>
-            <div class="w-6 h-6 rounded-full bg-sky-400/20 text-sky-300 flex items-center justify-center group-hover:bg-sky-400 group-hover:text-slate-950 transition-all">
-              <i class="fa-solid fa-arrow-right text-[10px]"></i>
+              <!-- Password Input -->
+              <div class="md:col-span-2 space-y-1">
+                <label class="text-xs font-bold text-slate-700 ml-1">รหัสผ่าน :</label>
+                <div class="relative">
+                  <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-sky-600">
+                    <i class="fa-solid fa-lock text-sm"></i>
+                  </span>
+                  <input type="password" id="password" required placeholder="••••••••" 
+                         class="w-full pl-10 pr-4 py-2.5 bg-white border-2 border-sky-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-sm outline-none transition-all text-slate-800 font-medium shadow-sm">
+                </div>
+              </div>
+
+              <!-- Login Button -->
+              <div class="md:col-span-1 md:pt-5">
+                <button type="submit" id="btnLogin" 
+                        class="w-full py-2.5 px-4 bg-gradient-to-r from-sky-600 to-blue-700 hover:from-sky-700 hover:to-blue-800 active:scale-[0.98] text-white font-bold rounded-xl text-sm shadow-md shadow-sky-200 transition duration-200 flex items-center justify-center gap-2 border border-sky-400">
+                  <i class="fa-solid fa-right-to-bracket text-xs"></i>
+                  <span>เข้าสู่ระบบ</span>
+                </button>
+              </div>
+
             </div>
+          </form>
+
+        </div>
+      </div>
+
+      <!-- ส่วนค้นหาเอกสารแบบพรีวิว (จำลองเลย์เอาต์ตามภาพตัวอย่าง) -->
+      <div class="w-full bg-white rounded-2xl border border-sky-200 shadow-md p-4 mb-4">
+        <div class="flex flex-col md:flex-row gap-2 items-center justify-between border-b border-slate-100 pb-3 mb-3">
+          <h3 class="text-xs md:text-sm font-bold text-slate-700 flex items-center gap-2">
+            <i class="fa-solid fa-magnifying-glass text-sky-600"></i>
+            <span>ค้นหาหนังสือรับเข้าล่าสุด</span>
+          </h3>
+          <div class="flex w-full md:w-auto gap-2">
+            <input type="text" placeholder="ระบุเลขที่เอกสาร / ชื่อเรื่อง..." class="w-full md:w-64 px-3 py-1.5 text-xs bg-slate-50 border border-slate-300 rounded-lg outline-none focus:border-sky-500">
+            <button type="button" class="px-3 py-1.5 bg-sky-600 hover:bg-sky-700 text-white rounded-lg text-xs font-bold shrink-0">
+              ค้นหา
+            </button>
           </div>
         </div>
 
-        <!-- Card 2: ฝ่ายบริหาร (ธีม Dark Royal Blue/Indigo) -->
-        <div onclick="openLoginModal('EXEC', 'ระบบฝ่ายบริหาร (ผอ. / รอง ผอ.)', 'bg-[#0f2b48]', 'fa-user-tie')" 
-             class="p-3 md:p-6 rounded-2xl md:rounded-3xl bg-gradient-to-b from-[#0f1f42] via-[#152a58] to-[#1c356e] border-2 border-blue-400/80 shadow-xl shadow-blue-950/30 hover:shadow-2xl hover:border-blue-300 cursor-pointer group transition-all duration-300 active:scale-95 md:hover:-translate-y-2 flex flex-col items-center md:items-stretch justify-between text-center md:text-left relative overflow-hidden text-white">
-          
-          <!-- แถบสีหัวการ์ด -->
-          <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-500"></div>
-
-          <!-- Light & Grid Overlay -->
-          <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-400/20 via-transparent to-transparent pointer-events-none"></div>
-          <div class="absolute inset-0 bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-[size:12px_12px] pointer-events-none"></div>
-
-          <div class="w-full flex items-center justify-center md:justify-between pt-1 relative z-10">
-            <!-- Icon Box -->
-            <div class="relative w-14 h-14 md:w-20 md:h-20 flex items-center justify-center bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-2.5 shadow-lg shadow-blue-950/60 group-hover:scale-110 transition-all duration-300 border border-blue-300">
-              <svg class="w-full h-full filter drop-shadow" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="14" y="8" width="36" height="48" rx="6" fill="#93C5FD"/>
-                <rect x="18" y="12" width="28" height="40" rx="4" fill="white"/>
-                <path d="M22 20H42M22 28H36" stroke="#3B82F6" stroke-width="3" stroke-linecap="round"/>
-                <circle cx="38" cy="40" r="10" fill="#1D4ED8"/>
-                <path d="M33 40L36.5 43.5L43 37" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
-            <span class="hidden md:inline-flex items-center gap-1 text-[11px] font-black px-3 py-1 bg-blue-950/80 text-blue-200 border border-blue-400/50 rounded-full shadow-inner">
-              <i class="fa-solid fa-crown text-amber-400"></i> ฝ่ายบริหาร
-            </span>
-          </div>
-
-          <div class="mt-3 md:mt-4 relative z-10">
-            <span class="md:hidden inline-block text-[9px] font-black px-2 py-0.5 bg-blue-500/20 text-blue-300 border border-blue-400/40 rounded-md mb-1">
-              บริหาร
-            </span>
-            <h2 class="text-xs md:text-xl font-extrabold text-white group-hover:text-blue-300 transition-colors leading-tight">
-              ฝ่ายบริหาร
-            </h2>
-            <p class="hidden md:block text-blue-200/80 text-xs font-medium mt-1.5 line-clamp-2 leading-relaxed">
-              สำหรับ ผอ. และ รอง ผอ. พิจารณา เกษียณสั่งการเอกสาร
-            </p>
-          </div>
-
-          <div class="hidden md:flex items-center justify-between mt-4 pt-3 border-t border-blue-400/30 text-xs text-blue-300 font-extrabold relative z-10">
-            <span>เข้าสู่ระบบ</span>
-            <div class="w-6 h-6 rounded-full bg-blue-400/20 text-blue-300 flex items-center justify-center group-hover:bg-blue-400 group-hover:text-slate-950 transition-all">
-              <i class="fa-solid fa-arrow-right text-[10px]"></i>
-            </div>
-          </div>
+        <div class="text-center py-6 text-slate-400 text-xs">
+          <i class="fa-solid fa-folder-open text-3xl mb-2 opacity-50"></i>
+          <p>กรุณาเข้าสู่ระบบเพื่อใช้งานและดูข้อมูลหนังสือรับเข้าทั้งหมด</p>
         </div>
-
-        <!-- Card 3: ครูและบุคลากร (ธีม Dark Cyan Blue) -->
-        <div onclick="openLoginModal('TEACHER', 'ระบบครูและบุคลากร', 'bg-[#0f2b48]', 'fa-chalkboard-user')" 
-             class="p-3 md:p-6 rounded-2xl md:rounded-3xl bg-gradient-to-b from-[#082a38] via-[#0b384a] to-[#0e485e] border-2 border-cyan-400/80 shadow-xl shadow-cyan-950/30 hover:shadow-2xl hover:border-cyan-300 cursor-pointer group transition-all duration-300 active:scale-95 md:hover:-translate-y-2 flex flex-col items-center md:items-stretch justify-between text-center md:text-left relative overflow-hidden text-white">
-          
-          <!-- แถบสีหัวการ์ด -->
-          <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-teal-400 via-cyan-400 to-sky-400"></div>
-
-          <!-- Light & Grid Overlay -->
-          <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-cyan-400/20 via-transparent to-transparent pointer-events-none"></div>
-          <div class="absolute inset-0 bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-[size:12px_12px] pointer-events-none"></div>
-
-          <div class="w-full flex items-center justify-center md:justify-between pt-1 relative z-10">
-            <!-- Icon Box -->
-            <div class="relative w-14 h-14 md:w-20 md:h-20 flex items-center justify-center bg-gradient-to-br from-cyan-500 to-teal-600 rounded-2xl p-2.5 shadow-lg shadow-cyan-950/60 group-hover:scale-110 transition-all duration-300 border border-cyan-300">
-              <svg class="w-full h-full filter drop-shadow" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="12" y="10" width="40" height="46" rx="6" fill="#67E8F9"/>
-                <rect x="16" y="14" width="32" height="38" rx="4" fill="white"/>
-                <circle cx="23" cy="24" r="3" fill="#0891B2"/>
-                <rect x="30" y="22" width="14" height="4" rx="2" fill="#0891B2"/>
-                <circle cx="23" cy="34" r="3" fill="#0891B2"/>
-                <rect x="30" y="32" width="14" height="4" rx="2" fill="#0891B2"/>
-                <circle cx="23" cy="44" r="3" fill="#0891B2"/>
-                <rect x="30" y="42" width="14" height="4" rx="2" fill="#0891B2"/>
-              </svg>
-            </div>
-            <span class="hidden md:inline-flex items-center gap-1 text-[11px] font-black px-3 py-1 bg-cyan-950/80 text-cyan-200 border border-cyan-400/50 rounded-full shadow-inner">
-              <i class="fa-solid fa-users text-cyan-400"></i> ครู/บุคลากร
-            </span>
-          </div>
-
-          <div class="mt-3 md:mt-4 relative z-10">
-            <span class="md:hidden inline-block text-[9px] font-black px-2 py-0.5 bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 rounded-md mb-1">
-              ครู/บุคลากร
-            </span>
-            <h2 class="text-xs md:text-xl font-extrabold text-white group-hover:text-cyan-300 transition-colors leading-tight">
-              ครู/บุคลากร
-            </h2>
-            <p class="hidden md:block text-cyan-200/80 text-xs font-medium mt-1.5 line-clamp-2 leading-relaxed">
-              ตรวจสอบหนังสือที่ได้รับมอบหมาย และรับทราบปฏิบัติงาน
-            </p>
-          </div>
-
-          <div class="hidden md:flex items-center justify-between mt-4 pt-3 border-t border-cyan-400/30 text-xs text-cyan-300 font-extrabold relative z-10">
-            <span>เข้าสู่ระบบ</span>
-            <div class="w-6 h-6 rounded-full bg-cyan-400/20 text-cyan-300 flex items-center justify-center group-hover:bg-cyan-400 group-hover:text-slate-950 transition-all">
-              <i class="fa-solid fa-arrow-right text-[10px]"></i>
-            </div>
-          </div>
-        </div>
-
       </div>
 
       <!-- Footer -->
@@ -285,7 +225,7 @@
     </div>
   </div>
 
-  <!-- ================= 2. MODAL LOG IN ================= -->
+  <!-- ================= 2. MODAL LOG IN (คงโครงสร้างเดิมไว้อ้างอิง JS) ================= -->
   <div id="loginModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-end md:items-center justify-center p-0 md:p-4 z-40 hidden transition-all duration-300">
     <div class="bg-white rounded-t-3xl md:rounded-3xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all border-2 border-sky-300 page-transition relative">
       
@@ -309,39 +249,6 @@
           </div>
         </div>
       </div>
-
-      <form id="loginForm" onsubmit="handleLogin(event)" class="p-6 space-y-4 relative z-10">
-        <input type="hidden" id="selectedRoleGroup">
-        
-        <div class="space-y-1">
-          <label class="text-xs font-bold text-slate-700 ml-1">ชื่อผู้ใช้งาน</label>
-          <div class="relative">
-            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-sky-500">
-              <i class="fa-solid fa-user text-sm"></i>
-            </span>
-            <input type="text" id="username" required placeholder="ระบุชื่อผู้ใช้..." 
-                   class="w-full pl-10 pr-4 py-3 bg-sky-50/50 border-2 border-sky-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 focus:bg-white text-sm outline-none transition-all text-slate-800 font-medium">
-          </div>
-        </div>
-
-        <div class="space-y-1">
-          <label class="text-xs font-bold text-slate-700 ml-1">รหัสผ่าน</label>
-          <div class="relative">
-            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-sky-500">
-              <i class="fa-solid fa-lock text-sm"></i>
-            </span>
-            <input type="password" id="password" required placeholder="••••••••" 
-                   class="w-full pl-10 pr-4 py-3 bg-sky-50/50 border-2 border-sky-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 focus:bg-white text-sm outline-none transition-all text-slate-800 font-medium">
-          </div>
-        </div>
-
-        <button type="submit" id="btnLogin" 
-                class="w-full py-3.5 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 active:scale-[0.98] text-white font-bold rounded-xl text-sm shadow-lg shadow-sky-200 transition duration-200 flex items-center justify-center gap-2 mt-2 border border-sky-300">
-          <span>ยืนยันเข้าสู่ระบบ</span>
-          <i class="fa-solid fa-arrow-right-to-bracket text-xs"></i>
-        </button>
-      </form>
-
     </div>
   </div>
 
@@ -425,7 +332,7 @@
 
     </div>
   </div>
-  
+
 <script>
     const GAS_URL = "https://script.google.com/macros/s/AKfycbxauMbrEeIaDNAN_U0DvffmUVN5vfbUqpNOpmVSPvtMZ9qbl0WfTcxB2JnvcRxkOfQm/exec"; 
     
