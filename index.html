@@ -246,8 +246,9 @@
   <!-- ================= 3. DASHBOARD MAIN ================= -->
   <div id="mainDashboard" class="hidden min-h-screen bg-sky-50/60 flex flex-col justify-between page-transition relative z-10">
     
-    <header class="bg-white/90 backdrop-blur-md border-b-2 border-sky-200 sticky top-0 z-30 px-4 py-3 pt-safe shadow-sm">
-      <div class="container mx-auto max-w-7xl flex justify-between items-center">
+    <!-- Top Header -->
+    <header class="bg-white/90 backdrop-blur-md border-b-2 border-sky-200 sticky top-0 z-30 px-3 md:px-6 py-3 pt-safe shadow-sm">
+      <div class="w-full flex justify-between items-center">
         <div class="flex items-center gap-3">
           <img class="headerSchoolLogo w-9 h-9 object-contain" src="https://raw.githubusercontent.com/joodami/school-assets/main/logo.png" alt="Logo">
           <div class="border-l-2 border-sky-200 pl-3">
@@ -262,14 +263,116 @@
       </div>
     </header>
 
-    <main class="container mx-auto px-2 md:px-4 py-4 flex-grow pb-28 md:pb-10 max-w-7xl">
+    <!-- Main Container: ปรับเมนูชิดซ้ายเต็มขอบ -->
+    <main class="w-full px-2 md:px-6 py-4 flex-grow pb-28 md:pb-10">
       <div id="roleContent" class="w-full">
-        <!-- Dashboard UI Dynamic Container -->
+        
+        <!-- Layout Grid ฝั่งซ้ายชิดขอบ -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
+          
+          <!-- ฝั่งซ้าย: แถบเมนูสารบรรณ (Sidebar) -->
+          <div class="md:col-span-3 lg:col-span-2 bg-white/95 rounded-2xl p-3 border-2 border-sky-200 shadow-md">
+            <div class="text-xs font-bold text-sky-900 mb-2 px-2 pb-1.5 border-b border-sky-100 flex items-center gap-1.5">
+              <i class="fa-solid fa-bars text-sky-600"></i>
+              <span>เมนูสารบรรณ</span>
+            </div>
+            <div class="space-y-1">
+              <button type="button" id="menuBtnAddBook" onclick="switchSarabunMenu('add')" 
+                      class="sidebar-menu-btn w-full text-left px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-sky-50 flex items-center gap-2.5 transition">
+                <i class="fa-solid fa-folder-plus text-sky-600 text-sm"></i>
+                <span>นำหนังสือรับเข้าแฟ้ม</span>
+              </button>
+
+              <button type="button" id="menuBtnRegistered" onclick="switchSarabunMenu('registered')" 
+                      class="sidebar-menu-btn active w-full text-left px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-sky-50 flex items-center gap-2.5 transition">
+                <i class="fa-solid fa-receipt text-sky-600 text-sm"></i>
+                <span>หนังสือรับที่ลงทะเบียนแล้ว</span>
+              </button>
+
+              <button type="button" id="menuBtnReturned" onclick="switchSarabunMenu('returned')" 
+                      class="sidebar-menu-btn w-full text-left px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-sky-50 flex items-center gap-2.5 transition">
+                <i class="fa-solid fa-reply-all text-sky-600 text-sm"></i>
+                <span>หนังสือส่งกลับจากฝ่ายบริหาร</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- ฝั่งขวา: ส่วนแสดงผลเนื้อหา (Content Container) -->
+          <div class="md:col-span-9 lg:col-span-10 space-y-4">
+
+            <!-- 1. ฟอร์มลงรับหนังสือเข้าใหม่ (เริ่มต้นซ่อนไว้ ด้วยคลาส hidden) -->
+            <div id="sarabunAddFormSection" class="hidden bg-white rounded-2xl border-2 border-slate-700 shadow-md overflow-hidden page-transition">
+              <div class="bg-slate-800 text-amber-400 px-4 py-3 font-bold text-xs md:text-sm flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <i class="fa-solid fa-folder-plus"></i>
+                  <span>ลงรับหนังสือเข้าใหม่ (เลขรับถัดไป: <span id="nextRegNo">4/2569</span>)</span>
+                </div>
+                <i class="fa-solid fa-chevron-down text-xs"></i>
+              </div>
+              <div class="p-4 md:p-6">
+                <!-- Form Inputs Area -->
+              </div>
+            </div>
+
+            <!-- 2. ตารางหนังสือรับที่ลงทะเบียนแล้ว (แสดงเป็นหน้าแรก) -->
+            <div id="sarabunTableSection" class="bg-white/95 rounded-2xl border-2 border-sky-200 shadow-md p-4 md:p-5 page-transition">
+              <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 mb-4">
+                <div class="flex items-center gap-2">
+                  <i class="fa-solid fa-list-check text-sky-700"></i>
+                  <h3 class="font-bold text-slate-800 text-sm md:text-base">รายการหนังสือรับทั้งหมด</h3>
+                </div>
+                <div class="relative w-full md:w-72">
+                  <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                    <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                  </span>
+                  <input type="text" id="searchInput" placeholder="ค้นหาเลขที่หนังสือ, เรื่อง, ผู้ส่ง..." 
+                         class="w-full pl-9 pr-3 py-1.5 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-sky-500 outline-none">
+                </div>
+              </div>
+
+              <!-- Table Body -->
+              <div class="overflow-x-auto rounded-xl border border-slate-200">
+                <table class="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr class="bg-[#0f2b48] text-white font-bold text-center">
+                      <th class="py-2.5 px-3 border-b border-slate-700 w-12">ลำดับ</th>
+                      <th class="py-2.5 px-3 border-b border-slate-700 w-24">เลขรับ</th>
+                      <th class="py-2.5 px-3 border-b border-slate-700 w-36">เลขที่หนังสือ</th>
+                      <th class="py-2.5 px-3 border-b border-slate-700 text-left">เรื่อง</th>
+                      <th class="py-2.5 px-3 border-b border-slate-700 w-44">จาก</th>
+                      <th class="py-2.5 px-3 border-b border-slate-700 w-28">วันที่ลงรับ</th>
+                      <th class="py-2.5 px-3 border-b border-slate-700 w-24">จัดการ</th>
+                    </tr>
+                  </thead>
+                  <tbody id="bookTableBody" class="divide-y divide-slate-200 text-slate-700">
+                    <!-- รายการตารางจะโหลดผ่าน JavaScript -->
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Pagination (แบ่งหน้าละ 20 รายการ) -->
+              <div class="flex flex-col md:flex-row items-center justify-between gap-3 mt-4 text-xs text-slate-600 font-medium">
+                <div id="paginationInfo">
+                  แสดง <span id="pageStart">1</span> - <span id="pageEnd">20</span> จากทั้งหมด <span id="totalItems">0</span> รายการ
+                </div>
+                <div class="flex items-center gap-1">
+                  <button id="btnPrevPage" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-lg text-slate-600 disabled:opacity-50 transition">ก่อนหน้า</button>
+                  <span id="pageNumbers" class="px-3 py-1 font-bold text-sky-700">1</span>
+                  <button id="btnNextPage" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-lg text-slate-600 disabled:opacity-50 transition">ถัดไป</button>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
       </div>
     </main>
 
-    <!-- Floating Navigation Bar -->
-    <div class="fixed bottom-4 left-0 right-0 z-30 px-4 max-w-md mx-auto">
+    <!-- Floating Navigation Bar (แสดงเฉพาะบนมือถือ ซ่อนบนคอมพิวเตอร์ด้วย md:hidden) -->
+    <div class="fixed bottom-4 left-0 right-0 z-30 px-4 max-w-md mx-auto block md:hidden">
       <nav class="floating-nav bg-white/95 backdrop-blur-xl rounded-2xl p-1.5 border-2 border-sky-200 shadow-2xl shadow-sky-300/50 flex justify-around items-center">
         <button onclick="loadRoleDashboard()" class="flex flex-col items-center justify-center w-full py-2 text-sky-600 transition group">
           <div class="w-9 h-7 bg-sky-100 rounded-lg flex items-center justify-center text-sky-600 font-bold shadow-sm">
@@ -320,14 +423,14 @@
     </div>
   </div>
 
-  <!-- ================= JavaScript ================= -->
+<!-- ================= JavaScript ================= -->
   <script>
     const GAS_URL = "https://script.google.com/macros/s/AKfycbxauMbrEeIaDNAN_U0DvffmUVN5vfbUqpNOpmVSPvtMZ9qbl0WfTcxB2JnvcRxkOfQm/exec"; 
     const SCHOOL_LOGO_URL = "https://raw.githubusercontent.com/joodami/school-assets/main/logo.png";
 
     let currentUser = null;
     let targetRoleGroup = 'SARABUN';
-    let currentSarabunTab = 'folderIn'; // 'folderIn', 'registered', 'returned'
+    let currentSarabunTab = 'registered'; // 'add', 'registered', 'returned'
 
     let incomingBooks = [];
     let filteredBooks = [];
@@ -354,6 +457,18 @@
         img.src = SCHOOL_LOGO_URL;
       });
 
+      // Bind Search Event
+      const searchInput = document.getElementById('searchInput');
+      if (searchInput) {
+        searchInput.addEventListener('keyup', filterDocs);
+      }
+
+      // Bind Pagination Events
+      const btnPrev = document.getElementById('btnPrevPage');
+      const btnNext = document.getElementById('btnNextPage');
+      if (btnPrev) btnPrev.addEventListener('click', () => changePage(-1));
+      if (btnNext) btnNext.addEventListener('click', () => changePage(1));
+
       const savedUser = localStorage.getItem('currentUser');
       const savedRoleGroup = localStorage.getItem('targetRoleGroup');
 
@@ -363,7 +478,6 @@
           if (savedRoleGroup) targetRoleGroup = savedRoleGroup;
 
           document.getElementById('portalSection').classList.add('hidden');
-          document.body.className = "bg-[#f4f6f9] min-h-full text-slate-800 flex flex-col justify-between antialiased";
           document.getElementById('mainDashboard').classList.remove('hidden');
           document.getElementById('userInfo').innerText = `${currentUser.name} • ${currentUser.position}`;
 
@@ -398,7 +512,7 @@
         iconContainer.className = "w-14 h-14 bg-amber-50 text-amber-600 border border-amber-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-sm";
         icon.className = "fa-solid fa-circle-exclamation";
       } else {
-        iconContainer.className = "w-14 h-14 bg-blue-50 text-[#0f2b48] border border-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-sm";
+        iconContainer.className = "w-14 h-14 bg-sky-100 text-[#0f2b48] border border-sky-300 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-sm";
         icon.className = "fa-solid fa-circle-info";
       }
 
@@ -424,7 +538,7 @@
       const display = document.getElementById('activeSystemNameDisplay');
       if (display) {
         let cleanTitle = roleTitle.replace('ระบบ', '');
-        display.innerHTML = 'ระบบที่เลือก: <span class="text-sky-700 font-extrabold">' + cleanTitle + '</span>';
+        display.innerHTML = 'ระบบที่เลือก: <span class="text-[#0f2b48] font-black underline decoration-amber-400 underline-offset-4">' + cleanTitle + '</span>';
       }
     }
 
@@ -439,7 +553,7 @@
       }
 
       const btn = document.getElementById('btnLogin');
-      btn.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin"></i> กำลังตรวจสอบ...`;
+      btn.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin text-xs"></i> <span>กำลังตรวจสอบ...</span>`;
       btn.disabled = true;
 
       const payload = {
@@ -468,7 +582,7 @@
 
           if (!hasPermission) {
             showAlert("คุณไม่มีสิทธิ์เข้าใช้งานในส่วนนี้ กรุณาเลือกระบบเข้าใช้งานให้ตรงกับสิทธิ์ของคุณ", "ไม่มีสิทธิ์เข้าถึงระบบ", "error");
-            btn.innerHTML = `<span>เข้าสู่ระบบ</span> <i class="fa-solid fa-right-to-bracket text-xs"></i>`;
+            btn.innerHTML = `<i class="fa-solid fa-right-to-bracket text-xs"></i> <span>เข้าสู่ระบบ</span>`;
             btn.disabled = false;
             return;
           }
@@ -478,7 +592,6 @@
           localStorage.setItem('targetRoleGroup', targetRoleGroup);
 
           document.getElementById('portalSection').classList.add('hidden');
-          document.body.className = "bg-[#f4f6f9] min-h-full text-slate-800 flex flex-col justify-between antialiased";
           document.getElementById('mainDashboard').classList.remove('hidden');
           document.getElementById('userInfo').innerText = `${currentUser.name} • ${currentUser.position}`;
           
@@ -491,7 +604,7 @@
         showAlert("ไม่สามารถเชื่อมต่อกับระบบได้ กรุณาลองใหม่อีกครั้ง", "เกิดข้อผิดพลาด", "error");
         console.error(err);
       } finally {
-        btn.innerHTML = `<span>เข้าสู่ระบบ</span> <i class="fa-solid fa-right-to-bracket text-xs"></i>`;
+        btn.innerHTML = `<i class="fa-solid fa-right-to-bracket text-xs"></i> <span>เข้าสู่ระบบ</span>`;
         btn.disabled = false;
       }
     }
@@ -552,177 +665,54 @@
     }
 
     function loadRoleDashboard() {
-      const content = document.getElementById('roleContent');
-      if (!content) return;
-
       if (currentUser.role === 'SARABUN') {
-        renderSarabunLayout();
-      } else {
-        renderUserDashboard();
+        updateNextRecNo();
+        switchSarabunMenu('registered');
       }
     }
 
-    function renderSarabunLayout() {
-      const content = document.getElementById('roleContent');
+    function updateNextRecNo() {
       const maxRecNo = incomingBooks.reduce((max, b) => {
         const num = parseInt(String(b.recNo).replace(/[^0-9]/g, ''), 10);
         return !isNaN(num) && num > max ? num : max;
       }, 0);
       const nextNumber = maxRecNo + 1;
-      const todayStr = new Date().toISOString().split('T')[0];
-
-      content.innerHTML = `
-        <div class="flex flex-col md:flex-row gap-5 page-transition">
-          <!-- SIDEBAR -->
-          <aside class="w-full md:w-64 shrink-0">
-            <div class="bg-white border-2 border-sky-200 rounded-2xl p-3 shadow-sm sticky top-20">
-              <div class="px-3 py-2 text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 mb-2">
-                เมนูสารบรรณ
-              </div>
-              <nav class="space-y-1.5">
-                <button id="menuFolderIn" onclick="switchSarabunMenu('folderIn')" class="sidebar-menu-btn ${currentSarabunTab === 'folderIn' ? 'active' : ''} w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs md:text-sm text-slate-700 hover:bg-sky-50 transition text-left">
-                  <i class="fa-solid fa-folder-plus text-sky-600 w-5 text-center"></i>
-                  <span>นำหนังสือรับเข้าแฟ้ม</span>
-                </button>
-
-                <button id="menuRegisteredDocs" onclick="switchSarabunMenu('registered')" class="sidebar-menu-btn ${currentSarabunTab === 'registered' ? 'active' : ''} w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs md:text-sm text-slate-700 hover:bg-sky-50 transition text-left">
-                  <i class="fa-solid fa-book-bookmark text-sky-600 w-5 text-center"></i>
-                  <span>หนังสือรับที่ลงทะเบียนแล้ว</span>
-                </button>
-
-                <button id="menuReturnedDocs" onclick="switchSarabunMenu('returned')" class="sidebar-menu-btn ${currentSarabunTab === 'returned' ? 'active' : ''} w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs md:text-sm text-slate-700 hover:bg-sky-50 transition text-left">
-                  <i class="fa-solid fa-reply-all text-sky-600 w-5 text-center"></i>
-                  <span>หนังสือส่งกลับจากฝ่ายบริหาร</span>
-                </button>
-              </nav>
-            </div>
-          </aside>
-
-          <!-- MAIN CONTENT AREA -->
-          <section class="flex-1 min-w-0 space-y-4">
-            
-            <!-- FORM TOGGLE SECTION -->
-            <div class="bg-white p-4 rounded-2xl border-2 border-sky-200 shadow-sm space-y-3">
-              <button onclick="toggleRegisterForm()" class="w-full py-3 px-4 bg-[#0f2b48] hover:bg-[#1a4366] text-white font-semibold rounded-xl shadow flex items-center justify-between transition">
-                <div class="flex items-center gap-3">
-                  <i class="fa-solid fa-file-circle-plus text-amber-300 text-lg"></i>
-                  <span class="text-sm font-bold">ลงรับหนังสือเข้าใหม่ (เลขรับถัดไป: ${nextNumber}/2569)</span>
-                </div>
-                <i class="fa-solid fa-chevron-down text-xs text-amber-300 transition-transform" id="formToggleIcon"></i>
-              </button>
-
-              <div id="registerFormContainer" class="hidden pt-3 border-t border-slate-100">
-                <form id="sarabunRegisterForm" onsubmit="handleRegisterBook(event)" class="space-y-3">
-                  <input type="hidden" id="bookRecNo" value="${nextNumber}">
-                  <div>
-                    <label class="text-[11px] font-semibold text-slate-600 mb-1 block">เลขที่หนังสือต้นทาง</label>
-                    <input type="text" id="bookNo" required placeholder="ศธ 1234/2569" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-sky-500">
-                  </div>
-                  <div class="grid grid-cols-2 gap-3">
-                    <div>
-                      <label class="text-[11px] font-semibold text-slate-600 mb-1 block">วันที่ลงรับระบบ</label>
-                      <input type="date" id="receiveDateInput" value="${todayStr}" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-sky-500">
-                    </div>
-                    <div>
-                      <label class="text-[11px] font-semibold text-slate-600 mb-1 block">ลงวันที่ (ในหนังสือ)</label>
-                      <input type="date" id="bookDate" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-sky-500">
-                    </div>
-                  </div>
-                  <div>
-                    <label class="text-[11px] font-semibold text-slate-600 mb-1 block">จาก (หน่วยงานเจ้าของเรื่อง)</label>
-                    <input type="text" id="bookFrom" required placeholder="สำนักงานเขตพื้นที่การศึกษา..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-sky-500">
-                  </div>
-                  <div>
-                    <label class="text-[11px] font-semibold text-slate-600 mb-1 block">เรื่อง</label>
-                    <input type="text" id="bookTitle" required placeholder="ระบุชื่อเรื่องหนังสือ..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-sky-500">
-                  </div>
-                  <div>
-                    <label class="text-[11px] font-semibold text-slate-600 mb-1 block">แนบไฟล์ PDF หนังสือเข้า</label>
-                    <input type="file" id="bookPdf" accept="application/pdf" required class="w-full text-xs text-slate-500 border border-slate-200 rounded-xl bg-slate-50 p-1">
-                  </div>
-                  <button type="submit" id="btnSubmitBook" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl text-xs shadow transition flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-stamp"></i>
-                    <span>ลงรับและประทับตราหนังสือ</span>
-                  </button>
-                </form>
-              </div>
-            </div>
-
-            <!-- TABLE & CARDS SECTION -->
-            <div class="bg-white border-2 border-sky-200 rounded-2xl p-4 shadow-sm">
-              <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 mb-4 pb-3 border-b border-slate-100">
-                <div>
-                  <h3 id="sarabunSectionTitle" class="text-base font-bold text-slate-800 flex items-center gap-2">
-                    <i class="fa-solid fa-list-check text-sky-600"></i>
-                    <span>รายการหนังสือรับทั้งหมด</span>
-                  </h3>
-                </div>
-                <div class="relative w-full md:w-72">
-                  <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
-                    <i class="fa-solid fa-magnifying-glass text-xs"></i>
-                  </span>
-                  <input type="text" id="searchInput" onkeyup="filterDocs()" placeholder="ค้นหาเลขที่หนังสือ, เรื่อง, ผู้ส่ง..." 
-                         class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-sky-500 outline-none">
-                </div>
-              </div>
-
-              <!-- DESKTOP TABLE VIEW -->
-              <div class="hidden md:block overflow-x-auto rounded-xl border border-slate-200">
-                <table class="w-full text-left border-collapse text-xs">
-                  <thead>
-                    <tr class="bg-sky-900 text-white font-semibold">
-                      <th class="p-3 w-12 text-center">ลำดับ</th>
-                      <th class="p-3 w-28">เลขรับ</th>
-                      <th class="p-3 w-32">เลขที่หนังสือ</th>
-                      <th class="p-3">เรื่อง</th>
-                      <th class="p-3 w-36">จาก</th>
-                      <th class="p-3 w-28 text-center">วันที่ลงรับ</th>
-                      <th class="p-3 w-24 text-center">จัดการ</th>
-                    </tr>
-                  </thead>
-                  <tbody id="desktopTableView" class="divide-y divide-slate-100"></tbody>
-                </table>
-              </div>
-
-              <!-- MOBILE CARDS VIEW -->
-              <div id="mobileCardView" class="block md:hidden space-y-3"></div>
-
-              <!-- PAGINATION -->
-              <div class="flex items-center justify-between mt-4 pt-3 border-t border-slate-100 text-xs text-slate-600">
-                <span id="pageInfo">แสดง 0 จาก 0 รายการ</span>
-                <div class="flex items-center gap-1">
-                  <button onclick="changePage(-1)" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg font-medium transition">ก่อนหน้า</button>
-                  <span id="currentPageNum" class="px-3 py-1 bg-sky-100 text-sky-800 font-bold rounded-lg">1</span>
-                  <button onclick="changePage(1)" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg font-medium transition">ถัดไป</button>
-                </div>
-              </div>
-
-            </div>
-          </section>
-        </div>
-      `;
-
-      renderTableAndCards();
+      const el = document.getElementById('nextRegNo');
+      if (el) el.innerText = `${nextNumber}/2569`;
     }
 
     function switchSarabunMenu(tabName) {
       currentSarabunTab = tabName;
       currentPage = 1;
       
-      document.querySelectorAll('.sidebar-menu-btn').forEach(btn => btn.classList.remove('active'));
-      
-      if (tabName === 'folderIn') {
-        document.getElementById('menuFolderIn')?.classList.add('active');
-        filteredBooks = [...incomingBooks];
-      } else if (tabName === 'registered') {
-        document.getElementById('menuRegisteredDocs')?.classList.add('active');
-        filteredBooks = incomingBooks.filter(b => b.status === 'COMPLETED' || b.status === 'REGISTERED');
-      } else if (tabName === 'returned') {
-        document.getElementById('menuReturnedDocs')?.classList.add('active');
-        filteredBooks = incomingBooks.filter(b => b.status === 'RETURNED' || b.status === 'EXECUTED');
+      const btnAdd = document.getElementById('menuBtnAddBook');
+      const btnReg = document.getElementById('menuBtnRegistered');
+      const btnRet = document.getElementById('menuBtnReturned');
+
+      if (btnAdd) btnAdd.classList.remove('active');
+      if (btnReg) btnReg.classList.remove('active');
+      if (btnRet) btnRet.classList.remove('active');
+
+      const addSection = document.getElementById('sarabunAddFormSection');
+      const tableSection = document.getElementById('sarabunTableSection');
+
+      if (tabName === 'add') {
+        if (btnAdd) btnAdd.classList.add('active');
+        if (addSection) addSection.classList.remove('hidden');
+        if (tableSection) tableSection.classList.add('hidden');
+      } else {
+        if (addSection) addSection.classList.add('hidden');
+        if (tableSection) tableSection.classList.remove('hidden');
+
+        if (tabName === 'registered') {
+          if (btnReg) btnReg.classList.add('active');
+          filteredBooks = incomingBooks.filter(b => b.status === 'COMPLETED' || b.status === 'REGISTERED' || b.status === 'PENDING_DIRECTOR');
+        } else if (tabName === 'returned') {
+          if (btnRet) btnRet.classList.add('active');
+          filteredBooks = incomingBooks.filter(b => b.status === 'RETURNED' || b.status === 'EXECUTED');
+        }
+        renderTableData();
       }
-      
-      renderTableAndCards();
     }
 
     function filterDocs() {
@@ -734,16 +724,19 @@
         (b.from && String(b.from).toLowerCase().includes(q))
       );
       currentPage = 1;
-      renderTableAndCards();
+      renderTableData();
     }
 
-    function renderTableAndCards() {
-      const desktopBody = document.getElementById('desktopTableView');
-      const mobileBody = document.getElementById('mobileCardView');
-      const pageInfo = document.getElementById('pageInfo');
-      const pageNumEl = document.getElementById('currentPageNum');
+    function renderTableData() {
+      const tableBody = document.getElementById('bookTableBody');
+      const pageStart = document.getElementById('pageStart');
+      const pageEnd = document.getElementById('pageEnd');
+      const totalItems = document.getElementById('totalItems');
+      const pageNumbers = document.getElementById('pageNumbers');
+      const btnPrev = document.getElementById('btnPrevPage');
+      const btnNext = document.getElementById('btnNextPage');
 
-      if (!desktopBody || !mobileBody) return;
+      if (!tableBody) return;
 
       const total = filteredBooks.length;
       const totalPages = Math.ceil(total / pageSize) || 1;
@@ -753,45 +746,31 @@
       const endIdx = Math.min(startIdx + pageSize, total);
       const pageData = filteredBooks.slice(startIdx, endIdx);
 
-      if (pageInfo) pageInfo.innerText = `แสดง ${total > 0 ? startIdx + 1 : 0} - ${endIdx} จากทั้งหมด ${total} รายการ`;
-      if (pageNumEl) pageNumEl.innerText = currentPage;
+      if (totalItems) totalItems.innerText = total;
+      if (pageStart) pageStart.innerText = total > 0 ? startIdx + 1 : 0;
+      if (pageEnd) pageEnd.innerText = endIdx;
+      if (pageNumbers) pageNumbers.innerText = currentPage;
+
+      if (btnPrev) btnPrev.disabled = (currentPage === 1);
+      if (btnNext) btnNext.disabled = (currentPage >= totalPages);
 
       if (pageData.length === 0) {
-        const emptyHtml = `<tr class="text-center text-slate-400"><td colspan="7" class="p-6">ไม่พบรายการหนังสือ</td></tr>`;
-        desktopBody.innerHTML = emptyHtml;
-        mobileBody.innerHTML = `<div class="p-6 text-center text-slate-400 bg-white rounded-xl border border-dashed border-slate-200">ไม่พบรายการหนังสือ</div>`;
+        tableBody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-slate-400 font-medium">ไม่พบข้อมูลหนังสือรับในระบบ</td></tr>`;
         return;
       }
 
-      // Render Desktop Table
-      desktopBody.innerHTML = pageData.map((b, i) => `
-        <tr class="hover:bg-sky-50/50 transition">
-          <td class="p-3 text-center font-medium text-slate-500">${startIdx + i + 1}</td>
-          <td class="p-3 font-bold text-amber-700">${b.recNo}/2569</td>
-          <td class="p-3 font-semibold text-slate-700">${b.no || '-'}</td>
-          <td class="p-3 font-medium text-slate-800">${b.title}</td>
-          <td class="p-3 text-slate-600">${b.from}</td>
-          <td class="p-3 text-center text-slate-500">${formatDisplayDate(b.date || b.time)}</td>
-          <td class="p-3 text-center">
-            ${b.fileUrl ? `<a href="${b.fileUrl}" target="_blank" class="px-2.5 py-1 bg-sky-100 hover:bg-sky-200 text-sky-800 font-semibold rounded-lg text-[11px] transition inline-flex items-center gap-1"><i class="fa-solid fa-file-pdf"></i> เอกสาร</a>` : '-'}
+      tableBody.innerHTML = pageData.map((b, i) => `
+        <tr class="hover:bg-sky-50/60 transition-colors">
+          <td class="py-3 px-3 text-center font-medium text-slate-500">${startIdx + i + 1}</td>
+          <td class="py-3 px-3 text-center font-bold text-amber-700">${b.recNo}/2569</td>
+          <td class="py-3 px-3 font-semibold text-slate-700">${b.no || '-'}</td>
+          <td class="py-3 px-3 font-medium text-slate-800">${b.title}</td>
+          <td class="py-3 px-3 text-slate-600">${b.from}</td>
+          <td class="py-3 px-3 text-center text-slate-500">${formatDisplayDate(b.date || b.time)}</td>
+          <td class="py-3 px-3 text-center">
+            ${b.fileUrl ? `<a href="${b.fileUrl}" target="_blank" class="px-2.5 py-1 bg-sky-100 hover:bg-sky-200 text-sky-800 font-bold rounded-lg text-[11px] transition inline-flex items-center gap-1 shadow-sm"><i class="fa-solid fa-file-pdf text-red-500"></i> เปิดดู</a>` : '-'}
           </td>
         </tr>
-      `).join('');
-
-      // Render Mobile Cards
-      mobileBody.innerHTML = pageData.map(b => `
-        <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
-          <div class="flex items-center justify-between border-b border-slate-100 pb-2">
-            <span class="text-[10px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">เลขรับ ${b.recNo}/2569</span>
-            <span class="text-[10px] text-slate-400">${formatDisplayDate(b.date || b.time)}</span>
-          </div>
-          <h4 class="text-xs font-bold text-slate-800">${b.title}</h4>
-          <p class="text-[11px] text-slate-500">จาก: ${b.from} | เลขที่: ${b.no}</p>
-          <div class="flex items-center justify-between pt-1">
-            <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md"><i class="fa-solid fa-stamp"></i> ประทับตราแล้ว</span>
-            ${b.fileUrl ? `<a href="${b.fileUrl}" target="_blank" class="text-xs font-bold text-blue-600 hover:underline"><i class="fa-solid fa-file-pdf"></i> ดู PDF</a>` : ''}
-          </div>
-        </div>
       `).join('');
     }
 
@@ -800,45 +779,11 @@
       currentPage += direction;
       if (currentPage < 1) currentPage = 1;
       if (currentPage > totalPages) currentPage = totalPages;
-      renderTableAndCards();
-    }
-
-    function toggleRegisterForm() {
-      const form = document.getElementById('registerFormContainer');
-      const icon = document.getElementById('formToggleIcon');
-      if (form && icon) {
-        form.classList.toggle('hidden');
-        icon.classList.toggle('rotate-180');
-      }
+      renderTableData();
     }
 
     function openRegisterModal() {
-      const form = document.getElementById('registerFormContainer');
-      if (form) {
-        form.classList.remove('hidden');
-        form.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
-
-    function renderUserDashboard() {
-      const content = document.getElementById('roleContent');
-      content.innerHTML = `
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 space-y-3">
-          <h3 class="text-base font-bold text-slate-800">รายการหนังสือสำหรับ ${currentUser.name}</h3>
-          <p class="text-xs text-slate-500">รวมรายการหนังสือรับเข้าปฏิบัติงานทั้งหมด (${incomingBooks.length} รายการ)</p>
-          <div class="space-y-2 mt-4">
-            ${incomingBooks.map(b => `
-              <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex justify-between items-center text-xs">
-                <div>
-                  <div class="font-bold text-slate-800">${b.title}</div>
-                  <div class="text-[11px] text-slate-500">จาก: ${b.from} | เลขที่: ${b.no}</div>
-                </div>
-                ${b.fileUrl ? `<a href="${b.fileUrl}" target="_blank" class="text-blue-600 font-bold hover:underline">ดู PDF</a>` : ''}
-              </div>
-            `).join('')}
-          </div>
-        </div>
-      `;
+      switchSarabunMenu('add');
     }
 
     async function stampPdfOnClient(file, receiveNo, receiveDate) {
@@ -903,19 +848,23 @@
       return 'data:application/pdf;base64,' + btoa(binary);
     }
 
-   async function handleRegisterBook(e) {
+    async function handleRegisterBook(e) {
       if (e && typeof e.preventDefault === 'function') e.preventDefault();
       
       const btn = document.getElementById('btnSubmitBook');
-      btn.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin"></i> กำลังประทับตราและบันทึก...`;
-      btn.disabled = true;
+      if (btn) {
+        btn.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin"></i> กำลังประทับตราและบันทึก...`;
+        btn.disabled = true;
+      }
 
       try {
         const fileInput = document.getElementById('bookPdf');
-        if (!fileInput.files || fileInput.files.length === 0) {
+        if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
           showAlert("กรุณาเลือกไฟล์ PDF หนังสือเข้า", "แจ้งเตือน", "warning");
-          btn.innerHTML = `<i class="fa-solid fa-stamp"></i> <span>ลงรับและประทับตราหนังสือ</span>`;
-          btn.disabled = false;
+          if (btn) {
+            btn.innerHTML = `<i class="fa-solid fa-stamp"></i> <span>ลงรับและประทับตราหนังสือ</span>`;
+            btn.disabled = false;
+          }
           return;
         }
 
@@ -951,9 +900,12 @@
         const res = await response.json();
 
         if (res.success) {
-          document.getElementById('sarabunRegisterForm').reset();
+          const form = document.getElementById('sarabunRegisterForm');
+          if (form) form.reset();
+          
           await loadDocsData();
-          renderSarabunLayout();
+          updateNextRecNo();
+          switchSarabunMenu('registered');
           showAlert(`ลงรับหนังสือเลขที่ ${recNo}/2569 และประทับตราเรียบร้อยแล้ว`, "ลงรับสำเร็จ", "success");
         } else {
           showAlert(res.message || "เกิดข้อผิดพลาดในการบันทึกข้อมูล", "บันทึกไม่สำเร็จ", "error");
@@ -961,9 +913,11 @@
       } catch (err) {
         console.error(err);
         showAlert("เกิดข้อผิดพลาด: " + err.message, "เกิดข้อผิดพลาด", "error");
-      } finally { //  แก้ไขเป็น finally เรียบร้อยครับ
-        btn.innerHTML = `<i class="fa-solid fa-stamp"></i> <span>ลงรับและประทับตราหนังสือ</span>`;
-        btn.disabled = false;
+      } finally {
+        if (btn) {
+          btn.innerHTML = `<i class="fa-solid fa-stamp"></i> <span>ลงรับและประทับตราหนังสือ</span>`;
+          btn.disabled = false;
+        }
       }
     }
     
@@ -974,9 +928,9 @@
       localStorage.removeItem('targetRoleGroup');
 
       document.getElementById('mainDashboard').classList.add('hidden');
-      document.body.className = "bg-[#f4f6f9] min-h-full text-slate-800 flex flex-col justify-between antialiased";
       document.getElementById('portalSection').classList.remove('hidden');
     }
   </script>
+  
 </body>
 </html>
