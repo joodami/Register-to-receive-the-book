@@ -628,13 +628,18 @@
             <form id="sarabunRegisterForm" onsubmit="handleRegisterBook(event)" class="space-y-3.5">
               <input type="hidden" id="bookRecNo" value="${nextNumber}">
               
+              <div>
+                <label class="text-[11px] font-semibold text-slate-600 mb-1 block">เลขที่หนังสือต้นทาง</label>
+                <input type="text" id="bookNo" required placeholder="ศธ 1234/2569" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-1 focus:ring-[#0f2b48] focus:bg-white outline-none">
+              </div>
+
               <div class="grid grid-cols-2 gap-3">
                 <div>
-                  <label class="text-[11px] font-semibold text-slate-600 mb-1 block">เลขที่หนังสือต้นทาง</label>
-                  <input type="text" id="bookNo" required placeholder="ศธ 1234/2569" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-1 focus:ring-[#0f2b48] focus:bg-white outline-none">
+                  <label class="text-[11px] font-semibold text-slate-600 mb-1 block">วันที่ลงรับระบบ</label>
+                  <input type="date" id="receiveDateInput" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-1 focus:ring-[#0f2b48] focus:bg-white outline-none">
                 </div>
                 <div>
-                  <label class="text-[11px] font-semibold text-slate-600 mb-1 block">ลงวันที่</label>
+                  <label class="text-[11px] font-semibold text-slate-600 mb-1 block">ลงวันที่ (ในหนังสือ)</label>
                   <input type="date" id="bookDate" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-1 focus:ring-[#0f2b48] focus:bg-white outline-none">
                 </div>
               </div>
@@ -719,10 +724,19 @@
       if (form && icon) {
         form.classList.toggle('hidden');
         icon.classList.toggle('rotate-180');
+
+        // กำหนดวันที่ปัจจุบันเป็นค่าเริ่มต้นให้อัตโนมัติเมื่อเปิดฟอร์ม
+        if (!form.classList.contains('hidden')) {
+          const recInput = document.getElementById('receiveDateInput');
+          if (recInput && !recInput.value) {
+            const today = new Date().toISOString().split('T')[0];
+            recInput.value = today;
+          }
+        }
       }
     }
 
-  // ฟังก์ชันประทับตราตามรูปแบบงานสารบรรณ (หมึกน้ำเงิน/เลขไทย/เส้นประ)
+ // ฟังก์ชันประทับตราตามรูปแบบงานสารบรรณ (หมึกน้ำเงิน/เลขไทย/เส้นประ)
     async function stampPdfOnClient(file, receiveNo, receiveDate) {
       const arrayBuffer = await file.arrayBuffer();
       const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
@@ -740,11 +754,20 @@
         'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
       ];
 
-      // คำนวณวันและเวลา ณ ปัจจุบัน
       const now = new Date();
-      const thaiDay = toThaiNum(now.getDate());
-      const thaiMonth = thaiMonths[now.getMonth()];
-      const thaiYear = toThaiNum(now.getFullYear() + 543);
+
+      // คำนวณวันที่ลงรับระบบ (หากระบุวันที่มาให้อยู่ในรูปแบบ YYYY-MM-DD จะแปลงใช้วันนั้น ถ้าไม่มีใช้ปัจจุบัน)
+      let targetDate = now;
+      if (receiveDate) {
+        const parts = receiveDate.split('-');
+        if (parts.length === 3) {
+          targetDate = new Date(parts[0], parts[1] - 1, parts[2]);
+        }
+      }
+
+      const thaiDay = toThaiNum(targetDate.getDate());
+      const thaiMonth = thaiMonths[targetDate.getMonth()];
+      const thaiYear = toThaiNum(targetDate.getFullYear() + 543);
       const formattedToday = `${thaiDay} ${thaiMonth} ${thaiYear}`;
 
       const hh = String(now.getHours()).padStart(2, '0');
@@ -767,6 +790,10 @@
       const x = width - stampWidth - margin;
       const y = height - stampHeight - margin;
 
+      // ปรับระยะจุดเริ่มต้นเส้นประและข้อความให้ขยับมาชิดกับคำว่า "รับที่", "วันที่", "เวลา" มากขึ้น
+      const lineStartX = x + 32;
+      const textStartX = x + 36;
+
       // 1. กรอบสี่เหลี่ยมตราประทับ
       firstPage.drawRectangle({
         x: x, y: y,
@@ -784,29 +811,29 @@
       // 3. แถว "รับที่" + เส้นประ + ข้อมูล
       firstPage.drawText("รับที่", { x: x + 10, y: y + 40, size: 10, font: customFont, color: inkColor });
       firstPage.drawLine({
-        start: { x: x + 42, y: y + 40 },
+        start: { x: lineStartX, y: y + 40 },
         end: { x: x + 165, y: y + 40 },
         thickness: 0.8, color: inkColor, dashArray: [1, 2]
       });
-      firstPage.drawText(thaiReceiveNo, { x: x + 48, y: y + 41, size: 10, font: customFont, color: inkColor });
+      firstPage.drawText(thaiReceiveNo, { x: textStartX, y: y + 41, size: 10, font: customFont, color: inkColor });
 
       // 4. แถว "วันที่" + เส้นประ + ข้อมูล
       firstPage.drawText("วันที่", { x: x + 10, y: y + 23, size: 10, font: customFont, color: inkColor });
       firstPage.drawLine({
-        start: { x: x + 42, y: y + 23 },
+        start: { x: lineStartX, y: y + 23 },
         end: { x: x + 165, y: y + 23 },
         thickness: 0.8, color: inkColor, dashArray: [1, 2]
       });
-      firstPage.drawText(formattedToday, { x: x + 48, y: y + 24, size: 10, font: customFont, color: inkColor });
+      firstPage.drawText(formattedToday, { x: textStartX, y: y + 24, size: 10, font: customFont, color: inkColor });
 
       // 5. แถว "เวลา" + เส้นประ + ข้อมูล
       firstPage.drawText("เวลา", { x: x + 10, y: y + 6, size: 10, font: customFont, color: inkColor });
       firstPage.drawLine({
-        start: { x: x + 42, y: y + 6 },
+        start: { x: lineStartX, y: y + 6 },
         end: { x: x + 165, y: y + 6 },
         thickness: 0.8, color: inkColor, dashArray: [1, 2]
       });
-      firstPage.drawText(formattedTime, { x: x + 48, y: y + 7, size: 10, font: customFont, color: inkColor });
+      firstPage.drawText(formattedTime, { x: textStartX, y: y + 7, size: 10, font: customFont, color: inkColor });
 
       const stampedPdfBytes = await pdfDoc.save();
 
@@ -818,7 +845,7 @@
       return 'data:application/pdf;base64,' + btoa(binary);
     }
 
-    async function handleRegisterBook(e) {
+   async function handleRegisterBook(e) {
       e.preventDefault();
       
       const btn = document.getElementById('btnSubmitBook');
@@ -837,18 +864,21 @@
         const file = fileInput.files[0];
         const recNo = document.getElementById('bookRecNo').value;
         const bookNo = document.getElementById('bookNo').value;
-        const bookDate = document.getElementById('bookDate').value;
+        const bookDate = document.getElementById('bookDate').value; // วันที่ในหนังสือ
+        const receiveDate = document.getElementById('receiveDateInput').value; // วันที่ลงรับระบบ
         const bookFrom = document.getElementById('bookFrom').value;
         const bookTitle = document.getElementById('bookTitle').value;
 
-        const stampedBase64 = await stampPdfOnClient(file, recNo, bookDate);
+        // ส่งวันที่ลงรับระบบไปประทับตราลง PDF
+        const stampedBase64 = await stampPdfOnClient(file, recNo, receiveDate);
 
         const payload = {
           action: 'SAVE_NEW_DOC',
           data: {
             receiveNo: recNo,
             bookNo: bookNo,
-            receiveDate: bookDate,
+            receiveDate: receiveDate,
+            bookDate: bookDate,
             fromDept: bookFrom,
             title: bookTitle,
             fileData: stampedBase64
