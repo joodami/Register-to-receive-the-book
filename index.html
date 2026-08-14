@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>ระบบลงทะเบียนรับหนังสือเข้า - โรงเรียนพิมานพิทยาสรรค์</title>
+  
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- FontAwesome Icons -->
@@ -58,7 +59,6 @@
     .pb-safe { padding-bottom: max(1.25rem, env(safe-area-inset-bottom)); }
     .pt-safe { padding-top: max(1rem, env(safe-area-inset-top)); }
 
-    /* Custom Style สำหรับ Tab Activation ให้เด่นชัดเจน */
     .system-tab-button {
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
@@ -72,7 +72,6 @@
       transform: translateY(-2px);
     }
 
-    /* Style เพิ่มเติมสำหรับ Sidebar Active Menu */
     .sidebar-menu-btn {
       transition: all 0.2s ease;
     }
@@ -81,6 +80,9 @@
       color: #ffffff;
       font-weight: 600;
       box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+    }
+    .sidebar-menu-btn.active i {
+      color: #ffffff !important;
     }
   </style>
 </head>
@@ -130,15 +132,13 @@
         </div>
       </div>
 
-     <!-- ข้อความแจ้งเตือนให้คลิกเลือกแท็บระบบก่อน -->
+      <!-- ข้อความแจ้งเตือนเลือกระบบ -->
       <div class="flex items-center justify-center my-3">
         <div class="inline-flex items-center gap-2 px-4 py-2 bg-slate-100/80 text-slate-700 rounded-full text-xs md:text-sm font-medium border border-slate-200/80 shadow-sm transition-all">
-          <!-- จุดกะพริบสไตล์ Modern UI -->
           <span class="relative flex h-2 w-2">
             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
             <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
           </span>
-          
           <span>ขั้นตอนที่ 1 : โปรดเลือกระบบเข้าใช้งานตามบทบาทของคุณก่อนลงชื่อเข้าใช้</span>
         </div>
       </div>
@@ -146,24 +146,19 @@
       <!-- แผงแท็บเลือกระบบ + ฟอร์มกรอกรหัสเข้าใช้งาน -->
       <div class="w-full bg-white rounded-2xl border-2 border-sky-300 shadow-xl overflow-hidden mb-6">
         
-        <!-- แท็บเลือกระบบ 3 ฝ่าย (เรียงลำดับใหม่: ฝ่ายบริหาร -> งานสารบรรณ -> ครูและบุคลากร) -->
         <div class="grid grid-cols-3 bg-slate-200/90 border-b-2 border-sky-200 text-xs md:text-sm font-bold text-slate-600 p-1.5 gap-1.5">
-          
-          <!-- 1. ฝ่ายบริหาร -->
           <button type="button" id="tab-EXEC" onclick="switchSystemTab('EXEC', 'ระบบฝ่ายบริหาร (ผอ. / รอง ผอ.)', 'bg-[#0f2b48]', 'fa-user-tie')" 
                   class="system-tab-button py-3 px-2 rounded-xl flex flex-col md:flex-row items-center justify-center gap-1.5 transition-all hover:text-sky-700">
             <i class="fa-solid fa-user-tie text-base text-blue-600"></i>
             <span class="text-center">ฝ่ายบริหาร</span>
           </button>
 
-          <!-- 2. งานสารบรรณโรงเรียน (Active Default) -->
           <button type="button" id="tab-SARABUN" onclick="switchSystemTab('SARABUN', 'ระบบงานสารบรรณโรงเรียน', 'bg-[#0f2b48]', 'fa-folder-open')" 
                   class="system-tab-button system-tab-active py-3 px-2 rounded-xl flex flex-col md:flex-row items-center justify-center gap-1.5 transition-all hover:text-sky-700">
             <i class="fa-solid fa-folder-open text-base text-sky-600"></i>
             <span class="text-center">งานสารบรรณโรงเรียน</span>
           </button>
 
-          <!-- 3. ครูและบุคลากร -->
           <button type="button" id="tab-TEACHER" onclick="switchSystemTab('TEACHER', 'ระบบครูและบุคลากร', 'bg-[#0f2b48]', 'fa-chalkboard-user')" 
                   class="system-tab-button py-3 px-2 rounded-xl flex flex-col md:flex-row items-center justify-center gap-1.5 transition-all hover:text-sky-700">
             <i class="fa-solid fa-chalkboard-user text-base text-teal-600"></i>
@@ -171,9 +166,7 @@
           </button>
         </div>
 
-        <!-- ฟอร์มเข้าสู่ระบบ -->
         <div class="p-4 md:p-6 bg-gradient-to-b from-sky-50/50 to-white">
-          
           <div class="flex items-center justify-between mb-4 pb-2 border-b border-slate-200">
             <div class="flex items-center gap-2">
               <i class="fa-solid fa-circle-check text-emerald-500 text-sm"></i>
@@ -184,13 +177,10 @@
             <span class="text-[11px] text-slate-500 font-medium hidden md:inline">ระบุชื่อผู้ใช้และรหัสผ่านเพื่อเข้าสู่ระบบ</span>
           </div>
 
-          <!-- ฟอร์มส่งเข้าระบบ -->
           <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
             <input type="hidden" id="selectedRoleGroup" value="SARABUN">
             
             <div class="grid grid-cols-1 md:grid-cols-5 gap-3 items-center">
-              
-              <!-- User Input -->
               <div class="md:col-span-2 space-y-1">
                 <label class="text-xs font-bold text-slate-700 ml-1">ชื่อผู้ใช้ :</label>
                 <div class="relative">
@@ -202,7 +192,6 @@
                 </div>
               </div>
 
-              <!-- Password Input -->
               <div class="md:col-span-2 space-y-1">
                 <label class="text-xs font-bold text-slate-700 ml-1">รหัสผ่าน :</label>
                 <div class="relative">
@@ -214,7 +203,6 @@
                 </div>
               </div>
 
-              <!-- Login Button -->
               <div class="md:col-span-1 md:pt-5">
                 <button type="submit" id="btnLogin" 
                         class="w-full py-2.5 px-4 bg-gradient-to-r from-sky-600 to-blue-700 hover:from-sky-700 hover:to-blue-800 active:scale-[0.98] text-white font-bold rounded-xl text-sm shadow-md shadow-sky-200 transition duration-200 flex items-center justify-center gap-2 border border-sky-400">
@@ -222,14 +210,11 @@
                   <span>เข้าสู่ระบบ</span>
                 </button>
               </div>
-
             </div>
           </form>
-
         </div>
       </div>
 
-      <!-- Footer -->
       <div class="w-full text-center py-3 text-[11px] text-sky-900 font-bold">
         <p>โรงเรียนพิมานพิทยาสรรค์ © Piman Phityasan School</p>
       </div>
@@ -237,22 +222,16 @@
     </div>
   </div>
 
-  <!-- ================= 2. MODAL LOG IN (คงไว้เพื่อรองรับ JS) ================= -->
+  <!-- ================= 2. MODAL LOG IN ================= -->
   <div id="loginModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-end md:items-center justify-center p-0 md:p-4 z-40 hidden transition-all duration-300">
     <div class="bg-white rounded-t-3xl md:rounded-3xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all border-2 border-sky-300 page-transition relative">
-      
-      <img src="https://raw.githubusercontent.com/joodami/school-assets/main/logo.png" 
-           alt="Watermark" 
-           class="absolute -right-10 -bottom-10 w-60 h-60 opacity-5 pointer-events-none z-0">
-
+      <img src="https://raw.githubusercontent.com/joodami/school-assets/main/logo.png" alt="Watermark" class="absolute -right-10 -bottom-10 w-60 h-60 opacity-5 pointer-events-none z-0">
       <div class="w-12 h-1.5 bg-sky-200 rounded-full mx-auto my-2.5 md:hidden"></div>
 
-      <!-- Modal Header -->
       <div id="modalHeaderBg" class="px-6 py-5 text-white text-center relative bg-gradient-to-r from-sky-500 via-blue-600 to-sky-600 border-b-2 border-sky-300 shadow-md z-10">
         <button onclick="closeLoginModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition">
           <i class="fa-solid fa-xmark text-sm"></i>
         </button>
-        
         <div class="flex items-center justify-center gap-3 mb-1">
           <img class="modalSchoolLogo w-11 h-11 object-contain drop-shadow" src="https://raw.githubusercontent.com/joodami/school-assets/main/logo.png" alt="Logo">
           <div class="text-left">
@@ -264,12 +243,11 @@
     </div>
   </div>
 
-  <!-- ================= 3. DASHBOARD MAIN (ปรับโครงสร้าง Sidebar & Content) ================= -->
+  <!-- ================= 3. DASHBOARD MAIN ================= -->
   <div id="mainDashboard" class="hidden min-h-screen bg-sky-50/60 flex flex-col justify-between page-transition relative z-10">
     
     <header class="bg-white/90 backdrop-blur-md border-b-2 border-sky-200 sticky top-0 z-30 px-4 py-3 pt-safe shadow-sm">
       <div class="container mx-auto max-w-7xl flex justify-between items-center">
-        
         <div class="flex items-center gap-3">
           <img class="headerSchoolLogo w-9 h-9 object-contain" src="https://raw.githubusercontent.com/joodami/school-assets/main/logo.png" alt="Logo">
           <div class="border-l-2 border-sky-200 pl-3">
@@ -281,125 +259,18 @@
         <button onclick="logout()" class="w-9 h-9 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl flex items-center justify-center text-xs transition border border-rose-200" title="ออกจากระบบ">
           <i class="fa-solid fa-power-off"></i>
         </button>
-
       </div>
     </header>
 
     <main class="container mx-auto px-2 md:px-4 py-4 flex-grow pb-28 md:pb-10 max-w-7xl">
       <div id="roleContent" class="w-full">
-        
-        <div class="flex flex-col md:flex-row gap-5">
-          
-          <!-- SIDEBAR เมนูอยู่แถบด้านซ้าย -->
-          <aside class="w-full md:w-64 shrink-0">
-            <div class="bg-white border-2 border-sky-200 rounded-2xl p-3 shadow-sm sticky top-20">
-              <div class="px-3 py-2 text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 mb-2">
-                เมนูสารบรรณ
-              </div>
-              <nav class="space-y-1.5">
-                <button id="menuFolderIn" onclick="switchSarabunMenu('folderIn')" class="sidebar-menu-btn active w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs md:text-sm text-slate-700 hover:bg-sky-50 transition text-left">
-                  <i class="fa-solid fa-folder-plus text-sky-600 w-5 text-center"></i>
-                  <span>นำหนังสือรับเข้าแฟ้ม</span>
-                </button>
-
-                <button id="menuRegisteredDocs" onclick="switchSarabunMenu('registered')" class="sidebar-menu-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs md:text-sm text-slate-700 hover:bg-sky-50 transition text-left">
-                  <i class="fa-solid fa-book-bookmark text-sky-600 w-5 text-center"></i>
-                  <span>หนังสือรับที่ลงทะเบียนแล้ว</span>
-                </button>
-
-                <button id="menuReturnedDocs" onclick="switchSarabunMenu('returned')" class="sidebar-menu-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs md:text-sm text-slate-700 hover:bg-sky-50 transition text-left">
-                  <i class="fa-solid fa-reply-all text-sky-600 w-5 text-center"></i>
-                  <span>หนังสือส่งกลับจากฝ่ายบริหาร</span>
-                </button>
-              </nav>
-            </div>
-          </aside>
-
-          <!-- MAIN CONTENT AREA (แสดงรายการหนังสือ/ตาราง/การ์ด) -->
-          <section class="flex-1 min-w-0">
-            <div class="bg-white border-2 border-sky-200 rounded-2xl p-4 shadow-sm">
-              
-              <!-- Header Section + Search Bar -->
-              <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 mb-4 pb-3 border-b border-slate-100">
-                <div>
-                  <h3 id="sarabunSectionTitle" class="text-base md:text-lg font-bold text-slate-800 flex items-center gap-2">
-                    <i class="fa-solid fa-list-check text-sky-600"></i>
-                    <span>รายการหนังสือรับทั้งหมด</span>
-                  </h3>
-                  <p class="text-xs text-slate-500">แสดงผล 20 รายการต่อหน้า</p>
-                </div>
-
-                <!-- ช่องค้นหาหนังสือ -->
-                <div class="relative w-full md:w-72">
-                  <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
-                    <i class="fa-solid fa-magnifying-glass text-xs"></i>
-                  </span>
-                  <input type="text" id="searchInput" onkeyup="filterDocs()" placeholder="ค้นหาเลขที่หนังสือ, เรื่อง, ผู้ส่ง..." 
-                         class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition">
-                </div>
-              </div>
-
-              <!-- DESKTOP VIEW: แสดงรูปแบบตาราง (เฉพาะคอมพิวเตอร์) -->
-              <div class="hidden md:block overflow-x-auto rounded-xl border border-slate-200">
-                <table class="w-full text-left border-collapse text-xs">
-                  <thead>
-                    <tr class="bg-sky-900 text-white font-semibold">
-                      <th class="p-3 w-12 text-center">ลำดับ</th>
-                      <th class="p-3 w-28">เลขรับ</th>
-                      <th class="p-3 w-32">เลขที่หนังสือ</th>
-                      <th class="p-3">เรื่อง</th>
-                      <th class="p-3 w-36">จาก</th>
-                      <th class="p-3 w-28 text-center">วันที่ลงรับ</th>
-                      <th class="p-3 w-24 text-center">จัดการ</th>
-                    </tr>
-                  </thead>
-                  <tbody id="desktopTableView" class="divide-y divide-slate-100">
-                    <!-- รายการตารางจะถูกโหลดด้วย JS ตรงนี้ -->
-                    <tr>
-                      <td colspan="7" class="p-8 text-center text-slate-400">
-                        <i class="fa-solid fa-spinner animate-spin text-xl mb-2 block"></i>
-                        กำลังโหลดข้อมูลหนังสือ...
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <!-- MOBILE VIEW: แสดงรูปแบบการ์ด (เฉพาะมือถือ) -->
-              <div id="mobileCardView" class="block md:hidden space-y-3">
-                <!-- รายการการ์ดจะถูกโหลดด้วย JS ตรงนี้ -->
-                <div class="p-6 text-center text-slate-400 border border-dashed border-slate-200 rounded-xl">
-                  <i class="fa-solid fa-spinner animate-spin text-lg mb-1 block"></i>
-                  กำลังโหลดข้อมูลหนังสือ...
-                </div>
-              </div>
-
-              <!-- PAGINATION CONTROLS (แสดงหน้าละ 20 รายการ) -->
-              <div class="flex items-center justify-between mt-4 pt-3 border-t border-slate-100 text-xs text-slate-600">
-                <span id="pageInfo">แสดง 1 - 20 จากทั้งหมด 0 รายการ</span>
-                <div class="flex items-center gap-1" id="paginationControl">
-                  <button onclick="changePage(-1)" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg font-medium transition disabled:opacity-50">
-                    <i class="fa-solid fa-chevron-left mr-1"></i> ก่อนหน้า
-                  </button>
-                  <span id="currentPageNum" class="px-3 py-1 bg-sky-100 text-sky-800 font-bold rounded-lg">1</span>
-                  <button onclick="changePage(1)" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg font-medium transition disabled:opacity-50">
-                    ถัดไป <i class="fa-solid fa-chevron-right ml-1"></i>
-                  </button>
-                </div>
-              </div>
-
-            </div>
-          </section>
-
-        </div>
-
+        <!-- Dashboard UI Dynamic Container -->
       </div>
     </main>
 
     <!-- Floating Navigation Bar -->
     <div class="fixed bottom-4 left-0 right-0 z-30 px-4 max-w-md mx-auto">
       <nav class="floating-nav bg-white/95 backdrop-blur-xl rounded-2xl p-1.5 border-2 border-sky-200 shadow-2xl shadow-sky-300/50 flex justify-around items-center">
-        
         <button onclick="loadRoleDashboard()" class="flex flex-col items-center justify-center w-full py-2 text-sky-600 transition group">
           <div class="w-9 h-7 bg-sky-100 rounded-lg flex items-center justify-center text-sky-600 font-bold shadow-sm">
             <i class="fa-solid fa-house-chimney text-sm"></i>
@@ -407,14 +278,14 @@
           <span class="text-[10px] mt-1 font-bold">หน้าแรก</span>
         </button>
 
-        <button onclick="showAlert('ระบบลงรับหนังสือเข้ากำลังเปิดปรับปรุงการทำงาน', 'แจ้งเตือน', 'info')" class="flex flex-col items-center justify-center w-full py-2 text-slate-400 hover:text-sky-600 transition group">
+        <button onclick="openRegisterModal()" class="flex flex-col items-center justify-center w-full py-2 text-slate-500 hover:text-sky-600 transition group">
           <div class="w-9 h-7 rounded-lg flex items-center justify-center">
             <i class="fa-solid fa-circle-plus text-sm"></i>
           </div>
           <span class="text-[10px] mt-1 font-medium">ลงรับ</span>
         </button>
 
-        <button onclick="showAlert('ระบบทะเบียนหนังสือรับกำลังเปิดปรับปรุงการทำงาน', 'แจ้งเตือน', 'info')" class="flex flex-col items-center justify-center w-full py-2 text-slate-400 hover:text-sky-600 transition group">
+        <button onclick="switchSarabunMenu('registered')" class="flex flex-col items-center justify-center w-full py-2 text-slate-500 hover:text-sky-600 transition group">
           <div class="w-9 h-7 rounded-lg flex items-center justify-center">
             <i class="fa-solid fa-receipt text-sm"></i>
           </div>
@@ -427,7 +298,6 @@
           </div>
           <span class="text-[10px] mt-1 font-medium">ออก</span>
         </button>
-
       </nav>
     </div>
 
@@ -436,7 +306,6 @@
   <!-- ================= 4. CUSTOM ALERT MODAL ================= -->
   <div id="alertModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden transition-all duration-300">
     <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden text-center p-6 page-transition border-2 border-sky-300">
-      
       <div id="alertIconContainer" class="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-inner transition-all bg-sky-100 text-sky-600 border border-sky-300">
         <i id="alertIcon" class="fa-solid"></i>
       </div>
@@ -448,9 +317,8 @@
               class="w-full py-3 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 active:scale-[0.98] text-white font-bold rounded-xl text-sm shadow-md transition duration-200">
         ตกลง
       </button>
-
     </div>
-  </div>
+  </div
   
 <script>
     const GAS_URL = "https://script.google.com/macros/s/AKfycbxauMbrEeIaDNAN_U0DvffmUVN5vfbUqpNOpmVSPvtMZ9qbl0WfTcxB2JnvcRxkOfQm/exec"; 
@@ -479,8 +347,8 @@
       }).catch(() => {});
     }
 
-    // อัปเดตโลโก้และส่ง Warm-up ปลุกเซิร์ฟเวอร์ทันทีเมื่อโหลดหน้าเว็บ
-    document.addEventListener("DOMContentLoaded", () => {
+    // อัปเดตโลโก้ ปลุกเซิร์ฟเวอร์ และตรวจสอบเซสชันเดิมเมื่อโหลดหน้าเว็บ
+    document.addEventListener("DOMContentLoaded", async () => {
       warmupServer();
 
       const portalLogo = document.getElementById('portalSchoolLogo');
@@ -489,6 +357,29 @@
       document.querySelectorAll('.modalSchoolLogo, .headerSchoolLogo').forEach(img => {
         img.src = SCHOOL_LOGO_URL;
       });
+
+      // ตรวจสอบข้อมูลการล็อกอินเดิมที่บันทึกไว้
+      const savedUser = localStorage.getItem('currentUser');
+      const savedRoleGroup = localStorage.getItem('targetRoleGroup');
+
+      if (savedUser) {
+        try {
+          currentUser = JSON.parse(savedUser);
+          if (savedRoleGroup) targetRoleGroup = savedRoleGroup;
+
+          // แสดงหน้า Dashboard ทันที
+          document.getElementById('portalSection').classList.add('hidden');
+          document.body.className = "bg-[#f4f6f9] min-h-full text-slate-800 flex flex-col justify-between antialiased";
+          document.getElementById('mainDashboard').classList.remove('hidden');
+          document.getElementById('userInfo').innerText = `${currentUser.name} • ${currentUser.position}`;
+
+          await loadDocsData();
+          loadRoleDashboard();
+        } catch (err) {
+          console.error("Restore session error:", err);
+          logout();
+        }
+      }
     });
 
     // --- ฟังก์ชันแสดง Alert Modal ---
@@ -566,7 +457,10 @@
     }
 
     async function handleLogin(e) {
-      e.preventDefault();
+      // ตรวจสอบและป้องกัน Form submit ตามปกติเพื่อไม่ให้รีเฟรชหน้า
+      if (e && typeof e.preventDefault === 'function') {
+        e.preventDefault();
+      }
 
       // การันตีการดึงค่าแท็บที่เลือกใช้งาน
       const selectedInput = document.getElementById('selectedRoleGroup');
@@ -626,6 +520,11 @@
           }
 
           currentUser = res.user;
+
+          // บันทึกสถานะการล็อกอินลง localStorage
+          localStorage.setItem('currentUser', JSON.stringify(currentUser));
+          localStorage.setItem('targetRoleGroup', targetRoleGroup);
+
           closeLoginModal();
           document.getElementById('portalSection').classList.add('hidden');
           document.body.className = "bg-[#f4f6f9] min-h-full text-slate-800 flex flex-col justify-between antialiased";
@@ -1074,7 +973,9 @@
     }
 
     async function handleRegisterBook(e) {
-      e.preventDefault();
+      if (e && typeof e.preventDefault === 'function') {
+        e.preventDefault();
+      }
       
       const btn = document.getElementById('btnSubmitBook');
       btn.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin"></i> กำลังประทับตราดิจิทัลและอัปโหลด...`;
@@ -1142,6 +1043,11 @@
     function logout() {
       currentUser = null;
       targetRoleGroup = 'SARABUN';
+
+      // ล้างข้อมูลการล็อกอินออกจากเครื่อง
+      localStorage.removeItem('currentUser');
+      localStorage.removeItem('targetRoleGroup');
+
       document.getElementById('mainDashboard').classList.add('hidden');
       document.body.className = "bg-[#f4f6f9] min-h-full text-slate-800 flex flex-col justify-between antialiased";
       document.getElementById('portalSection').classList.remove('hidden');
