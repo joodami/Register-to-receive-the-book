@@ -500,7 +500,7 @@
       }
     }
 
-    // ฟังก์ชันดึงรายการหนังสือจากเซิร์ฟเวอร์
+   // ฟังก์ชันดึงรายการหนังสือจากเซิร์ฟเวอร์
     async function loadDocsData() {
       if (!currentUser) return;
       try {
@@ -532,23 +532,39 @@
           totalCount = incomingBooks.length;
           pendingCount = incomingBooks.filter(b => b.status === 'PENDING_DIRECTOR' || !b.status).length;
           
-          // คำนวณวันที่วันนี้ตามเวลาท้องถิ่น (ป้องกันปัญหา Timezone UTC เหลื่อมวัน)
+          // คำนวณวันที่วันนี้ตามเวลาเครื่องผู้ใช้ (ป้องกันปัญหาเรื่อง ISO/UTC เหลื่อมวัน)
           const now = new Date();
-          const yyyy = now.getFullYear();
-          const mm = String(now.getMonth() + 1).padStart(2, '0');
-          const dd = String(now.getDate()).padStart(2, '0');
-          const todayStr = `${yyyy}-${mm}-${dd}`;
+          const todayY = now.getFullYear();
+          const todayM = now.getMonth();
+          const todayD = now.getDate();
 
           todayCount = incomingBooks.filter(b => {
             if (!b.date) return false;
-            // ดึงเฉพาะส่วน YYYY-MM-DD ออกมาเปรียบเทียบ
-            const docDateStr = String(b.date).split('T')[0].trim();
-            return docDateStr === todayStr || docDateStr.includes(todayStr);
+            const d = new Date(b.date);
+            if (isNaN(d.getTime())) return false;
+            
+            return d.getFullYear() === todayY && 
+                   d.getMonth() === todayM && 
+                   d.getDate() === todayD;
           }).length;
         }
       } catch (err) {
         console.error("Error loading docs:", err);
       }
+    }
+
+  // ฟังก์ชันแปลงวันที่ ISO/String ให้เป็นวันที่ไทยสั้น (เช่น 14 ส.ค. 2569)
+    function formatDisplayDate(dateStr) {
+      if (!dateStr) return '-';
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) {
+        return String(dateStr).split('T')[0];
+      }
+      const thaiMonths = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+      const day = d.getDate();
+      const month = thaiMonths[d.getMonth()];
+      const year = d.getFullYear() + 543;
+      return `${day} ${month} ${year}`;
     }
 
     function loadRoleDashboard() {
@@ -699,6 +715,7 @@
       `;
     }
 
+  // ฟังก์ชันแสดงรายการหนังสือ
     function renderBooksList() {
       if (incomingBooks.length === 0) {
         return `
@@ -721,7 +738,7 @@
             <div class="truncate">
               <div class="flex items-center gap-2">
                 <span class="text-[10px] font-bold text-amber-700 bg-amber-50 px-1.5 py-0.2 rounded border border-amber-200">เลขรับ ${book.recNo}/2569</span>
-                <span class="text-[10px] text-slate-400">${book.time || ''}</span>
+                <span class="text-[10px] text-slate-400">${formatDisplayDate(book.date || book.time)}</span>
               </div>
               <h4 class="text-xs font-semibold text-slate-800 truncate mt-0.5">${book.title}</h4>
               <p class="text-[10px] text-slate-500 truncate">จาก: ${book.from} | เลขที่: ${book.no}</p>
@@ -735,7 +752,7 @@
         </div>
       `).join('');
     }
-
+  
     function toggleRegisterForm() {
       const form = document.getElementById('registerFormContainer');
       const icon = document.getElementById('formToggleIcon');
