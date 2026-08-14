@@ -229,7 +229,7 @@
       <div class="w-12 h-1.5 bg-sky-200 rounded-full mx-auto my-2.5 md:hidden"></div>
 
       <div id="modalHeaderBg" class="px-6 py-5 text-white text-center relative bg-gradient-to-r from-sky-500 via-blue-600 to-sky-600 border-b-2 border-sky-300 shadow-md z-10">
-        <button onclick="closeLoginModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition">
+        <button type="button" onclick="closeLoginModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition">
           <i class="fa-solid fa-xmark text-sm"></i>
         </button>
         <div class="flex items-center justify-center gap-3 mb-1">
@@ -257,7 +257,7 @@
           </div>
         </div>
 
-        <button onclick="logout()" class="w-9 h-9 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl flex items-center justify-center text-xs transition border border-rose-200" title="ออกจากระบบ">
+        <button type="button" onclick="logout()" class="w-9 h-9 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl flex items-center justify-center text-xs transition border border-rose-200" title="ออกจากระบบ">
           <i class="fa-solid fa-power-off"></i>
         </button>
       </div>
@@ -278,17 +278,17 @@
             </div>
             <!-- ฝั่ง Sidebar Menu -->
             <div class="space-y-1">
-              <button type="button" id="menuBtnAddBook" onclick="switchSarabunMenu('add')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all shadow-sm active">
+              <button type="button" id="menuBtnAddBook" onclick="switchSarabunMenu('add')" class="sidebar-menu-btn active w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all shadow-sm">
                 <i class="fa-solid fa-file-circle-plus"></i>
                 <span>นำหนังสือรับเข้าแฟ้ม</span>
               </button>
 
-              <button type="button" id="menuBtnRegistered" onclick="switchSarabunMenu('registered')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all shadow-sm">
+              <button type="button" id="menuBtnRegistered" onclick="switchSarabunMenu('registered')" class="sidebar-menu-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all shadow-sm">
                 <i class="fa-solid fa-list-check"></i>
                 <span>หนังสือรับที่ลงทะเบียนแล้ว</span>
               </button>
 
-              <button type="button" id="menuBtnReturned" onclick="switchSarabunMenu('returned')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all shadow-sm">
+              <button type="button" id="menuBtnReturned" onclick="switchSarabunMenu('returned')" class="sidebar-menu-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all shadow-sm">
                 <i class="fa-solid fa-arrow-rotate-left"></i>
                 <span>หนังสือรับส่งกลับจากฝ่ายบริหาร</span>
               </button>
@@ -435,9 +435,9 @@
                   แสดง <span id="pageStart">1</span> - <span id="pageEnd">20</span> จากทั้งหมด <span id="totalItems">0</span> รายการ
                 </div>
                 <div class="flex items-center gap-1">
-                  <button id="btnPrevPage" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-lg text-slate-600 disabled:opacity-50 transition">ก่อนหน้า</button>
+                  <button type="button" id="btnPrevPage" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-lg text-slate-600 disabled:opacity-50 transition">ก่อนหน้า</button>
                   <span id="pageNumbers" class="px-3 py-1 font-bold text-sky-700">1</span>
-                  <button id="btnNextPage" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-lg text-slate-600 disabled:opacity-50 transition">ถัดไป</button>
+                  <button type="button" id="btnNextPage" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-lg text-slate-600 disabled:opacity-50 transition">ถัดไป</button>
                 </div>
               </div>
 
@@ -453,28 +453,28 @@
     <!-- Floating Navigation Bar (แสดงเฉพาะบนมือถือ ซ่อนบนคอมพิวเตอร์ด้วย md:hidden) -->
     <div class="fixed bottom-4 left-0 right-0 z-30 px-4 max-w-md mx-auto block md:hidden">
       <nav class="floating-nav bg-white/95 backdrop-blur-xl rounded-2xl p-1.5 border-2 border-sky-200 shadow-2xl shadow-sky-300/50 flex justify-around items-center">
-        <button onclick="loadRoleDashboard()" class="flex flex-col items-center justify-center w-full py-2 text-sky-600 transition group">
+        <button type="button" onclick="loadRoleDashboard()" class="flex flex-col items-center justify-center w-full py-2 text-sky-600 transition group">
           <div class="w-9 h-7 bg-sky-100 rounded-lg flex items-center justify-center text-sky-600 font-bold shadow-sm">
             <i class="fa-solid fa-house-chimney text-sm"></i>
           </div>
           <span class="text-[10px] mt-1 font-bold">หน้าแรก</span>
         </button>
 
-        <button onclick="openRegisterModal()" class="flex flex-col items-center justify-center w-full py-2 text-slate-500 hover:text-sky-600 transition group">
+        <button type="button" onclick="openRegisterModal()" class="flex flex-col items-center justify-center w-full py-2 text-slate-500 hover:text-sky-600 transition group">
           <div class="w-9 h-7 rounded-lg flex items-center justify-center">
             <i class="fa-solid fa-circle-plus text-sm"></i>
           </div>
           <span class="text-[10px] mt-1 font-medium">ลงรับ</span>
         </button>
 
-        <button onclick="switchSarabunMenu('registered')" class="flex flex-col items-center justify-center w-full py-2 text-slate-500 hover:text-sky-600 transition group">
+        <button type="button" onclick="switchSarabunMenu('registered')" class="flex flex-col items-center justify-center w-full py-2 text-slate-500 hover:text-sky-600 transition group">
           <div class="w-9 h-7 rounded-lg flex items-center justify-center">
             <i class="fa-solid fa-receipt text-sm"></i>
           </div>
           <span class="text-[10px] mt-1 font-medium">ทะเบียน</span>
         </button>
 
-        <button onclick="logout()" class="flex flex-col items-center justify-center w-full py-2 text-rose-500 hover:text-rose-700 transition group">
+        <button type="button" onclick="logout()" class="flex flex-col items-center justify-center w-full py-2 text-rose-500 hover:text-rose-700 transition group">
           <div class="w-9 h-7 rounded-lg flex items-center justify-center">
             <i class="fa-solid fa-arrow-right-from-bracket text-sm"></i>
           </div>
@@ -495,7 +495,7 @@
       <h3 id="alertTitle" class="text-base font-bold text-slate-800 mb-1 leading-tight">แจ้งเตือน</h3>
       <p id="alertMessage" class="text-slate-600 text-xs font-normal leading-relaxed mb-6 px-2"></p>
 
-      <button onclick="closeAlertModal()" 
+      <button type="button" onclick="closeAlertModal()" 
               class="w-full py-3 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 active:scale-[0.98] text-white font-bold rounded-xl text-sm shadow-md transition duration-200">
         ตกลง
       </button>
@@ -503,521 +503,562 @@
   </div>
 
 <!-- ================= JavaScript ================= -->
-  <script>
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbxauMbrEeIaDNAN_U0DvffmUVN5vfbUqpNOpmVSPvtMZ9qbl0WfTcxB2JnvcRxkOfQm/exec"; 
-    const SCHOOL_LOGO_URL = "https://raw.githubusercontent.com/joodami/school-assets/main/logo.png";
+<script>
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbxauMbrEeIaDNAN_U0DvffmUVN5vfbUqpNOpmVSPvtMZ9qbl0WfTcxB2JnvcRxkOfQm/exec"; 
+  const SCHOOL_LOGO_URL = "https://raw.githubusercontent.com/joodami/school-assets/main/logo.png";
 
-    let currentUser = null;
-    let targetRoleGroup = 'SARABUN';
-    let currentSarabunTab = 'registered'; // 'add', 'registered', 'returned'
+  let currentUser = null;
+  let targetRoleGroup = 'SARABUN';
+  let currentSarabunTab = 'registered'; // 'add', 'registered', 'returned'
 
-    let incomingBooks = [];
-    let filteredBooks = [];
-    let currentPage = 1;
-    const pageSize = 20;
+  let incomingBooks = [];
+  let filteredBooks = [];
+  let currentPage = 1;
+  const pageSize = 20;
 
-    let cachedFontBytes = null;
+  let cachedFontBytes = null;
 
-    function warmupServer() {
-      fetch(GAS_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        body: JSON.stringify({ action: 'PING' })
-      }).catch(() => {});
-    }
+  function warmupServer() {
+    fetch(GAS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: JSON.stringify({ action: 'PING' })
+    }).catch(() => {});
+  }
 
-    document.addEventListener("DOMContentLoaded", async () => {
-      warmupServer();
+  document.addEventListener("DOMContentLoaded", async () => {
+    warmupServer();
 
-      const portalLogo = document.getElementById('portalSchoolLogo');
-      if (portalLogo) portalLogo.src = SCHOOL_LOGO_URL;
+    // Set Logos
+    const portalLogo = document.getElementById('portalSchoolLogo');
+    if (portalLogo) portalLogo.src = SCHOOL_LOGO_URL;
 
-      document.querySelectorAll('.modalSchoolLogo, .headerSchoolLogo').forEach(img => {
-        img.src = SCHOOL_LOGO_URL;
-      });
-
-      // Bind Search Event
-      const searchInput = document.getElementById('searchInput');
-      if (searchInput) {
-        searchInput.addEventListener('keyup', filterDocs);
-      }
-
-      // Bind Pagination Events
-      const btnPrev = document.getElementById('btnPrevPage');
-      const btnNext = document.getElementById('btnNextPage');
-      if (btnPrev) btnPrev.addEventListener('click', () => changePage(-1));
-      if (btnNext) btnNext.addEventListener('click', () => changePage(1));
-
-      const savedUser = localStorage.getItem('currentUser');
-      const savedRoleGroup = localStorage.getItem('targetRoleGroup');
-
-      if (savedUser) {
-        try {
-          currentUser = JSON.parse(savedUser);
-          if (savedRoleGroup) targetRoleGroup = savedRoleGroup;
-
-          document.getElementById('portalSection').classList.add('hidden');
-          document.getElementById('mainDashboard').classList.remove('hidden');
-          document.getElementById('userInfo').innerText = `${currentUser.name} • ${currentUser.position}`;
-
-          await loadDocsData();
-          loadRoleDashboard();
-        } catch (err) {
-          console.error("Restore session error:", err);
-          logout();
-        }
-      }
+    document.querySelectorAll('.modalSchoolLogo, .headerSchoolLogo').forEach(img => {
+      img.src = SCHOOL_LOGO_URL;
     });
 
-    function showAlert(message, title = 'แจ้งเตือน', type = 'error') {
-      const modal = document.getElementById('alertModal');
-      const iconContainer = document.getElementById('alertIconContainer');
-      const icon = document.getElementById('alertIcon');
-      const titleEl = document.getElementById('alertTitle');
-      const messageEl = document.getElementById('alertMessage');
-
-      if (!modal || !titleEl || !messageEl) return;
-
-      titleEl.innerText = title;
-      messageEl.innerText = message;
-
-      if (type === 'error') {
-        iconContainer.className = "w-14 h-14 bg-red-50 text-red-600 border border-red-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-sm";
-        icon.className = "fa-solid fa-triangle-exclamation";
-      } else if (type === 'success') {
-        iconContainer.className = "w-14 h-14 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-sm";
-        icon.className = "fa-solid fa-circle-check";
-      } else if (type === 'warning') {
-        iconContainer.className = "w-14 h-14 bg-amber-50 text-amber-600 border border-amber-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-sm";
-        icon.className = "fa-solid fa-circle-exclamation";
-      } else {
-        iconContainer.className = "w-14 h-14 bg-sky-100 text-[#0f2b48] border border-sky-300 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-sm";
-        icon.className = "fa-solid fa-circle-info";
-      }
-
-      modal.classList.remove('hidden');
+    // Bind Search Event (ใช้ 'input' เพื่อรองรับทั้งการพิมพ์และ Paste)
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+      searchInput.addEventListener('input', filterDocs);
     }
 
-    function closeAlertModal() {
-      const modal = document.getElementById('alertModal');
-      if (modal) modal.classList.add('hidden');
-    }
+    // Bind Pagination Events
+    const btnPrev = document.getElementById('btnPrevPage');
+    const btnNext = document.getElementById('btnNextPage');
+    if (btnPrev) btnPrev.addEventListener('click', () => changePage(-1));
+    if (btnNext) btnNext.addEventListener('click', () => changePage(1));
 
-    function switchSystemTab(roleGroup, roleTitle, headerBgClass, iconClass) {
-      const selectedInput = document.getElementById('selectedRoleGroup');
-      if (selectedInput) selectedInput.value = roleGroup;
-      targetRoleGroup = roleGroup;
+    // Restore Session
+    const savedUser = localStorage.getItem('currentUser');
+    const savedRoleGroup = localStorage.getItem('targetRoleGroup');
 
-      document.querySelectorAll('.system-tab-button').forEach(btn => {
-        btn.classList.remove('system-tab-active');
-      });
-      const activeBtn = document.getElementById('tab-' + roleGroup);
-      if (activeBtn) activeBtn.classList.add('system-tab-active');
+    if (savedUser) {
+      try {
+        currentUser = JSON.parse(savedUser);
+        if (savedRoleGroup) targetRoleGroup = savedRoleGroup;
 
-      const display = document.getElementById('activeSystemNameDisplay');
-      if (display) {
-        let cleanTitle = roleTitle.replace('ระบบ', '');
-        display.innerHTML = 'ระบบที่เลือก: <span class="text-[#0f2b48] font-black underline decoration-amber-400 underline-offset-4">' + cleanTitle + '</span>';
+        document.getElementById('portalSection')?.classList.add('hidden');
+        document.getElementById('mainDashboard')?.classList.remove('hidden');
+        
+        const userInfoEl = document.getElementById('userInfo');
+        if (userInfoEl) userInfoEl.innerText = `${currentUser.name} • ${currentUser.position}`;
+
+        await loadDocsData();
+        loadRoleDashboard();
+      } catch (err) {
+        console.error("Restore session error:", err);
+        logout();
       }
     }
+  });
 
-    async function handleLogin(e) {
-      if (e && typeof e.preventDefault === 'function') {
-        e.preventDefault();
-      }
+  function showAlert(message, title = 'แจ้งเตือน', type = 'error') {
+    const modal = document.getElementById('alertModal');
+    const iconContainer = document.getElementById('alertIconContainer');
+    const icon = document.getElementById('alertIcon');
+    const titleEl = document.getElementById('alertTitle');
+    const messageEl = document.getElementById('alertMessage');
 
-      const selectedInput = document.getElementById('selectedRoleGroup');
-      if (selectedInput && selectedInput.value) {
-        targetRoleGroup = selectedInput.value;
-      }
+    if (!modal || !titleEl || !messageEl) return;
 
-      const btn = document.getElementById('btnLogin');
+    titleEl.innerText = title;
+    messageEl.innerText = message;
+
+    if (type === 'error') {
+      iconContainer.className = "w-14 h-14 bg-red-50 text-red-600 border border-red-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-sm";
+      icon.className = "fa-solid fa-triangle-exclamation";
+    } else if (type === 'success') {
+      iconContainer.className = "w-14 h-14 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-sm";
+      icon.className = "fa-solid fa-circle-check";
+    } else if (type === 'warning') {
+      iconContainer.className = "w-14 h-14 bg-amber-50 text-amber-600 border border-amber-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-sm";
+      icon.className = "fa-solid fa-circle-exclamation";
+    } else {
+      iconContainer.className = "w-14 h-14 bg-sky-100 text-[#0f2b48] border border-sky-300 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-sm";
+      icon.className = "fa-solid fa-circle-info";
+    }
+
+    modal.classList.remove('hidden');
+  }
+
+  function closeAlertModal() {
+    const modal = document.getElementById('alertModal');
+    if (modal) modal.classList.add('hidden');
+  }
+
+  function switchSystemTab(roleGroup, roleTitle, headerBgClass, iconClass) {
+    const selectedInput = document.getElementById('selectedRoleGroup');
+    if (selectedInput) selectedInput.value = roleGroup;
+    targetRoleGroup = roleGroup;
+
+    document.querySelectorAll('.system-tab-button').forEach(btn => {
+      btn.classList.remove('system-tab-active');
+    });
+    const activeBtn = document.getElementById('tab-' + roleGroup);
+    if (activeBtn) activeBtn.classList.add('system-tab-active');
+
+    const display = document.getElementById('activeSystemNameDisplay');
+    if (display) {
+      let cleanTitle = roleTitle.replace('ระบบ', '');
+      display.innerHTML = 'ระบบที่เลือก: <span class="text-[#0f2b48] font-black underline decoration-amber-400 underline-offset-4">' + cleanTitle + '</span>';
+    }
+  }
+
+  async function handleLogin(e) {
+    if (e && typeof e.preventDefault === 'function') {
+      e.preventDefault();
+    }
+
+    const selectedInput = document.getElementById('selectedRoleGroup');
+    if (selectedInput && selectedInput.value) {
+      targetRoleGroup = selectedInput.value;
+    }
+
+    const btn = document.getElementById('btnLogin');
+    if (btn) {
       btn.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin text-xs"></i> <span>กำลังตรวจสอบ...</span>`;
       btn.disabled = true;
+    }
 
-      const payload = {
-        action: 'LOGIN',
-        data: {
-          username: document.getElementById('username').value,
-          password: document.getElementById('password').value
-        }
-      };
-
-      try {
-        const response = await fetch(GAS_URL, {
-          method: 'POST',
-          body: JSON.stringify(payload)
-        });
-
-        const res = await response.json();
-
-        if (res.success) {
-          const userRole = res.user.role;
-          let hasPermission = false;
-          
-          if (targetRoleGroup === 'SARABUN' && userRole === 'SARABUN') hasPermission = true;
-          else if (targetRoleGroup === 'EXEC' && (userRole === 'DIRECTOR' || userRole === 'VICE_DIRECTOR')) hasPermission = true;
-          else if (targetRoleGroup === 'TEACHER' && (userRole === 'TEACHER' || userRole === 'STAFF')) hasPermission = true;
-
-          if (!hasPermission) {
-            showAlert("คุณไม่มีสิทธิ์เข้าใช้งานในส่วนนี้ กรุณาเลือกระบบเข้าใช้งานให้ตรงกับสิทธิ์ของคุณ", "ไม่มีสิทธิ์เข้าถึงระบบ", "error");
-            btn.innerHTML = `<i class="fa-solid fa-right-to-bracket text-xs"></i> <span>เข้าสู่ระบบ</span>`;
-            btn.disabled = false;
-            return;
-          }
-
-          currentUser = res.user;
-          localStorage.setItem('currentUser', JSON.stringify(currentUser));
-          localStorage.setItem('targetRoleGroup', targetRoleGroup);
-
-          document.getElementById('portalSection').classList.add('hidden');
-          document.getElementById('mainDashboard').classList.remove('hidden');
-          document.getElementById('userInfo').innerText = `${currentUser.name} • ${currentUser.position}`;
-          
-          await loadDocsData();
-          loadRoleDashboard();
-        } else {
-          showAlert(res.message || "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง", "เข้าสู่ระบบไม่สำเร็จ", "error");
-        }
-      } catch (err) {
-        showAlert("ไม่สามารถเชื่อมต่อกับระบบได้ กรุณาลองใหม่อีกครั้ง", "เกิดข้อผิดพลาด", "error");
-        console.error(err);
-      } finally {
-        btn.innerHTML = `<i class="fa-solid fa-right-to-bracket text-xs"></i> <span>เข้าสู่ระบบ</span>`;
-        btn.disabled = false;
+    const payload = {
+      action: 'LOGIN',
+      data: {
+        username: document.getElementById('username')?.value || '',
+        password: document.getElementById('password')?.value || ''
       }
-    }
+    };
 
-    function parseLocalDate(dateStr) {
-      if (!dateStr) return null;
-      if (typeof dateStr === 'string' && dateStr.includes('-')) {
-        const cleanStr = dateStr.split('T')[0];
-        const parts = cleanStr.split('-');
-        if (parts.length === 3) {
-          return new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
-        }
-      }
-      const d = new Date(dateStr);
-      return isNaN(d.getTime()) ? null : d;
-    }
+    try {
+      const response = await fetch(GAS_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
 
-    function formatDisplayDate(dateStr) {
-      if (!dateStr) return '-';
-      const d = parseLocalDate(dateStr);
-      if (!d) return String(dateStr).split('T')[0];
-      const thaiMonths = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
-      return `${d.getDate()} ${thaiMonths[d.getMonth()]} ${d.getFullYear() + 543}`;
-    }
+      const res = await response.json();
 
-    async function loadDocsData() {
-      if (!currentUser) return;
-      try {
-        const payload = {
-          action: 'GET_DOCS_BY_ROLE',
-          data: {
-            role: currentUser.role,
-            userId: currentUser.userId || currentUser.username || currentUser.id || ''
-          }
-        };
-        const response = await fetch(GAS_URL, {
-          method: 'POST',
-          body: JSON.stringify(payload)
-        });
-        const res = await response.json();
+      if (res.success) {
+        const userRole = res.user.role;
+        let hasPermission = false;
         
-        if (res.success && res.docs) {
-          incomingBooks = res.docs.map(doc => ({
-            recNo: doc.receiveNo || doc.recNo || '',
-            no: doc.bookNo || doc.no || '',
-            date: doc.receiveDate || doc.date || '',
-            from: doc.fromDept || doc.from || '',
-            title: doc.title || '',
-            fileUrl: doc.fileUrl || doc.url || '',
-            status: doc.status || 'PENDING_DIRECTOR',
-            time: doc.receiveTime || doc.time || doc.receiveDate || ''
-          }));
-          filteredBooks = [...incomingBooks];
-        }
-      } catch (err) {
-        console.error("Error loading docs:", err);
-      }
-    }
+        if (targetRoleGroup === 'SARABUN' && userRole === 'SARABUN') hasPermission = true;
+        else if (targetRoleGroup === 'EXEC' && (userRole === 'DIRECTOR' || userRole === 'VICE_DIRECTOR')) hasPermission = true;
+        else if (targetRoleGroup === 'TEACHER' && (userRole === 'TEACHER' || userRole === 'STAFF')) hasPermission = true;
 
-    function loadRoleDashboard() {
-      if (currentUser.role === 'SARABUN') {
-        updateNextRecNo();
-        switchSarabunMenu('registered');
-      }
-    }
-
-    function updateNextRecNo() {
-      const maxRecNo = incomingBooks.reduce((max, b) => {
-        const num = parseInt(String(b.recNo).replace(/[^0-9]/g, ''), 10);
-        return !isNaN(num) && num > max ? num : max;
-      }, 0);
-      const nextNumber = maxRecNo + 1;
-      const el = document.getElementById('nextRegNo');
-      if (el) el.innerText = `${nextNumber}/2569`;
-    }
-
-    function switchSarabunMenu(tabName) {
-  currentSarabunTab = tabName;
-  currentPage = 1;
-  
-  // 1. จัดการสถานะปุ่ม Active ใน Sidebar
-  const btnAdd = document.getElementById('menuBtnAddBook');
-  const btnReg = document.getElementById('menuBtnRegistered');
-  const btnRet = document.getElementById('menuBtnReturned');
-
-  if (btnAdd) btnAdd.classList.remove('active', 'bg-sky-700', 'text-white');
-  if (btnReg) btnReg.classList.remove('active', 'bg-sky-700', 'text-white');
-  if (btnRet) btnRet.classList.remove('active', 'bg-sky-700', 'text-white');
-
-  // 2. ดึง Element ฟอร์มและตาราง
-  const addSection = document.getElementById('sarabunAddFormSection');
-  const tableSection = document.getElementById('sarabunTableSection');
-
-  // 3. สลับการแสดงผล
-  if (tabName === 'add') {
-    if (btnAdd) btnAdd.classList.add('active', 'bg-sky-700', 'text-white');
-    
-    // แสดงฟอร์มลงรับ ซ่อนตาราง
-    if (addSection) addSection.classList.remove('hidden');
-    if (tableSection) tableSection.classList.add('hidden');
-  } else {
-    // ซ่อนฟอร์มลงรับ แสดงตาราง
-    if (addSection) addSection.classList.add('hidden');
-    if (tableSection) tableSection.classList.remove('hidden');
-
-    if (tabName === 'registered') {
-      if (btnReg) btnReg.classList.add('active', 'bg-sky-700', 'text-white');
-      filteredBooks = incomingBooks.filter(b => b.status === 'COMPLETED' || b.status === 'REGISTERED' || b.status === 'PENDING_DIRECTOR');
-    } else if (tabName === 'returned') {
-      if (btnRet) btnRet.classList.add('active', 'bg-sky-700', 'text-white');
-      filteredBooks = incomingBooks.filter(b => b.status === 'RETURNED' || b.status === 'EXECUTED');
-    }
-    
-    // โหลดข้อมูลลงตาราง
-    renderTableData();
-  }
-}
-
-    function filterDocs() {
-      const q = (document.getElementById('searchInput')?.value || '').toLowerCase();
-      filteredBooks = incomingBooks.filter(b => 
-        (b.recNo && String(b.recNo).toLowerCase().includes(q)) ||
-        (b.no && String(b.no).toLowerCase().includes(q)) ||
-        (b.title && String(b.title).toLowerCase().includes(q)) ||
-        (b.from && String(b.from).toLowerCase().includes(q))
-      );
-      currentPage = 1;
-      renderTableData();
-    }
-
-    function renderTableData() {
-      const tableBody = document.getElementById('bookTableBody');
-      const pageStart = document.getElementById('pageStart');
-      const pageEnd = document.getElementById('pageEnd');
-      const totalItems = document.getElementById('totalItems');
-      const pageNumbers = document.getElementById('pageNumbers');
-      const btnPrev = document.getElementById('btnPrevPage');
-      const btnNext = document.getElementById('btnNextPage');
-
-      if (!tableBody) return;
-
-      const total = filteredBooks.length;
-      const totalPages = Math.ceil(total / pageSize) || 1;
-      if (currentPage > totalPages) currentPage = totalPages;
-
-      const startIdx = (currentPage - 1) * pageSize;
-      const endIdx = Math.min(startIdx + pageSize, total);
-      const pageData = filteredBooks.slice(startIdx, endIdx);
-
-      if (totalItems) totalItems.innerText = total;
-      if (pageStart) pageStart.innerText = total > 0 ? startIdx + 1 : 0;
-      if (pageEnd) pageEnd.innerText = endIdx;
-      if (pageNumbers) pageNumbers.innerText = currentPage;
-
-      if (btnPrev) btnPrev.disabled = (currentPage === 1);
-      if (btnNext) btnNext.disabled = (currentPage >= totalPages);
-
-      if (pageData.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-slate-400 font-medium">ไม่พบข้อมูลหนังสือรับในระบบ</td></tr>`;
-        return;
-      }
-
-      tableBody.innerHTML = pageData.map((b, i) => `
-        <tr class="hover:bg-sky-50/60 transition-colors">
-          <td class="py-3 px-3 text-center font-medium text-slate-500">${startIdx + i + 1}</td>
-          <td class="py-3 px-3 text-center font-bold text-amber-700">${b.recNo}/2569</td>
-          <td class="py-3 px-3 font-semibold text-slate-700">${b.no || '-'}</td>
-          <td class="py-3 px-3 font-medium text-slate-800">${b.title}</td>
-          <td class="py-3 px-3 text-slate-600">${b.from}</td>
-          <td class="py-3 px-3 text-center text-slate-500">${formatDisplayDate(b.date || b.time)}</td>
-          <td class="py-3 px-3 text-center">
-            ${b.fileUrl ? `<a href="${b.fileUrl}" target="_blank" class="px-2.5 py-1 bg-sky-100 hover:bg-sky-200 text-sky-800 font-bold rounded-lg text-[11px] transition inline-flex items-center gap-1 shadow-sm"><i class="fa-solid fa-file-pdf text-red-500"></i> เปิดดู</a>` : '-'}
-          </td>
-        </tr>
-      `).join('');
-    }
-
-    function changePage(direction) {
-      const totalPages = Math.ceil(filteredBooks.length / pageSize) || 1;
-      currentPage += direction;
-      if (currentPage < 1) currentPage = 1;
-      if (currentPage > totalPages) currentPage = totalPages;
-      renderTableData();
-    }
-
-    function openRegisterModal() {
-      switchSarabunMenu('add');
-    }
-
-    async function stampPdfOnClient(file, receiveNo, receiveDate) {
-      if (typeof PDFLib === 'undefined' || typeof fontkit === 'undefined') {
-        throw new Error("ไม่พบไลบรารี PDF-Lib หรือ fontkit");
-      }
-
-      const arrayBuffer = await file.arrayBuffer();
-      const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
-      pdfDoc.registerFontkit(fontkit);
-
-      if (!cachedFontBytes) {
-        cachedFontBytes = await fetch("https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/sarabun/Sarabun-Bold.ttf")
-          .then(res => res.arrayBuffer());
-      }
-
-      const customFont = await pdfDoc.embedFont(cachedFontBytes);
-      const toThaiNum = (str) => String(str).replace(/[0-9]/g, m => ['๐','๑','๒','๓','๔','๕','๖','๗','๘','๙'][m]);
-      const thaiMonths = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
-
-      const now = new Date();
-      let targetDate = parseLocalDate(receiveDate) || now;
-
-      const thaiDay = toThaiNum(targetDate.getDate());
-      const thaiMonth = thaiMonths[targetDate.getMonth()];
-      const thaiYear = toThaiNum(targetDate.getFullYear() + 543);
-      const formattedToday = `${thaiDay} ${thaiMonth} ${thaiYear}`;
-
-      const hh = String(now.getHours()).padStart(2, '0');
-      const mm = String(now.getMinutes()).padStart(2, '0');
-      const ss = String(now.getSeconds()).padStart(2, '0');
-      const formattedTime = toThaiNum(`${hh}:${mm}:${ss}`);
-      const thaiReceiveNo = toThaiNum(receiveNo);
-
-      const inkColor = PDFLib.rgb(0.08, 0.18, 0.52);
-      const pages = pdfDoc.getPages();
-      const firstPage = pages[0];
-      const { width, height } = firstPage.getSize();
-
-      const stampWidth = 160;
-      const stampHeight = 78;
-      const margin = 15;
-      const x = width - stampWidth - margin;
-      const y = height - stampHeight - margin;
-
-      firstPage.drawRectangle({ x, y, width: stampWidth, height: stampHeight, borderColor: inkColor, borderWidth: 1.5 });
-      firstPage.drawText("โรงเรียนพิมานพิทยาสรรค์", { x: x + 10, y: y + 58, size: 11, font: customFont, color: inkColor });
-      firstPage.drawText("รับที่", { x: x + 10, y: y + 40, size: 10, font: customFont, color: inkColor });
-      firstPage.drawText(thaiReceiveNo, { x: x + 36, y: y + 41, size: 10, font: customFont, color: inkColor });
-      firstPage.drawText("วันที่", { x: x + 10, y: y + 23, size: 10, font: customFont, color: inkColor });
-      firstPage.drawText(formattedToday, { x: x + 36, y: y + 24, size: 10, font: customFont, color: inkColor });
-      firstPage.drawText("เวลา", { x: x + 10, y: y + 6, size: 10, font: customFont, color: inkColor });
-      firstPage.drawText(formattedTime, { x: x + 36, y: y + 7, size: 10, font: customFont, color: inkColor });
-
-      const stampedPdfBytes = await pdfDoc.save();
-      let binary = '';
-      const bytes = new Uint8Array(stampedPdfBytes);
-      const chunkSize = 0x8000;
-      for (let i = 0; i < bytes.length; i += chunkSize) {
-        binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize));
-      }
-      return 'data:application/pdf;base64,' + btoa(binary);
-    }
-
-    async function handleRegisterBook(e) {
-      if (e && typeof e.preventDefault === 'function') e.preventDefault();
-      
-      const btn = document.getElementById('btnSubmitBook');
-      if (btn) {
-        btn.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin"></i> กำลังประทับตราและบันทึก...`;
-        btn.disabled = true;
-      }
-
-      try {
-        const fileInput = document.getElementById('bookPdf');
-        if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
-          showAlert("กรุณาเลือกไฟล์ PDF หนังสือเข้า", "แจ้งเตือน", "warning");
+        if (!hasPermission) {
+          showAlert("คุณไม่มีสิทธิ์เข้าใช้งานในส่วนนี้ กรุณาเลือกระบบเข้าใช้งานให้ตรงกับสิทธิ์ของคุณ", "ไม่มีสิทธิ์เข้าถึงระบบ", "error");
           if (btn) {
-            btn.innerHTML = `<i class="fa-solid fa-stamp"></i> <span>ลงรับและประทับตราหนังสือ</span>`;
+            btn.innerHTML = `<i class="fa-solid fa-right-to-bracket text-xs"></i> <span>เข้าสู่ระบบ</span>`;
             btn.disabled = false;
           }
           return;
         }
 
-        const file = fileInput.files[0];
-        const recNo = document.getElementById('bookRecNo').value;
-        const bookNo = document.getElementById('bookNo').value;
-        const bookDate = document.getElementById('bookDate').value;
-        const receiveDate = document.getElementById('receiveDateInput').value;
-        const bookFrom = document.getElementById('bookFrom').value;
-        const bookTitle = document.getElementById('bookTitle').value;
+        currentUser = res.user;
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        localStorage.setItem('targetRoleGroup', targetRoleGroup);
 
-        // ประทับตรา PDF บนฝั่ง Client
-        const stampedBase64 = await stampPdfOnClient(file, recNo, receiveDate);
+        document.getElementById('portalSection')?.classList.add('hidden');
+        document.getElementById('mainDashboard')?.classList.remove('hidden');
+        
+        const userInfoEl = document.getElementById('userInfo');
+        if (userInfoEl) userInfoEl.innerText = `${currentUser.name} • ${currentUser.position}`;
+        
+        await loadDocsData();
+        loadRoleDashboard();
+      } else {
+        showAlert(res.message || "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง", "เข้าสู่ระบบไม่สำเร็จ", "error");
+      }
+    } catch (err) {
+      showAlert("ไม่สามารถเชื่อมต่อกับระบบได้ กรุณาลองใหม่อีกครั้ง", "เกิดข้อผิดพลาด", "error");
+      console.error(err);
+    } finally {
+      if (btn) {
+        btn.innerHTML = `<i class="fa-solid fa-right-to-bracket text-xs"></i> <span>เข้าสู่ระบบ</span>`;
+        btn.disabled = false;
+      }
+    }
+  }
 
-        const payload = {
-          action: 'SAVE_NEW_DOC',
-          data: {
-            receiveNo: recNo,
-            bookNo: bookNo,
-            receiveDate: receiveDate,
-            bookDate: bookDate,
-            fromDept: bookFrom,
-            title: bookTitle,
-            fileData: stampedBase64
-          }
-        };
+  function parseLocalDate(dateStr) {
+    if (!dateStr) return null;
+    if (typeof dateStr === 'string' && dateStr.includes('-')) {
+      const cleanStr = dateStr.split('T')[0];
+      const parts = cleanStr.split('-');
+      if (parts.length === 3) {
+        return new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+      }
+    }
+    const d = new Date(dateStr);
+    return isNaN(d.getTime()) ? null : d;
+  }
 
-        const response = await fetch(GAS_URL, {
-          method: 'POST',
-          body: JSON.stringify(payload)
-        });
+  function formatDisplayDate(dateStr) {
+    if (!dateStr) return '-';
+    const d = parseLocalDate(dateStr);
+    if (!d) return String(dateStr).split('T')[0];
+    const thaiMonths = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+    return `${d.getDate()} ${thaiMonths[d.getMonth()]} ${d.getFullYear() + 543}`;
+  }
 
-        const res = await response.json();
-
-        if (res.success) {
-          const form = document.getElementById('sarabunRegisterForm');
-          if (form) form.reset();
-          
-          await loadDocsData();
-          updateNextRecNo();
-          switchSarabunMenu('registered');
-          showAlert(`ลงรับหนังสือเลขที่ ${recNo}/2569 และประทับตราเรียบร้อยแล้ว`, "ลงรับสำเร็จ", "success");
-        } else {
-          showAlert(res.message || "เกิดข้อผิดพลาดในการบันทึกข้อมูล", "บันทึกไม่สำเร็จ", "error");
+  async function loadDocsData() {
+    if (!currentUser) return;
+    try {
+      const payload = {
+        action: 'GET_DOCS_BY_ROLE',
+        data: {
+          role: currentUser.role,
+          userId: currentUser.userId || currentUser.username || currentUser.id || ''
         }
-      } catch (err) {
-        console.error(err);
-        showAlert("เกิดข้อผิดพลาด: " + err.message, "เกิดข้อผิดพลาด", "error");
-      } finally {
+      };
+      const response = await fetch(GAS_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+      const res = await response.json();
+      
+      if (res.success && res.docs) {
+        incomingBooks = res.docs.map(doc => ({
+          recNo: doc.receiveNo || doc.recNo || '',
+          no: doc.bookNo || doc.no || '',
+          date: doc.receiveDate || doc.date || '',
+          from: doc.fromDept || doc.from || '',
+          title: doc.title || '',
+          fileUrl: doc.fileUrl || doc.url || '',
+          status: doc.status || 'PENDING_DIRECTOR',
+          time: doc.receiveTime || doc.time || doc.receiveDate || ''
+        }));
+      } else {
+        incomingBooks = [];
+      }
+    } catch (err) {
+      console.error("Error loading docs:", err);
+      incomingBooks = [];
+    }
+  }
+
+  function loadRoleDashboard() {
+    if (currentUser && currentUser.role === 'SARABUN') {
+      updateNextRecNo();
+      switchSarabunMenu('registered');
+    }
+  }
+
+  function updateNextRecNo() {
+    const maxRecNo = incomingBooks.reduce((max, b) => {
+      const num = parseInt(String(b.recNo).replace(/[^0-9]/g, ''), 10);
+      return !isNaN(num) && num > max ? num : max;
+    }, 0);
+    const nextNumber = maxRecNo + 1;
+    
+    // อัปเดตข้อความแสดงเลขรับถัดไป
+    const el = document.getElementById('nextRegNo');
+    if (el) el.innerText = `${nextNumber}/2569`;
+
+    // อัปเดตค่าลงในช่อง Input ของฟอร์มลงรับให้อัตโนมัติ
+    const recInput = document.getElementById('bookRecNo');
+    if (recInput) recInput.value = nextNumber;
+  }
+
+  function switchSarabunMenu(tabName) {
+    currentSarabunTab = tabName;
+    currentPage = 1;
+    
+    // 1. จัดการสถานะปุ่ม Active ใน Sidebar
+    const btnAdd = document.getElementById('menuBtnAddBook');
+    const btnReg = document.getElementById('menuBtnRegistered');
+    const btnRet = document.getElementById('menuBtnReturned');
+
+    [btnAdd, btnReg, btnRet].forEach(btn => {
+      if (btn) btn.classList.remove('active', 'bg-sky-700', 'text-white');
+    });
+
+    // 2. ดึง Element ฟอร์มและตาราง
+    const addSection = document.getElementById('sarabunAddFormSection');
+    const tableSection = document.getElementById('sarabunTableSection');
+
+    // 3. สลับการแสดงผล
+    if (tabName === 'add') {
+      if (btnAdd) btnAdd.classList.add('active', 'bg-sky-700', 'text-white');
+      
+      if (addSection) addSection.classList.remove('hidden');
+      if (tableSection) tableSection.classList.add('hidden');
+
+      // เติมค่าตั้งต้นให้อัตโนมัติ (วันที่ปัจจุบัน และ เลขรับถัดไป)
+      const receiveDateInput = document.getElementById('receiveDateInput');
+      if (receiveDateInput && !receiveDateInput.value) {
+        const today = new Date().toISOString().split('T')[0];
+        receiveDateInput.value = today;
+      }
+      updateNextRecNo();
+    } else {
+      if (addSection) addSection.classList.add('hidden');
+      if (tableSection) tableSection.classList.remove('hidden');
+
+      if (tabName === 'registered' && btnReg) {
+        btnReg.classList.add('active', 'bg-sky-700', 'text-white');
+      } else if (tabName === 'returned' && btnRet) {
+        btnRet.classList.add('active', 'bg-sky-700', 'text-white');
+      }
+      
+      // กรองข้อมูลและแสดงผลตารางตาม Tab และคำค้นหา
+      filterDocs();
+    }
+  }
+
+  function filterDocs() {
+    const q = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
+
+    // 1. กรองตาม Tab ปัจจุบัน
+    let baseList = [];
+    if (currentSarabunTab === 'registered') {
+      baseList = incomingBooks.filter(b => b.status === 'COMPLETED' || b.status === 'REGISTERED' || b.status === 'PENDING_DIRECTOR');
+    } else if (currentSarabunTab === 'returned') {
+      baseList = incomingBooks.filter(b => b.status === 'RETURNED' || b.status === 'EXECUTED');
+    } else {
+      baseList = [...incomingBooks];
+    }
+
+    // 2. กรองตามคำค้นหา
+    if (q) {
+      filteredBooks = baseList.filter(b => 
+        (b.recNo && String(b.recNo).toLowerCase().includes(q)) ||
+        (b.no && String(b.no).toLowerCase().includes(q)) ||
+        (b.title && String(b.title).toLowerCase().includes(q)) ||
+        (b.from && String(b.from).toLowerCase().includes(q))
+      );
+    } else {
+      filteredBooks = baseList;
+    }
+
+    currentPage = 1;
+    renderTableData();
+  }
+
+  function renderTableData() {
+    const tableBody = document.getElementById('bookTableBody');
+    const pageStart = document.getElementById('pageStart');
+    const pageEnd = document.getElementById('pageEnd');
+    const totalItems = document.getElementById('totalItems');
+    const pageNumbers = document.getElementById('pageNumbers');
+    const btnPrev = document.getElementById('btnPrevPage');
+    const btnNext = document.getElementById('btnNextPage');
+
+    if (!tableBody) return;
+
+    const total = filteredBooks.length;
+    const totalPages = Math.ceil(total / pageSize) || 1;
+    if (currentPage > totalPages) currentPage = totalPages;
+
+    const startIdx = (currentPage - 1) * pageSize;
+    const endIdx = Math.min(startIdx + pageSize, total);
+    const pageData = filteredBooks.slice(startIdx, endIdx);
+
+    if (totalItems) totalItems.innerText = total;
+    if (pageStart) pageStart.innerText = total > 0 ? startIdx + 1 : 0;
+    if (pageEnd) pageEnd.innerText = endIdx;
+    if (pageNumbers) pageNumbers.innerText = currentPage;
+
+    if (btnPrev) btnPrev.disabled = (currentPage === 1);
+    if (btnNext) btnNext.disabled = (currentPage >= totalPages);
+
+    if (pageData.length === 0) {
+      tableBody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-slate-400 font-medium">ไม่พบข้อมูลหนังสือรับในระบบ</td></tr>`;
+      return;
+    }
+
+    tableBody.innerHTML = pageData.map((b, i) => `
+      <tr class="hover:bg-sky-50/60 transition-colors">
+        <td class="py-3 px-3 text-center font-medium text-slate-500">${startIdx + i + 1}</td>
+        <td class="py-3 px-3 text-center font-bold text-amber-700">${b.recNo}/2569</td>
+        <td class="py-3 px-3 font-semibold text-slate-700">${b.no || '-'}</td>
+        <td class="py-3 px-3 font-medium text-slate-800">${b.title}</td>
+        <td class="py-3 px-3 text-slate-600">${b.from}</td>
+        <td class="py-3 px-3 text-center text-slate-500">${formatDisplayDate(b.date || b.time)}</td>
+        <td class="py-3 px-3 text-center">
+          ${b.fileUrl ? `<a href="${b.fileUrl}" target="_blank" class="px-2.5 py-1 bg-sky-100 hover:bg-sky-200 text-sky-800 font-bold rounded-lg text-[11px] transition inline-flex items-center gap-1 shadow-sm"><i class="fa-solid fa-file-pdf text-red-500"></i> เปิดดู</a>` : '-'}
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  function changePage(direction) {
+    const totalPages = Math.ceil(filteredBooks.length / pageSize) || 1;
+    currentPage += direction;
+    if (currentPage < 1) currentPage = 1;
+    if (currentPage > totalPages) currentPage = totalPages;
+    renderTableData();
+  }
+
+  function openRegisterModal() {
+    switchSarabunMenu('add');
+  }
+
+  async function stampPdfOnClient(file, receiveNo, receiveDate) {
+    if (typeof PDFLib === 'undefined' || typeof fontkit === 'undefined') {
+      throw new Error("ไม่พบไลบรารี PDF-Lib หรือ fontkit");
+    }
+
+    const arrayBuffer = await file.arrayBuffer();
+    const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
+    pdfDoc.registerFontkit(fontkit);
+
+    if (!cachedFontBytes) {
+      cachedFontBytes = await fetch("https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/sarabun/Sarabun-Bold.ttf")
+        .then(res => res.arrayBuffer());
+    }
+
+    const customFont = await pdfDoc.embedFont(cachedFontBytes);
+    const toThaiNum = (str) => String(str).replace(/[0-9]/g, m => ['๐','๑','๒','๓','๔','๕','๖','๗','๘','๙'][m]);
+    const thaiMonths = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+
+    const now = new Date();
+    let targetDate = parseLocalDate(receiveDate) || now;
+
+    const thaiDay = toThaiNum(targetDate.getDate());
+    const thaiMonth = thaiMonths[targetDate.getMonth()];
+    const thaiYear = toThaiNum(targetDate.getFullYear() + 543);
+    const formattedToday = `${thaiDay} ${thaiMonth} ${thaiYear}`;
+
+    const hh = String(now.getHours()).padStart(2, '0');
+    const mm = String(now.getMinutes()).padStart(2, '0');
+    const ss = String(now.getSeconds()).padStart(2, '0');
+    const formattedTime = toThaiNum(`${hh}:${mm}:${ss}`);
+    const thaiReceiveNo = toThaiNum(receiveNo);
+
+    const inkColor = PDFLib.rgb(0.08, 0.18, 0.52);
+    const pages = pdfDoc.getPages();
+    const firstPage = pages[0];
+    const { width, height } = firstPage.getSize();
+
+    const stampWidth = 160;
+    const stampHeight = 78;
+    const margin = 15;
+    const x = width - stampWidth - margin;
+    const y = height - stampHeight - margin;
+
+    firstPage.drawRectangle({ x, y, width: stampWidth, height: stampHeight, borderColor: inkColor, borderWidth: 1.5 });
+    firstPage.drawText("โรงเรียนพิมานพิทยาสรรค์", { x: x + 10, y: y + 58, size: 11, font: customFont, color: inkColor });
+    firstPage.drawText("รับที่", { x: x + 10, y: y + 40, size: 10, font: customFont, color: inkColor });
+    firstPage.drawText(thaiReceiveNo, { x: x + 36, y: y + 41, size: 10, font: customFont, color: inkColor });
+    firstPage.drawText("วันที่", { x: x + 10, y: y + 23, size: 10, font: customFont, color: inkColor });
+    firstPage.drawText(formattedToday, { x: x + 36, y: y + 24, size: 10, font: customFont, color: inkColor });
+    firstPage.drawText("เวลา", { x: x + 10, y: y + 6, size: 10, font: customFont, color: inkColor });
+    firstPage.drawText(formattedTime, { x: x + 36, y: y + 7, size: 10, font: customFont, color: inkColor });
+
+    const stampedPdfBytes = await pdfDoc.save();
+    let binary = '';
+    const bytes = new Uint8Array(stampedPdfBytes);
+    const chunkSize = 0x8000;
+    for (let i = 0; i < bytes.length; i += chunkSize) {
+      binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize));
+    }
+    return 'data:application/pdf;base64,' + btoa(binary);
+  }
+
+  async function handleRegisterBook(e) {
+    if (e && typeof e.preventDefault === 'function') e.preventDefault();
+    
+    const btn = document.getElementById('btnSubmitBook');
+    if (btn) {
+      btn.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin"></i> กำลังประทับตราและบันทึก...`;
+      btn.disabled = true;
+    }
+
+    try {
+      const fileInput = document.getElementById('bookPdf');
+      if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+        showAlert("กรุณาเลือกไฟล์ PDF หนังสือเข้า", "แจ้งเตือน", "warning");
         if (btn) {
           btn.innerHTML = `<i class="fa-solid fa-stamp"></i> <span>ลงรับและประทับตราหนังสือ</span>`;
           btn.disabled = false;
         }
+        return;
+      }
+
+      const file = fileInput.files[0];
+      const recNo = document.getElementById('bookRecNo')?.value || '';
+      const bookNo = document.getElementById('bookNo')?.value || '';
+      const bookDate = document.getElementById('bookDate')?.value || '';
+      const receiveDate = document.getElementById('receiveDateInput')?.value || '';
+      const bookFrom = document.getElementById('bookFrom')?.value || '';
+      const bookTitle = document.getElementById('bookTitle')?.value || '';
+
+      // ประทับตรา PDF บนฝั่ง Client
+      const stampedBase64 = await stampPdfOnClient(file, recNo, receiveDate);
+
+      const payload = {
+        action: 'SAVE_NEW_DOC',
+        data: {
+          receiveNo: recNo,
+          bookNo: bookNo,
+          receiveDate: receiveDate,
+          bookDate: bookDate,
+          fromDept: bookFrom,
+          title: bookTitle,
+          fileData: stampedBase64
+        }
+      };
+
+      const response = await fetch(GAS_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+
+      const res = await response.json();
+
+      if (res.success) {
+        const form = document.getElementById('sarabunRegisterForm');
+        if (form) form.reset();
+        
+        await loadDocsData();
+        updateNextRecNo();
+        switchSarabunMenu('registered');
+        showAlert(`ลงรับหนังสือเลขที่ ${recNo}/2569 และประทับตราเรียบร้อยแล้ว`, "ลงรับสำเร็จ", "success");
+      } else {
+        showAlert(res.message || "เกิดข้อผิดพลาดในการบันทึกข้อมูล", "บันทึกไม่สำเร็จ", "error");
+      }
+    } catch (err) {
+      console.error(err);
+      showAlert("เกิดข้อผิดพลาด: " + err.message, "เกิดข้อผิดพลาด", "error");
+    } finally {
+      if (btn) {
+        btn.innerHTML = `<i class="fa-solid fa-stamp"></i> <span>ลงรับและประทับตราหนังสือ</span>`;
+        btn.disabled = false;
       }
     }
-    
-    function logout() {
-      currentUser = null;
-      targetRoleGroup = 'SARABUN';
-      localStorage.removeItem('currentUser');
-      localStorage.removeItem('targetRoleGroup');
+  }
+  
+  function logout() {
+    currentUser = null;
+    targetRoleGroup = 'SARABUN';
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('targetRoleGroup');
 
-      document.getElementById('mainDashboard').classList.add('hidden');
-      document.getElementById('portalSection').classList.remove('hidden');
-    }
-  </script>
+    document.getElementById('mainDashboard')?.classList.add('hidden');
+    document.getElementById('portalSection')?.classList.remove('hidden');
+  }
+</script>
   
 </body>
 </html>
