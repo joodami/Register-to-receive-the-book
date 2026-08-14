@@ -135,7 +135,7 @@
 
       </div>
 
-      <!-- Action Cards (เพิ่มภาพกราฟิกสวยๆ ประจำการ์ด) -->
+      <!-- Action Cards (ใช้ SVG Graphics แท้ 100% เพื่อให้แสดงผลแน่นอน) -->
       <div class="w-full grid grid-cols-3 md:grid-cols-3 gap-3 md:gap-6 my-auto">
         
         <!-- Card 1: งานสารบรรณโรงเรียน -->
@@ -144,13 +144,15 @@
           
           <div class="absolute top-0 left-0 right-0 h-1.5 bg-sky-500 group-hover:h-2 transition-all"></div>
 
-          <!-- รูปภาพกราฟิกบนการ์ด (3D Folder Graphic) -->
+          <!-- SVG Graphic 1: Folder/Document -->
           <div class="w-full flex items-center justify-center md:justify-between pt-1">
-            <div class="relative w-14 h-14 md:w-20 md:h-20 flex items-center justify-center">
-              <div class="absolute inset-0 bg-sky-400/20 rounded-full blur-md group-hover:bg-sky-400/40 transition-all"></div>
-              <img src="https://cdni.iconscout.com/illustration/premium/thumb/folder-management-5381831-4501254.png?f=webp" 
-                   alt="สารบรรณ" 
-                   class="w-full h-full object-contain relative z-10 filter drop-shadow-md group-hover:scale-110 transition-transform duration-300">
+            <div class="relative w-12 h-12 md:w-20 md:h-20 flex items-center justify-center bg-sky-100/70 rounded-2xl p-2.5 group-hover:bg-sky-200/80 transition-colors shadow-inner">
+              <svg class="w-full h-full text-sky-600 drop-shadow group-hover:scale-110 transition-transform duration-300" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 16C8 12.6863 10.6863 10 14 10H24L30 18H50C53.3137 18 56 20.6863 56 24V48C56 51.3137 53.3137 54 50 54H14C10.6863 54 8 51.3137 8 48V16Z" fill="#38BDF8"/>
+                <path d="M12 22C12 18.6863 14.6863 16 18 16H46C49.3137 16 52 18.6863 52 22V48C52 51.3137 49.3137 54 46 54H18C14.6863 54 12 51.3137 12 48V22Z" fill="#0284C7"/>
+                <rect x="20" y="26" width="24" height="4" rx="2" fill="white"/>
+                <rect x="20" y="34" width="16" height="4" rx="2" fill="white"/>
+              </svg>
             </div>
             <span class="hidden md:inline-block text-[10px] font-bold px-3 py-1 bg-sky-100 text-sky-800 rounded-full border border-sky-300">
               Admin
@@ -176,13 +178,16 @@
           
           <div class="absolute top-0 left-0 right-0 h-1.5 bg-blue-600 group-hover:h-2 transition-all"></div>
 
-          <!-- รูปภาพกราฟิกบนการ์ด (3D Executive Graphic) -->
+          <!-- SVG Graphic 2: Executive Approval Stamp -->
           <div class="w-full flex items-center justify-center md:justify-between pt-1">
-            <div class="relative w-14 h-14 md:w-20 md:h-20 flex items-center justify-center">
-              <div class="absolute inset-0 bg-blue-400/20 rounded-full blur-md group-hover:bg-blue-400/40 transition-all"></div>
-              <img src="https://cdni.iconscout.com/illustration/premium/thumb/approved-document-4439062-3685089.png?f=webp" 
-                   alt="ฝ่ายบริหาร" 
-                   class="w-full h-full object-contain relative z-10 filter drop-shadow-md group-hover:scale-110 transition-transform duration-300">
+            <div class="relative w-12 h-12 md:w-20 md:h-20 flex items-center justify-center bg-blue-100/70 rounded-2xl p-2.5 group-hover:bg-blue-200/80 transition-colors shadow-inner">
+              <svg class="w-full h-full text-blue-600 drop-shadow group-hover:scale-110 transition-transform duration-300" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="14" y="8" width="36" height="48" rx="6" fill="#60A5FA"/>
+                <rect x="18" y="12" width="28" height="40" rx="4" fill="white"/>
+                <path d="M22 20H42M22 28H36" stroke="#93C5FD" stroke-width="3" stroke-linecap="round"/>
+                <circle cx="38" cy="40" r="10" fill="#2563EB"/>
+                <path d="M33 40L36.5 43.5L43 37" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
             </div>
             <span class="hidden md:inline-block text-[10px] font-bold px-3 py-1 bg-blue-100 text-blue-800 rounded-full border border-blue-300">
               Executive
@@ -208,13 +213,19 @@
           
           <div class="absolute top-0 left-0 right-0 h-1.5 bg-sky-600 group-hover:h-2 transition-all"></div>
 
-          <!-- รูปภาพกราฟิกบนการ์ด (3D Teacher/Staff Graphic) -->
+          <!-- SVG Graphic 3: Checklist / Task -->
           <div class="w-full flex items-center justify-center md:justify-between pt-1">
-            <div class="relative w-14 h-14 md:w-20 md:h-20 flex items-center justify-center">
-              <div class="absolute inset-0 bg-cyan-400/20 rounded-full blur-md group-hover:bg-cyan-400/40 transition-all"></div>
-              <img src="https://cdni.iconscout.com/illustration/premium/thumb/task-management-4439066-3685093.png?f=webp" 
-                   alt="ครูและบุคลากร" 
-                   class="w-full h-full object-contain relative z-10 filter drop-shadow-md group-hover:scale-110 transition-transform duration-300">
+            <div class="relative w-12 h-12 md:w-20 md:h-20 flex items-center justify-center bg-cyan-100/70 rounded-2xl p-2.5 group-hover:bg-cyan-200/80 transition-colors shadow-inner">
+              <svg class="w-full h-full text-cyan-600 drop-shadow group-hover:scale-110 transition-transform duration-300" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="12" y="10" width="40" height="46" rx="6" fill="#38BDF8"/>
+                <rect x="16" y="14" width="32" height="38" rx="4" fill="white"/>
+                <circle cx="23" cy="24" r="3" fill="#0284C7"/>
+                <rect x="30" y="22" width="14" height="4" rx="2" fill="#0284C7"/>
+                <circle cx="23" cy="34" r="3" fill="#0284C7"/>
+                <rect x="30" y="32" width="14" height="4" rx="2" fill="#0284C7"/>
+                <circle cx="23" cy="44" r="3" fill="#0284C7"/>
+                <rect x="30" y="42" width="14" height="4" rx="2" fill="#0284C7"/>
+              </svg>
             </div>
             <span class="hidden md:inline-block text-[10px] font-bold px-3 py-1 bg-sky-100 text-sky-800 rounded-full border border-sky-300">
               Staff
