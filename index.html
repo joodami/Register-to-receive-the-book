@@ -819,7 +819,7 @@
       const firstPage = pages[0];
       const { width, height } = firstPage.getSize();
 
-      const stampWidth = 175;
+      const stampWidth = 165;
       const stampHeight = 78;
       const margin = 15;
       const x = width - stampWidth - margin;
@@ -847,7 +847,7 @@
       firstPage.drawText("รับที่", { x: x + 10, y: y + 40, size: 10, font: customFont, color: inkColor });
       firstPage.drawLine({
         start: { x: lineStartX, y: y + 40 },
-        end: { x: x + 165, y: y + 40 },
+        end: { x: x + 165, y: y + 35 },
         thickness: 0.8, color: inkColor, dashArray: [1, 2]
       });
       firstPage.drawText(thaiReceiveNo, { x: textStartX, y: y + 41, size: 10, font: customFont, color: inkColor });
