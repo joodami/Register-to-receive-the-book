@@ -276,26 +276,23 @@
               <i class="fa-solid fa-bars text-sky-600"></i>
               <span>เมนูสารบรรณ</span>
             </div>
-            <div class="space-y-1">
-              <button type="button" id="menuBtnAddBook" onclick="switchSarabunMenu('add')" 
-                      class="sidebar-menu-btn w-full text-left px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-sky-50 flex items-center gap-2.5 transition">
-                <i class="fa-solid fa-folder-plus text-sky-600 text-sm"></i>
-                <span>นำหนังสือรับเข้าแฟ้ม</span>
-              </button>
+            <!-- ฝั่ง Sidebar Menu -->
+<div class="space-y-1">
+  <button type="button" id="menuBtnAddBook" onclick="switchSarabunMenu('add')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all shadow-sm active">
+    <i class="fa-solid fa-file-circle-plus"></i>
+    <span>นำหนังสือรับเข้าแฟ้ม</span>
+  </button>
 
-              <button type="button" id="menuBtnRegistered" onclick="switchSarabunMenu('registered')" 
-                      class="sidebar-menu-btn active w-full text-left px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-sky-50 flex items-center gap-2.5 transition">
-                <i class="fa-solid fa-receipt text-sky-600 text-sm"></i>
-                <span>หนังสือรับที่ลงทะเบียนแล้ว</span>
-              </button>
+  <button type="button" id="menuBtnRegistered" onclick="switchSarabunMenu('registered')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all shadow-sm">
+    <i class="fa-solid fa-list-check"></i>
+    <span>หนังสือรับที่ลงทะเบียนแล้ว</span>
+  </button>
 
-              <button type="button" id="menuBtnReturned" onclick="switchSarabunMenu('returned')" 
-                      class="sidebar-menu-btn w-full text-left px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-sky-50 flex items-center gap-2.5 transition">
-                <i class="fa-solid fa-reply-all text-sky-600 text-sm"></i>
-                <span>หนังสือส่งกลับจากฝ่ายบริหาร</span>
-              </button>
-            </div>
-          </div>
+  <button type="button" id="menuBtnReturned" onclick="switchSarabunMenu('returned')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all shadow-sm">
+    <i class="fa-solid fa-arrow-rotate-left"></i>
+    <span>หนังสือรับส่งกลับจากฝ่ายบริหาร</span>
+  </button>
+</div>
 
           <!-- ฝั่งขวา: ส่วนแสดงผลเนื้อหา (Content Container) -->
           <div class="md:col-span-9 lg:col-span-10 space-y-4">
@@ -682,38 +679,46 @@
     }
 
     function switchSarabunMenu(tabName) {
-      currentSarabunTab = tabName;
-      currentPage = 1;
-      
-      const btnAdd = document.getElementById('menuBtnAddBook');
-      const btnReg = document.getElementById('menuBtnRegistered');
-      const btnRet = document.getElementById('menuBtnReturned');
+  currentSarabunTab = tabName;
+  currentPage = 1;
+  
+  // 1. จัดการสถานะปุ่ม Active ใน Sidebar
+  const btnAdd = document.getElementById('menuBtnAddBook');
+  const btnReg = document.getElementById('menuBtnRegistered');
+  const btnRet = document.getElementById('menuBtnReturned');
 
-      if (btnAdd) btnAdd.classList.remove('active');
-      if (btnReg) btnReg.classList.remove('active');
-      if (btnRet) btnRet.classList.remove('active');
+  if (btnAdd) btnAdd.classList.remove('active', 'bg-sky-700', 'text-white');
+  if (btnReg) btnReg.classList.remove('active', 'bg-sky-700', 'text-white');
+  if (btnRet) btnRet.classList.remove('active', 'bg-sky-700', 'text-white');
 
-      const addSection = document.getElementById('sarabunAddFormSection');
-      const tableSection = document.getElementById('sarabunTableSection');
+  // 2. ดึง Element ฟอร์มและตาราง
+  const addSection = document.getElementById('sarabunAddFormSection');
+  const tableSection = document.getElementById('sarabunTableSection');
 
-      if (tabName === 'add') {
-        if (btnAdd) btnAdd.classList.add('active');
-        if (addSection) addSection.classList.remove('hidden');
-        if (tableSection) tableSection.classList.add('hidden');
-      } else {
-        if (addSection) addSection.classList.add('hidden');
-        if (tableSection) tableSection.classList.remove('hidden');
+  // 3. สลับการแสดงผล
+  if (tabName === 'add') {
+    if (btnAdd) btnAdd.classList.add('active', 'bg-sky-700', 'text-white');
+    
+    // แสดงฟอร์มลงรับ ซ่อนตาราง
+    if (addSection) addSection.classList.remove('hidden');
+    if (tableSection) tableSection.classList.add('hidden');
+  } else {
+    // ซ่อนฟอร์มลงรับ แสดงตาราง
+    if (addSection) addSection.classList.add('hidden');
+    if (tableSection) tableSection.classList.remove('hidden');
 
-        if (tabName === 'registered') {
-          if (btnReg) btnReg.classList.add('active');
-          filteredBooks = incomingBooks.filter(b => b.status === 'COMPLETED' || b.status === 'REGISTERED' || b.status === 'PENDING_DIRECTOR');
-        } else if (tabName === 'returned') {
-          if (btnRet) btnRet.classList.add('active');
-          filteredBooks = incomingBooks.filter(b => b.status === 'RETURNED' || b.status === 'EXECUTED');
-        }
-        renderTableData();
-      }
+    if (tabName === 'registered') {
+      if (btnReg) btnReg.classList.add('active', 'bg-sky-700', 'text-white');
+      filteredBooks = incomingBooks.filter(b => b.status === 'COMPLETED' || b.status === 'REGISTERED' || b.status === 'PENDING_DIRECTOR');
+    } else if (tabName === 'returned') {
+      if (btnRet) btnRet.classList.add('active', 'bg-sky-700', 'text-white');
+      filteredBooks = incomingBooks.filter(b => b.status === 'RETURNED' || b.status === 'EXECUTED');
     }
+    
+    // โหลดข้อมูลลงตาราง
+    renderTableData();
+  }
+}
 
     function filterDocs() {
       const q = (document.getElementById('searchInput')?.value || '').toLowerCase();
