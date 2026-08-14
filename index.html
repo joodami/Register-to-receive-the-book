@@ -74,25 +74,31 @@
     
     <div class="container mx-auto px-4 pt-safe py-6 flex-grow flex flex-col justify-between items-center max-w-md md:max-w-5xl">
       
-      <!-- App Bar / Header Card -->
-      <div class="w-full text-center mt-1 mb-4 md:mb-6 rounded-3xl bg-white border-2 border-sky-300/80 p-5 md:p-8 shadow-xl shadow-sky-200/60 relative overflow-hidden transition-all">
+      <!-- App Bar / Header Card (ปรับปรุง: ใส่พื้นหลังสีน้ำเงินเข้ม ลายรัศมีเรืองแสง ขอบชัด) -->
+      <div class="w-full text-center mt-1 mb-4 md:mb-6 rounded-3xl bg-gradient-to-br from-[#0c2340] via-[#0f2b48] to-[#1e3a8a] border-2 border-sky-400/80 p-5 md:p-8 shadow-2xl shadow-sky-900/40 relative overflow-hidden transition-all text-white">
         
-        <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-sky-400 via-blue-500 to-sky-400"></div>
+        <!-- แถบแสงไล่เฉดสีฟ้าด้านบน -->
+        <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-sky-300 via-cyan-400 to-blue-400"></div>
 
-        <svg class="absolute -right-10 -bottom-10 w-48 h-48 text-sky-100/70 pointer-events-none z-0" fill="currentColor" viewBox="0 0 200 200">
+        <!-- Pattern Background: Radial Glow & Grid Overlay -->
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-sky-400/20 via-transparent to-transparent pointer-events-none"></div>
+        <div class="absolute inset-0 bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none"></div>
+
+        <!-- Graphic SVG Shape Background -->
+        <svg class="absolute -right-10 -bottom-10 w-56 h-56 text-sky-400/10 pointer-events-none z-0" fill="currentColor" viewBox="0 0 200 200">
           <path d="M44.7,-76.4C58.8,-69.2,71.8,-59.1,79.6,-45.8C87.4,-32.6,90,-16.3,88.5,-0.9C87,14.6,81.4,29.2,72.8,41.2C64.2,53.2,52.6,62.6,39.6,69.7C26.6,76.8,13.3,81.6,-0.6,82.6C-14.5,83.6,-29,80.8,-41.8,73.5C-54.6,66.2,-65.7,54.4,-73.2,40.7C-80.7,27,-84.6,13.5,-83.4,0.7C-82.2,-12.1,-75.9,-24.2,-67.7,-34.8C-59.5,-45.4,-49.4,-54.5,-37.5,-62.7C-25.6,-70.9,-12.8,-78.2,1.6,-81C16,-83.8,30.6,-83.6,44.7,-76.4Z" transform="translate(100 100)" />
         </svg>
 
         <div class="flex md:flex-row items-center justify-between md:justify-around gap-4 relative z-10">
           
           <div class="flex items-center md:items-start md:flex-col gap-3 md:gap-1 text-left">
-            <div class="hidden md:inline-flex items-center gap-2 bg-sky-100/80 border border-sky-300 px-3.5 py-1 rounded-full text-xs font-bold text-sky-800 mb-2 shadow-sm">
-              <i class="fa-solid fa-shield-halved text-sky-600"></i>
+            <div class="hidden md:inline-flex items-center gap-2 bg-sky-950/80 border border-sky-400/50 px-3.5 py-1 rounded-full text-xs font-bold text-sky-200 mb-2 shadow-inner">
+              <i class="fa-solid fa-shield-halved text-cyan-400"></i>
               <span>ระบบงานสารบรรณอิเล็กทรอนิกส์</span>
             </div>
 
-            <div class="flex items-center gap-3">
-              <div class="w-14 h-14 md:w-20 md:h-20 p-1.5 bg-sky-50/80 rounded-2xl border-2 border-sky-300 shadow-md flex items-center justify-center shrink-0">
+            <div class="flex items-center gap-3.5">
+              <div class="w-14 h-14 md:w-20 md:h-20 p-1.5 bg-white/95 rounded-2xl border-2 border-sky-300 shadow-xl flex items-center justify-center shrink-0">
                 <img id="portalSchoolLogo" 
                      src="https://raw.githubusercontent.com/joodami/school-assets/main/logo.png" 
                      alt="ตราโรงเรียนพิมานพิทยาสรรค์" 
@@ -100,33 +106,35 @@
               </div>
 
               <div>
-                <h1 class="text-lg md:text-2xl font-black text-sky-950 tracking-tight leading-tight">
+                <h1 class="text-lg md:text-2xl font-black text-white tracking-tight leading-tight drop-shadow-sm">
                   ระบบรับหนังสือเข้า
                 </h1>
-                <p class="text-sky-700 text-xs md:text-sm font-bold tracking-wide mt-0.5">
+                <p class="text-sky-200 text-xs md:text-sm font-semibold tracking-wide mt-0.5">
                   โรงเรียนพิมานพิทยาสรรค์
                 </p>
               </div>
             </div>
           </div>
 
+          <!-- Card Highlight ขวามือ (สำหรับ Desktop) -->
           <div class="hidden md:flex items-center justify-center shrink-0">
-            <div class="w-32 h-24 bg-gradient-to-br from-sky-400 to-blue-600 rounded-2xl p-3 shadow-lg shadow-sky-300/50 flex flex-col justify-between text-white relative overflow-hidden group">
-              <i class="fa-solid fa-file-invoice text-4xl opacity-20 absolute -right-2 -bottom-2 group-hover:scale-110 transition-transform"></i>
+            <div class="w-36 h-24 bg-sky-950/60 border border-sky-400/40 backdrop-blur-md rounded-2xl p-3 shadow-lg flex flex-col justify-between text-white relative overflow-hidden group">
+              <i class="fa-solid fa-file-invoice text-5xl opacity-15 absolute -right-2 -bottom-2 text-sky-300 group-hover:scale-110 transition-transform"></i>
               <div class="flex items-center justify-between">
-                <span class="text-[10px] bg-white/20 backdrop-blur px-2 py-0.5 rounded-md font-medium">E-DOCUMENT</span>
-                <i class="fa-solid fa-circle text-[8px] text-emerald-300 animate-pulse"></i>
+                <span class="text-[10px] bg-sky-400/20 text-sky-200 border border-sky-400/40 backdrop-blur px-2 py-0.5 rounded-md font-bold">E-DOCUMENT</span>
+                <i class="fa-solid fa-circle text-[8px] text-emerald-400 animate-pulse"></i>
               </div>
               <div>
-                <p class="text-xs font-bold">Smart Sarabun</p>
-                <p class="text-[9px] text-sky-100">Piman Phityasan School</p>
+                <p class="text-xs font-bold text-white">Smart Sarabun</p>
+                <p class="text-[9px] text-sky-300">Piman Phityasan School</p>
               </div>
             </div>
           </div>
 
+          <!-- Badge สำหรับ Mobile -->
           <div class="md:hidden shrink-0">
-            <span class="inline-flex items-center gap-1.5 bg-sky-100 border border-sky-300 px-3 py-1 rounded-full text-[11px] font-bold text-sky-800 shadow-sm">
-              <span class="w-2 h-2 rounded-full bg-sky-500 animate-pulse"></span>
+            <span class="inline-flex items-center gap-1.5 bg-sky-900/90 border border-sky-400/60 px-3 py-1 rounded-full text-[11px] font-bold text-sky-100 shadow-md">
+              <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
               สารบรรณ
             </span>
           </div>
@@ -135,21 +143,17 @@
 
       </div>
 
-      <!-- Action Cards (ปรับปรุง: ขอบหนา ชัดเจน แยกธีมพื้นหลัง และไอคอนประจำระบบอย่างชัดเจน) -->
+      <!-- Action Cards ทั้ง 3 ใบ -->
       <div class="w-full grid grid-cols-3 md:grid-cols-3 gap-3 md:gap-6 my-auto">
         
-        <!-- Card 1: งานสารบรรณโรงเรียน (ธีมสีฟ้าเข้ม/เอกสาร) -->
+        <!-- Card 1: งานสารบรรณโรงเรียน -->
         <div onclick="openLoginModal('SARABUN', 'ระบบงานสารบรรณโรงเรียน', 'bg-[#0f2b48]', 'fa-folder-open')" 
              class="p-3 md:p-6 rounded-2xl md:rounded-3xl bg-gradient-to-b from-sky-50/90 via-white to-sky-100/60 border-2 border-sky-400 shadow-lg shadow-sky-200/50 hover:shadow-2xl hover:border-sky-600 cursor-pointer group transition-all duration-300 active:scale-95 md:hover:-translate-y-1.5 flex flex-col items-center md:items-stretch justify-between text-center md:text-left relative overflow-hidden">
           
-          <!-- แถบสีหัวการ์ด -->
           <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-sky-400 to-indigo-500"></div>
-
-          <!-- Pattern Background 1: Dot Grid -->
           <div class="absolute inset-0 bg-[radial-gradient(#0284c7_1.5px,transparent_1.5px)] [background-size:12px_12px] opacity-[0.08] pointer-events-none"></div>
 
           <div class="w-full flex items-center justify-center md:justify-between pt-1 relative z-10">
-            <!-- Graphic Icon Container -->
             <div class="relative w-14 h-14 md:w-20 md:h-20 flex items-center justify-center bg-sky-500 text-white rounded-2xl p-2.5 shadow-md shadow-sky-300 group-hover:scale-110 group-hover:bg-sky-600 transition-all duration-300 border-2 border-white">
               <svg class="w-full h-full filter drop-shadow" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M8 16C8 12.6863 10.6863 10 14 10H24L30 18H50C53.3137 18 56 20.6863 56 24V48C56 51.3137 53.3137 54 50 54H14C10.6863 54 8 51.3137 8 48V16Z" fill="#7DD3FC"/>
@@ -183,18 +187,14 @@
           </div>
         </div>
 
-        <!-- Card 2: ฝ่ายบริหาร (ธีมสีน้ำเงินเข้ม Royal Blue/ตราประทับ) -->
+        <!-- Card 2: ฝ่ายบริหาร -->
         <div onclick="openLoginModal('EXEC', 'ระบบฝ่ายบริหาร (ผอ. / รอง ผอ.)', 'bg-[#0f2b48]', 'fa-user-tie')" 
              class="p-3 md:p-6 rounded-2xl md:rounded-3xl bg-gradient-to-b from-blue-50/90 via-white to-blue-100/60 border-2 border-blue-500 shadow-lg shadow-blue-200/50 hover:shadow-2xl hover:border-blue-700 cursor-pointer group transition-all duration-300 active:scale-95 md:hover:-translate-y-1.5 flex flex-col items-center md:items-stretch justify-between text-center md:text-left relative overflow-hidden">
           
-          <!-- แถบสีหัวการ์ด -->
           <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-blue-600 to-indigo-700"></div>
-
-          <!-- Pattern Background 2: Diagonal Stripes -->
           <div class="absolute inset-0 opacity-[0.05] pointer-events-none bg-[linear-gradient(45deg,#1e40af_25%,transparent_25%,transparent_50%,#1e40af_50%,#1e40af_75%,transparent_75%,transparent)] [background-size:16px_16px]"></div>
 
           <div class="w-full flex items-center justify-center md:justify-between pt-1 relative z-10">
-            <!-- Graphic Icon Container -->
             <div class="relative w-14 h-14 md:w-20 md:h-20 flex items-center justify-center bg-blue-700 text-white rounded-2xl p-2.5 shadow-md shadow-blue-400 group-hover:scale-110 group-hover:bg-blue-800 transition-all duration-300 border-2 border-white">
               <svg class="w-full h-full filter drop-shadow" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <rect x="14" y="8" width="36" height="48" rx="6" fill="#93C5FD"/>
@@ -229,18 +229,14 @@
           </div>
         </div>
 
-        <!-- Card 3: ครูและบุคลากร (ธีมสีฟ้าสดใส Cyan/Checklist) -->
+        <!-- Card 3: ครูและบุคลากร -->
         <div onclick="openLoginModal('TEACHER', 'ระบบครูและบุคลากร', 'bg-[#0f2b48]', 'fa-chalkboard-user')" 
              class="p-3 md:p-6 rounded-2xl md:rounded-3xl bg-gradient-to-b from-cyan-50/90 via-white to-cyan-100/60 border-2 border-cyan-500 shadow-lg shadow-cyan-200/50 hover:shadow-2xl hover:border-cyan-700 cursor-pointer group transition-all duration-300 active:scale-95 md:hover:-translate-y-1.5 flex flex-col items-center md:items-stretch justify-between text-center md:text-left relative overflow-hidden">
           
-          <!-- แถบสีหัวการ์ด -->
           <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-cyan-500 to-blue-500"></div>
-
-          <!-- Pattern Background 3: Circles Wave -->
           <div class="absolute inset-0 bg-[radial-gradient(#0891b2_1.5px,transparent_1.5px)] [background-size:16px_16px] opacity-[0.07] pointer-events-none"></div>
 
           <div class="w-full flex items-center justify-center md:justify-between pt-1 relative z-10">
-            <!-- Graphic Icon Container -->
             <div class="relative w-14 h-14 md:w-20 md:h-20 flex items-center justify-center bg-cyan-600 text-white rounded-2xl p-2.5 shadow-md shadow-cyan-300 group-hover:scale-110 group-hover:bg-cyan-700 transition-all duration-300 border-2 border-white">
               <svg class="w-full h-full filter drop-shadow" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <rect x="12" y="10" width="40" height="46" rx="6" fill="#67E8F9"/>
