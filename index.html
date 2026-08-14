@@ -532,8 +532,19 @@
           totalCount = incomingBooks.length;
           pendingCount = incomingBooks.filter(b => b.status === 'PENDING_DIRECTOR' || !b.status).length;
           
-          const todayStr = new Date().toISOString().split('T')[0];
-          todayCount = incomingBooks.filter(b => b.date && String(b.date).includes(todayStr)).length;
+          // คำนวณวันที่วันนี้ตามเวลาท้องถิ่น (ป้องกันปัญหา Timezone UTC เหลื่อมวัน)
+          const now = new Date();
+          const yyyy = now.getFullYear();
+          const mm = String(now.getMonth() + 1).padStart(2, '0');
+          const dd = String(now.getDate()).padStart(2, '0');
+          const todayStr = `${yyyy}-${mm}-${dd}`;
+
+          todayCount = incomingBooks.filter(b => {
+            if (!b.date) return false;
+            // ดึงเฉพาะส่วน YYYY-MM-DD ออกมาเปรียบเทียบ
+            const docDateStr = String(b.date).split('T')[0].trim();
+            return docDateStr === todayStr || docDateStr.includes(todayStr);
+          }).length;
         }
       } catch (err) {
         console.error("Error loading docs:", err);
@@ -578,6 +589,13 @@
     function renderSarabunDashboard() {
       const content = document.getElementById('roleContent');
       const nextNumber = 1 + incomingBooks.length;
+
+      // หาวันที่ปัจจุบันในรูปแบบ YYYY-MM-DD ตามเวลาท้องถิ่น
+      const now = new Date();
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+      const todayStr = `${yyyy}-${mm}-${dd}`;
 
       content.innerHTML = `
         <div class="space-y-5 page-transition">
@@ -636,7 +654,7 @@
               <div class="grid grid-cols-2 gap-3">
                 <div>
                   <label class="text-[11px] font-semibold text-slate-600 mb-1 block">วันที่ลงรับระบบ</label>
-                  <input type="date" id="receiveDateInput" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-1 focus:ring-[#0f2b48] focus:bg-white outline-none">
+                  <input type="date" id="receiveDateInput" value="${todayStr}" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-1 focus:ring-[#0f2b48] focus:bg-white outline-none">
                 </div>
                 <div>
                   <label class="text-[11px] font-semibold text-slate-600 mb-1 block">ลงวันที่ (ในหนังสือ)</label>
