@@ -2130,77 +2130,78 @@
   
 <!-- ================= JavaScript ================= -->
 <script>
-  const GAS_URL = "https://script.google.com/macros/s/AKfycbxauMbrEeIaDNAN_U0DvffmUVN5vfbUqpNOpmVSPvtMZ9qbl0WfTcxB2JnvcRxkOfQm/exec"; 
+  /* =========================================================
+     CONFIGURATION
+     ========================================================= */
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbxauMbrEeIaDNAN_U0DvffmUVN5vfbUqpNOpmVSPvtMZ9qbl0WfTcxB2JnvcRxkOfQm/exec";
   const SCHOOL_LOGO_URL = "https://raw.githubusercontent.com/joodami/school-assets/main/logo.png";
 
+  /* =========================================================
+     GLOBAL STATE
+     ========================================================= */
   let currentUser = null;
   let targetRoleGroup = 'SARABUN';
-  let currentSarabunTab = 'registered'; // 'add', 'registered', 'returned'
+  let currentSarabunTab = 'registered';
 
   let incomingBooks = [];
   let filteredBooks = [];
+
   let currentPage = 1;
   const pageSize = 20;
 
   let cachedFontBytes = null;
   let isLoadingData = false;
 
-  function warmupServer() {
-    fetch(GAS_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      body: JSON.stringify({ action: 'PING' })
-    }).catch(() => {});
+  // ป้องกันการกดบันทึกซ้ำ
+  let isRegisteringBook = false;
+
+  // ป้องกันการ Login ซ้ำ
+  let isLoggingIn = false;
+
+
+  /* =========================================================
+     UTILITY FUNCTIONS
+     ========================================================= */
+
+  /**
+   * Escape HTML
+   * ป้องกันข้อมูลจาก Google Sheet ที่มีอักขระพิเศษ
+   * ทำให้ HTML ตารางผิดรูป
+   */
+  function escapeHtml(value) {
+    if (value === null || value === undefined) return '';
+
+    return String(value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
   }
 
-  document.addEventListener("DOMContentLoaded", async () => {
-    warmupServer();
 
-    // Set Logos
-    const portalLogo = document.getElementById('portalSchoolLogo');
-    if (portalLogo) portalLogo.src = SCHOOL_LOGO_URL;
+  /**
+   * Escape URL สำหรับใช้ใน href
+   */
+  function safeUrl(url) {
+    if (!url) return '';
 
-    document.querySelectorAll('.modalSchoolLogo, .headerSchoolLogo').forEach(img => {
-      img.src = SCHOOL_LOGO_URL;
-    });
+    const value = String(url).trim();
 
-    // Bind Search Event
-    const searchInput = document.getElementById('searchInput');
-    if (searchInput) {
-      searchInput.addEventListener('input', filterDocs);
+    if (
+      value.startsWith('https://') ||
+      value.startsWith('http://')
+    ) {
+      return escapeHtml(value);
     }
 
-    // Bind Pagination Events
-    const btnPrev = document.getElementById('btnPrevPage');
-    const btnNext = document.getElementById('btnNextPage');
-    if (btnPrev) btnPrev.addEventListener('click', () => changePage(-1));
-    if (btnNext) btnNext.addEventListener('click', () => changePage(1));
+    return '';
+  }
 
-    // Restore Session
-    const savedUser = localStorage.getItem('currentUser');
-    const savedRoleGroup = localStorage.getItem('targetRoleGroup');
 
-    if (savedUser) {
-      try {
-        currentUser = JSON.parse(savedUser);
-        if (savedRoleGroup) targetRoleGroup = savedRoleGroup;
-
-        document.getElementById('portalSection')?.classList.add('hidden');
-        document.getElementById('mainDashboard')?.classList.remove('hidden');
-        
-        const userInfoEl = document.getElementById('userInfo');
-        if (userInfoEl) userInfoEl.innerText = `${currentUser.name} • ${currentUser.position}`;
-
-        // โหลดข้อมูลให้เสร็จ 100% ก่อนจึงเริ่มวาดแดชบอร์ด
-        await loadDocsData();
-        loadRoleDashboard();
-      } catch (err) {
-        console.error("Restore session error:", err);
-        logout();
-      }
-    }
-  });
-
+  /**
+   * แสดงข้อความแจ้งเตือน
+   */
   function showAlert(message, title = 'แจ้งเตือน', type = 'error') {
     const modal = document.getElementById('alertModal');
     const iconContainer = document.getElementById('alertIconContainer');
@@ -2213,568 +2214,2347 @@
     titleEl.innerText = title;
     messageEl.innerText = message;
 
-    if (type === 'error') {
-      iconContainer.className = "w-14 h-14 bg-red-50 text-red-600 border border-red-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-sm";
-      icon.className = "fa-solid fa-triangle-exclamation";
-    } else if (type === 'success') {
-      iconContainer.className = "w-14 h-14 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-sm";
-      icon.className = "fa-solid fa-circle-check";
-    } else if (type === 'warning') {
-      iconContainer.className = "w-14 h-14 bg-amber-50 text-amber-600 border border-amber-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-sm";
-      icon.className = "fa-solid fa-circle-exclamation";
-    } else {
-      iconContainer.className = "w-14 h-14 bg-sky-100 text-[#0f2b48] border border-sky-300 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-sm";
-      icon.className = "fa-solid fa-circle-info";
+    if (iconContainer && icon) {
+
+      if (type === 'error') {
+        iconContainer.className =
+          "w-14 h-14 bg-red-50 text-red-600 border border-red-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-sm";
+
+        icon.className = "fa-solid fa-triangle-exclamation";
+
+      } else if (type === 'success') {
+        iconContainer.className =
+          "w-14 h-14 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-sm";
+
+        icon.className = "fa-solid fa-circle-check";
+
+      } else if (type === 'warning') {
+        iconContainer.className =
+          "w-14 h-14 bg-amber-50 text-amber-600 border border-amber-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-sm";
+
+        icon.className = "fa-solid fa-circle-exclamation";
+
+      } else {
+        iconContainer.className =
+          "w-14 h-14 bg-sky-100 text-[#0f2b48] border border-sky-300 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-sm";
+
+        icon.className = "fa-solid fa-circle-info";
+      }
     }
 
     modal.classList.remove('hidden');
   }
 
+
+  /**
+   * ปิด Alert Modal
+   */
   function closeAlertModal() {
     const modal = document.getElementById('alertModal');
-    if (modal) modal.classList.add('hidden');
-  }
 
-  function switchSystemTab(roleGroup, roleTitle, headerBgClass, iconClass) {
-    const selectedInput = document.getElementById('selectedRoleGroup');
-    if (selectedInput) selectedInput.value = roleGroup;
-    targetRoleGroup = roleGroup;
-
-    document.querySelectorAll('.system-tab-button').forEach(btn => {
-      btn.classList.remove('system-tab-active');
-    });
-    const activeBtn = document.getElementById('tab-' + roleGroup);
-    if (activeBtn) activeBtn.classList.add('system-tab-active');
-
-    const display = document.getElementById('activeSystemNameDisplay');
-    if (display) {
-      let cleanTitle = roleTitle.replace('ระบบ', '');
-      display.innerHTML = 'ระบบที่เลือก: <span class="text-[#0f2b48] font-black underline decoration-amber-400 underline-offset-4">' + cleanTitle + '</span>';
+    if (modal) {
+      modal.classList.add('hidden');
     }
   }
 
+
+  /**
+   * แปลงวันที่แบบ Local
+   * ป้องกันปัญหา Date ถูกเลื่อน 1 วันจาก Timezone
+   */
+  function parseLocalDate(dateStr) {
+    if (!dateStr) return null;
+
+    if (
+      typeof dateStr === 'string' &&
+      dateStr.includes('-')
+    ) {
+      const cleanStr = dateStr.split('T')[0];
+      const parts = cleanStr.split('-');
+
+      if (parts.length === 3) {
+        const year = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1;
+        const day = parseInt(parts[2], 10);
+
+        const date = new Date(year, month, day);
+
+        return isNaN(date.getTime()) ? null : date;
+      }
+    }
+
+    const d = new Date(dateStr);
+
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+
+  /**
+   * แสดงวันที่ในรูปแบบภาษาไทย
+   */
+  function formatDisplayDate(dateStr) {
+    if (!dateStr) return '-';
+
+    const d = parseLocalDate(dateStr);
+
+    if (!d) {
+      return String(dateStr).split('T')[0];
+    }
+
+    const thaiMonths = [
+      'ม.ค.',
+      'ก.พ.',
+      'มี.ค.',
+      'เม.ย.',
+      'พ.ค.',
+      'มิ.ย.',
+      'ก.ค.',
+      'ส.ค.',
+      'ก.ย.',
+      'ต.ค.',
+      'พ.ย.',
+      'ธ.ค.'
+    ];
+
+    return `${d.getDate()} ${thaiMonths[d.getMonth()]} ${d.getFullYear() + 543}`;
+  }
+
+
+  /**
+   * คืนค่าปี พ.ศ. ปัจจุบัน
+   */
+  function getCurrentYearBE() {
+    return new Date().getFullYear() + 543;
+  }
+
+
+  /* =========================================================
+     SERVER CONNECTION
+     ========================================================= */
+
+  /**
+   * Warm up GAS
+   * ช่วยให้ Server พร้อมก่อนการใช้งานจริง
+   */
+  function warmupServer() {
+    fetch(GAS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: JSON.stringify({
+        action: 'PING'
+      })
+    }).catch(() => {});
+  }
+
+
+  /**
+   * ส่งข้อมูลไปยัง GAS
+   */
+  async function postToGas(payload) {
+    const response = await fetch(GAS_URL, {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP Error ${response.status}`);
+    }
+
+    return await response.json();
+  }
+
+
+  /* =========================================================
+     INITIALIZATION
+     ========================================================= */
+
+  document.addEventListener("DOMContentLoaded", async () => {
+
+    warmupServer();
+
+    /* -------------------------
+       Set School Logo
+       ------------------------- */
+
+    const portalLogo =
+      document.getElementById('portalSchoolLogo');
+
+    if (portalLogo) {
+      portalLogo.src = SCHOOL_LOGO_URL;
+    }
+
+    document
+      .querySelectorAll('.modalSchoolLogo, .headerSchoolLogo')
+      .forEach(img => {
+        img.src = SCHOOL_LOGO_URL;
+      });
+
+
+    /* -------------------------
+       Search Event
+       ------------------------- */
+
+    const searchInput =
+      document.getElementById('searchInput');
+
+    if (searchInput) {
+      searchInput.addEventListener('input', filterDocs);
+    }
+
+
+    /* -------------------------
+       Pagination Events
+       ------------------------- */
+
+    const btnPrev =
+      document.getElementById('btnPrevPage');
+
+    const btnNext =
+      document.getElementById('btnNextPage');
+
+    if (btnPrev) {
+      btnPrev.addEventListener('click', () => {
+        changePage(-1);
+      });
+    }
+
+    if (btnNext) {
+      btnNext.addEventListener('click', () => {
+        changePage(1);
+      });
+    }
+
+
+    /* -------------------------
+       Restore Session
+       ------------------------- */
+
+    const savedUser =
+      localStorage.getItem('currentUser');
+
+    const savedRoleGroup =
+      localStorage.getItem('targetRoleGroup');
+
+
+    if (savedUser) {
+
+      try {
+
+        currentUser = JSON.parse(savedUser);
+
+        if (savedRoleGroup) {
+          targetRoleGroup = savedRoleGroup;
+        }
+
+        document
+          .getElementById('portalSection')
+          ?.classList.add('hidden');
+
+        document
+          .getElementById('mainDashboard')
+          ?.classList.remove('hidden');
+
+
+        const userInfoEl =
+          document.getElementById('userInfo');
+
+        if (userInfoEl && currentUser) {
+          userInfoEl.innerText =
+            `${currentUser.name} • ${currentUser.position}`;
+        }
+
+
+        // โหลดข้อมูลให้เสร็จก่อนสร้าง Dashboard
+        await loadDocsData();
+
+        loadRoleDashboard();
+
+      } catch (err) {
+
+        console.error(
+          "Restore session error:",
+          err
+        );
+
+        logout();
+      }
+    }
+  });
+
+
+  /* =========================================================
+     SYSTEM TAB
+     ========================================================= */
+
+  function switchSystemTab(
+    roleGroup,
+    roleTitle,
+    headerBgClass,
+    iconClass
+  ) {
+
+    const selectedInput =
+      document.getElementById('selectedRoleGroup');
+
+    if (selectedInput) {
+      selectedInput.value = roleGroup;
+    }
+
+    targetRoleGroup = roleGroup;
+
+
+    document
+      .querySelectorAll('.system-tab-button')
+      .forEach(btn => {
+        btn.classList.remove('system-tab-active');
+      });
+
+
+    const activeBtn =
+      document.getElementById('tab-' + roleGroup);
+
+    if (activeBtn) {
+      activeBtn.classList.add('system-tab-active');
+    }
+
+
+    const display =
+      document.getElementById('activeSystemNameDisplay');
+
+    if (display) {
+
+      const cleanTitle =
+        String(roleTitle || '').replace('ระบบ', '');
+
+      display.innerHTML =
+        'ระบบที่เลือก: ' +
+        `<span class="text-[#0f2b48] font-black underline decoration-amber-400 underline-offset-4">` +
+        `${escapeHtml(cleanTitle)}` +
+        `</span>`;
+    }
+  }
+
+
+  /* =========================================================
+     LOGIN
+     ========================================================= */
+
   async function handleLogin(e) {
+
     if (e && typeof e.preventDefault === 'function') {
       e.preventDefault();
     }
 
-    const selectedInput = document.getElementById('selectedRoleGroup');
-    if (selectedInput && selectedInput.value) {
-      targetRoleGroup = selectedInput.value;
+
+    // ป้องกันกด Login ซ้ำ
+    if (isLoggingIn) {
+      return;
     }
 
-    const btn = document.getElementById('btnLogin');
+    isLoggingIn = true;
+
+
+    const selectedInput =
+      document.getElementById('selectedRoleGroup');
+
+    if (
+      selectedInput &&
+      selectedInput.value
+    ) {
+      targetRoleGroup =
+        selectedInput.value;
+    }
+
+
+    const btn =
+      document.getElementById('btnLogin');
+
+
     if (btn) {
-      btn.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin text-xs"></i> <span>กำลังตรวจสอบ...</span>`;
+
+      btn.innerHTML =
+        `<i class="fa-solid fa-circle-notch animate-spin text-xs"></i> ` +
+        `<span>กำลังตรวจสอบ...</span>`;
+
       btn.disabled = true;
     }
 
+
     const payload = {
       action: 'LOGIN',
+
       data: {
-        username: document.getElementById('username')?.value || '',
-        password: document.getElementById('password')?.value || ''
+        username:
+          document.getElementById('username')?.value || '',
+
+        password:
+          document.getElementById('password')?.value || ''
       }
     };
 
-    try {
-      const response = await fetch(GAS_URL, {
-        method: 'POST',
-        body: JSON.stringify(payload)
-      });
 
-      const res = await response.json();
+    try {
+
+      const res =
+        await postToGas(payload);
+
 
       if (res.success) {
-        const userRole = res.user.role;
+
+        const userRole =
+          res.user.role;
+
         let hasPermission = false;
-        
-        if (targetRoleGroup === 'SARABUN' && userRole === 'SARABUN') hasPermission = true;
-        else if (targetRoleGroup === 'EXEC' && (userRole === 'DIRECTOR' || userRole === 'VICE_DIRECTOR')) hasPermission = true;
-        else if (targetRoleGroup === 'TEACHER' && (userRole === 'TEACHER' || userRole === 'STAFF')) hasPermission = true;
+
+
+        if (
+          targetRoleGroup === 'SARABUN' &&
+          userRole === 'SARABUN'
+        ) {
+          hasPermission = true;
+
+        } else if (
+          targetRoleGroup === 'EXEC' &&
+          (
+            userRole === 'DIRECTOR' ||
+            userRole === 'VICE_DIRECTOR'
+          )
+        ) {
+          hasPermission = true;
+
+        } else if (
+          targetRoleGroup === 'TEACHER' &&
+          (
+            userRole === 'TEACHER' ||
+            userRole === 'STAFF'
+          )
+        ) {
+          hasPermission = true;
+        }
+
 
         if (!hasPermission) {
-          showAlert("คุณไม่มีสิทธิ์เข้าใช้งานในส่วนนี้ กรุณาเลือกระบบเข้าใช้งานให้ตรงกับสิทธิ์ของคุณ", "ไม่มีสิทธิ์เข้าถึงระบบ", "error");
-          if (btn) {
-            btn.innerHTML = `<i class="fa-solid fa-right-to-bracket text-xs"></i> <span>เข้าสู่ระบบ</span>`;
-            btn.disabled = false;
-          }
+
+          showAlert(
+            "คุณไม่มีสิทธิ์เข้าใช้งานในส่วนนี้ กรุณาเลือกระบบเข้าใช้งานให้ตรงกับสิทธิ์ของคุณ",
+            "ไม่มีสิทธิ์เข้าถึงระบบ",
+            "error"
+          );
+
           return;
         }
 
-        currentUser = res.user;
-        localStorage.setItem('currentUser', JSON.stringify(currentUser));
-        localStorage.setItem('targetRoleGroup', targetRoleGroup);
 
-        document.getElementById('portalSection')?.classList.add('hidden');
-        document.getElementById('mainDashboard')?.classList.remove('hidden');
-        
-        const userInfoEl = document.getElementById('userInfo');
-        if (userInfoEl) userInfoEl.innerText = `${currentUser.name} • ${currentUser.position}`;
-        
-        // รอให้ดึงข้อมูลหนังสือรับเสร็จสมบูรณ์ก่อนเปิดหน้า Dashboard
+        currentUser = res.user;
+
+
+        localStorage.setItem(
+          'currentUser',
+          JSON.stringify(currentUser)
+        );
+
+        localStorage.setItem(
+          'targetRoleGroup',
+          targetRoleGroup
+        );
+
+
+        document
+          .getElementById('portalSection')
+          ?.classList.add('hidden');
+
+        document
+          .getElementById('mainDashboard')
+          ?.classList.remove('hidden');
+
+
+        const userInfoEl =
+          document.getElementById('userInfo');
+
+        if (userInfoEl) {
+
+          userInfoEl.innerText =
+            `${currentUser.name} • ${currentUser.position}`;
+        }
+
+
+        // โหลดข้อมูลให้เสร็จก่อนเปิด Dashboard
         await loadDocsData();
+
         loadRoleDashboard();
+
+
       } else {
-        showAlert(res.message || "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง", "เข้าสู่ระบบไม่สำเร็จ", "error");
+
+        showAlert(
+          res.message ||
+          "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง",
+          "เข้าสู่ระบบไม่สำเร็จ",
+          "error"
+        );
       }
+
+
     } catch (err) {
-      showAlert("ไม่สามารถเชื่อมต่อกับระบบได้ กรุณาลองใหม่อีกครั้ง", "เกิดข้อผิดพลาด", "error");
-      console.error(err);
+
+      console.error(
+        "Login error:",
+        err
+      );
+
+      showAlert(
+        "ไม่สามารถเชื่อมต่อกับระบบได้ กรุณาลองใหม่อีกครั้ง",
+        "เกิดข้อผิดพลาด",
+        "error"
+      );
+
     } finally {
+
+      isLoggingIn = false;
+
       if (btn) {
-        btn.innerHTML = `<i class="fa-solid fa-right-to-bracket text-xs"></i> <span>เข้าสู่ระบบ</span>`;
+
+        btn.innerHTML =
+          `<i class="fa-solid fa-right-to-bracket text-xs"></i> ` +
+          `<span>เข้าสู่ระบบ</span>`;
+
         btn.disabled = false;
       }
     }
   }
 
-  function parseLocalDate(dateStr) {
-    if (!dateStr) return null;
-    if (typeof dateStr === 'string' && dateStr.includes('-')) {
-      const cleanStr = dateStr.split('T')[0];
-      const parts = cleanStr.split('-');
-      if (parts.length === 3) {
-        return new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
-      }
-    }
-    const d = new Date(dateStr);
-    return isNaN(d.getTime()) ? null : d;
-  }
 
-  function formatDisplayDate(dateStr) {
-    if (!dateStr) return '-';
-    const d = parseLocalDate(dateStr);
-    if (!d) return String(dateStr).split('T')[0];
-    const thaiMonths = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
-    return `${d.getDate()} ${thaiMonths[d.getMonth()]} ${d.getFullYear() + 543}`;
-  }
+  /* =========================================================
+     LOAD DOCUMENT DATA
+     ========================================================= */
 
   async function loadDocsData() {
-    if (!currentUser) return;
-    
+
+    if (!currentUser) {
+      return;
+    }
+
+
     isLoadingData = true;
-    renderLoadingState(); // แสดง UI กำลังโหลดในตารางทันที
+
+    renderLoadingState();
+
 
     try {
+
       const payload = {
         action: 'GET_DOCS_BY_ROLE',
+
         data: {
-          role: currentUser.role,
-          userId: currentUser.userId || currentUser.username || currentUser.id || ''
+          role:
+            currentUser.role,
+
+          userId:
+            currentUser.userId ||
+            currentUser.username ||
+            currentUser.id ||
+            ''
         }
       };
-      const response = await fetch(GAS_URL, {
-        method: 'POST',
-        body: JSON.stringify(payload)
-      });
-      const res = await response.json();
-      
-      if (res.success && res.docs) {
-        incomingBooks = res.docs.map(doc => ({
-          recNo: doc.receiveNo || doc.recNo || '',
-          no: doc.bookNo || doc.no || '',
-          date: doc.receiveDate || doc.date || '',
-          from: doc.fromDept || doc.from || '',
-          title: doc.title || '',
-          fileUrl: doc.fileUrl || doc.url || '',
-          status: doc.status || 'PENDING_DIRECTOR',
-          time: doc.receiveTime || doc.time || doc.receiveDate || ''
-        }));
+
+
+      const res =
+        await postToGas(payload);
+
+
+      if (
+        res.success &&
+        Array.isArray(res.docs)
+      ) {
+
+        incomingBooks =
+          res.docs.map(doc => ({
+
+            recNo:
+              doc.receiveNo ||
+              doc.recNo ||
+              '',
+
+            no:
+              doc.bookNo ||
+              doc.no ||
+              '',
+
+            date:
+              doc.receiveDate ||
+              doc.date ||
+              '',
+
+            from:
+              doc.fromDept ||
+              doc.from ||
+              '',
+
+            title:
+              doc.title ||
+              '',
+
+            fileUrl:
+              doc.fileUrl ||
+              doc.url ||
+              '',
+
+            status:
+              doc.status ||
+              'PENDING_DIRECTOR',
+
+            time:
+              doc.receiveTime ||
+              doc.time ||
+              doc.receiveDate ||
+              ''
+          }));
+
       } else {
+
         incomingBooks = [];
       }
+
+
     } catch (err) {
-      console.error("Error loading docs:", err);
+
+      console.error(
+        "Error loading docs:",
+        err
+      );
+
       incomingBooks = [];
+
     } finally {
+
       isLoadingData = false;
     }
   }
 
+
+  /* =========================================================
+     LOADING STATE
+     ========================================================= */
+
   function renderLoadingState() {
-    const tableBody = document.getElementById('bookTableBody');
-    if (tableBody) {
-      tableBody.innerHTML = `
-        <tr>
-          <td colspan="7" class="py-12 text-center text-slate-500 font-medium">
-            <div class="flex flex-col items-center justify-center gap-2">
-              <i class="fa-solid fa-circle-notch animate-spin text-2xl text-sky-600"></i>
-              <span>กำลังดึงข้อมูลหนังสือรับจากระบบ...</span>
-            </div>
-          </td>
-        </tr>
-      `;
+
+    const tableBody =
+      document.getElementById('bookTableBody');
+
+    if (!tableBody) {
+      return;
     }
+
+
+    tableBody.innerHTML = `
+      <tr>
+        <td colspan="7"
+            class="py-12 text-center text-slate-500 font-medium">
+
+          <div class="flex flex-col items-center justify-center gap-2">
+
+            <div class="w-10 h-10 rounded-full
+                        bg-sky-50
+                        flex items-center justify-center">
+
+              <i class="fa-solid fa-circle-notch
+                        animate-spin
+                        text-xl
+                        text-sky-600"></i>
+
+            </div>
+
+            <span>
+              กำลังดึงข้อมูลหนังสือรับจากระบบ...
+            </span>
+
+          </div>
+
+        </td>
+      </tr>
+    `;
   }
 
+
+  /* =========================================================
+     ROLE DASHBOARD
+     ========================================================= */
+
   function loadRoleDashboard() {
-    if (currentUser && currentUser.role === 'SARABUN') {
+
+    if (
+      currentUser &&
+      currentUser.role === 'SARABUN'
+    ) {
+
       updateNextRecNo();
+
       switchSarabunMenu('registered');
     }
   }
 
-  function updateNextRecNo() {
-    const currentYearBE = new Date().getFullYear() + 543;
-    const maxRecNo = incomingBooks.reduce((max, b) => {
-      const num = parseInt(String(b.recNo).replace(/[^0-9]/g, ''), 10);
-      return !isNaN(num) && num > max ? num : max;
-    }, 0);
-    const nextNumber = maxRecNo + 1;
-    
-    const el = document.getElementById('nextRegNo');
-    if (el) el.innerText = `${nextNumber}/${currentYearBE}`;
 
-    const recInput = document.getElementById('bookRecNo');
-    if (recInput) recInput.value = nextNumber;
+  /* =========================================================
+     RECEIVE NUMBER
+     ========================================================= */
+
+  function updateNextRecNo() {
+
+    const currentYearBE =
+      getCurrentYearBE();
+
+
+    const maxRecNo =
+      incomingBooks.reduce(
+        (max, b) => {
+
+          const num =
+            parseInt(
+              String(b.recNo)
+                .replace(/[^0-9]/g, ''),
+              10
+            );
+
+          return (
+            !isNaN(num) &&
+            num > max
+          )
+            ? num
+            : max;
+
+        },
+        0
+      );
+
+
+    const nextNumber =
+      maxRecNo + 1;
+
+
+    const el =
+      document.getElementById('nextRegNo');
+
+    if (el) {
+
+      el.innerText =
+        `${nextNumber}/${currentYearBE}`;
+    }
+
+
+    const recInput =
+      document.getElementById('bookRecNo');
+
+    if (recInput) {
+
+      recInput.value =
+        nextNumber;
+    }
   }
+
+
+  /* =========================================================
+     SARABUN MENU
+     ========================================================= */
 
   function switchSarabunMenu(tabName) {
-    currentSarabunTab = tabName;
+
+    currentSarabunTab =
+      tabName;
+
     currentPage = 1;
-    
-    const btnAdd = document.getElementById('menuBtnAddBook');
-    const btnReg = document.getElementById('menuBtnRegistered');
-    const btnRet = document.getElementById('menuBtnReturned');
 
-    [btnAdd, btnReg, btnRet].forEach(btn => {
-      if (btn) btn.classList.remove('active', 'bg-sky-700', 'text-white');
-    });
 
-    const addSection = document.getElementById('sarabunAddFormSection');
-    const tableSection = document.getElementById('sarabunTableSection');
+    const btnAdd =
+      document.getElementById('menuBtnAddBook');
+
+    const btnReg =
+      document.getElementById('menuBtnRegistered');
+
+    const btnRet =
+      document.getElementById('menuBtnReturned');
+
+
+    [btnAdd, btnReg, btnRet]
+      .forEach(btn => {
+
+        if (btn) {
+
+          btn.classList.remove(
+            'active',
+            'bg-sky-700',
+            'text-white'
+          );
+        }
+      });
+
+
+    const addSection =
+      document.getElementById(
+        'sarabunAddFormSection'
+      );
+
+    const tableSection =
+      document.getElementById(
+        'sarabunTableSection'
+      );
+
+
+    /* -------------------------
+       ADD
+       ------------------------- */
 
     if (tabName === 'add') {
-      if (btnAdd) btnAdd.classList.add('active', 'bg-sky-700', 'text-white');
-      
-      if (addSection) addSection.classList.remove('hidden');
-      if (tableSection) tableSection.classList.add('hidden');
 
-      const receiveDateInput = document.getElementById('receiveDateInput');
-      if (receiveDateInput && !receiveDateInput.value) {
-        const today = new Date().toISOString().split('T')[0];
-        receiveDateInput.value = today;
+      if (btnAdd) {
+
+        btnAdd.classList.add(
+          'active',
+          'bg-sky-700',
+          'text-white'
+        );
       }
+
+
+      if (addSection) {
+
+        addSection.classList.remove(
+          'hidden'
+        );
+      }
+
+
+      if (tableSection) {
+
+        tableSection.classList.add(
+          'hidden'
+        );
+      }
+
+
+      const receiveDateInput =
+        document.getElementById(
+          'receiveDateInput'
+        );
+
+
+      if (
+        receiveDateInput &&
+        !receiveDateInput.value
+      ) {
+
+        const now =
+          new Date();
+
+        const yyyy =
+          now.getFullYear();
+
+        const mm =
+          String(
+            now.getMonth() + 1
+          ).padStart(2, '0');
+
+        const dd =
+          String(
+            now.getDate()
+          ).padStart(2, '0');
+
+        receiveDateInput.value =
+          `${yyyy}-${mm}-${dd}`;
+      }
+
+
       updateNextRecNo();
-    } else {
-      if (addSection) addSection.classList.add('hidden');
-      if (tableSection) tableSection.classList.remove('hidden');
 
-      if (tabName === 'registered' && btnReg) {
-        btnReg.classList.add('active', 'bg-sky-700', 'text-white');
-      } else if (tabName === 'returned' && btnRet) {
-        btnRet.classList.add('active', 'bg-sky-700', 'text-white');
-      }
-      
-      filterDocs();
+
+      return;
     }
+
+
+    /* -------------------------
+       TABLE
+       ------------------------- */
+
+    if (addSection) {
+
+      addSection.classList.add(
+        'hidden'
+      );
+    }
+
+
+    if (tableSection) {
+
+      tableSection.classList.remove(
+        'hidden'
+      );
+    }
+
+
+    if (
+      tabName === 'registered' &&
+      btnReg
+    ) {
+
+      btnReg.classList.add(
+        'active',
+        'bg-sky-700',
+        'text-white'
+      );
+
+    } else if (
+      tabName === 'returned' &&
+      btnRet
+    ) {
+
+      btnRet.classList.add(
+        'active',
+        'bg-sky-700',
+        'text-white'
+      );
+    }
+
+
+    filterDocs();
   }
+
+
+  /* =========================================================
+     SEARCH / FILTER
+     ========================================================= */
 
   function filterDocs() {
+
     if (isLoadingData) {
+
       renderLoadingState();
+
       return;
     }
 
-    const q = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
+
+    const q =
+      (
+        document
+          .getElementById('searchInput')
+          ?.value || ''
+      )
+        .trim()
+        .toLowerCase();
+
 
     let baseList = [];
-    if (currentSarabunTab === 'registered') {
-      baseList = incomingBooks.filter(b => b.status === 'COMPLETED' || b.status === 'REGISTERED' || b.status === 'PENDING_DIRECTOR');
-    } else if (currentSarabunTab === 'returned') {
-      baseList = incomingBooks.filter(b => b.status === 'RETURNED' || b.status === 'EXECUTED');
+
+
+    if (
+      currentSarabunTab ===
+      'registered'
+    ) {
+
+      baseList =
+        incomingBooks.filter(
+          b =>
+            b.status === 'COMPLETED' ||
+            b.status === 'REGISTERED' ||
+            b.status === 'PENDING_DIRECTOR'
+        );
+
+    } else if (
+      currentSarabunTab ===
+      'returned'
+    ) {
+
+      baseList =
+        incomingBooks.filter(
+          b =>
+            b.status === 'RETURNED' ||
+            b.status === 'EXECUTED'
+        );
+
     } else {
-      baseList = [...incomingBooks];
+
+      baseList =
+        [...incomingBooks];
     }
+
 
     if (q) {
-      filteredBooks = baseList.filter(b => 
-        (b.recNo && String(b.recNo).toLowerCase().includes(q)) ||
-        (b.no && String(b.no).toLowerCase().includes(q)) ||
-        (b.title && String(b.title).toLowerCase().includes(q)) ||
-        (b.from && String(b.from).toLowerCase().includes(q))
-      );
+
+      filteredBooks =
+        baseList.filter(b => {
+
+          return (
+
+            (
+              b.recNo &&
+              String(b.recNo)
+                .toLowerCase()
+                .includes(q)
+            ) ||
+
+            (
+              b.no &&
+              String(b.no)
+                .toLowerCase()
+                .includes(q)
+            ) ||
+
+            (
+              b.title &&
+              String(b.title)
+                .toLowerCase()
+                .includes(q)
+            ) ||
+
+            (
+              b.from &&
+              String(b.from)
+                .toLowerCase()
+                .includes(q)
+            )
+          );
+        });
+
     } else {
-      filteredBooks = baseList;
+
+      filteredBooks =
+        baseList;
     }
+
 
     currentPage = 1;
+
     renderTableData();
   }
+
+
+  /* =========================================================
+     TABLE RENDER
+     ========================================================= */
 
   function renderTableData() {
+
     if (isLoadingData) {
+
       renderLoadingState();
+
       return;
     }
 
-    const tableBody = document.getElementById('bookTableBody');
-    const pageStart = document.getElementById('pageStart');
-    const pageEnd = document.getElementById('pageEnd');
-    const totalItems = document.getElementById('totalItems');
-    const pageNumbers = document.getElementById('pageNumbers');
-    const btnPrev = document.getElementById('btnPrevPage');
-    const btnNext = document.getElementById('btnNextPage');
 
-    if (!tableBody) return;
+    const tableBody =
+      document.getElementById(
+        'bookTableBody'
+      );
 
-    const total = filteredBooks.length;
-    const totalPages = Math.ceil(total / pageSize) || 1;
-    if (currentPage > totalPages) currentPage = totalPages;
+    const pageStart =
+      document.getElementById(
+        'pageStart'
+      );
 
-    const startIdx = (currentPage - 1) * pageSize;
-    const endIdx = Math.min(startIdx + pageSize, total);
-    const pageData = filteredBooks.slice(startIdx, endIdx);
+    const pageEnd =
+      document.getElementById(
+        'pageEnd'
+      );
 
-    if (totalItems) totalItems.innerText = total;
-    if (pageStart) pageStart.innerText = total > 0 ? startIdx + 1 : 0;
-    if (pageEnd) pageEnd.innerText = endIdx;
-    if (pageNumbers) pageNumbers.innerText = currentPage;
+    const totalItems =
+      document.getElementById(
+        'totalItems'
+      );
 
-    if (btnPrev) btnPrev.disabled = (currentPage === 1);
-    if (btnNext) btnNext.disabled = (currentPage >= totalPages);
+    const pageNumbers =
+      document.getElementById(
+        'pageNumbers'
+      );
+
+    const btnPrev =
+      document.getElementById(
+        'btnPrevPage'
+      );
+
+    const btnNext =
+      document.getElementById(
+        'btnNextPage'
+      );
+
+
+    if (!tableBody) {
+      return;
+    }
+
+
+    const total =
+      filteredBooks.length;
+
+
+    const totalPages =
+      Math.ceil(
+        total / pageSize
+      ) || 1;
+
+
+    if (
+      currentPage >
+      totalPages
+    ) {
+
+      currentPage =
+        totalPages;
+    }
+
+
+    const startIdx =
+      (currentPage - 1) *
+      pageSize;
+
+
+    const endIdx =
+      Math.min(
+        startIdx + pageSize,
+        total
+      );
+
+
+    const pageData =
+      filteredBooks.slice(
+        startIdx,
+        endIdx
+      );
+
+
+    /* -------------------------
+       Pagination Info
+       ------------------------- */
+
+    if (totalItems) {
+
+      totalItems.innerText =
+        total;
+    }
+
+
+    if (pageStart) {
+
+      pageStart.innerText =
+        total > 0
+          ? startIdx + 1
+          : 0;
+    }
+
+
+    if (pageEnd) {
+
+      pageEnd.innerText =
+        endIdx;
+    }
+
+
+    if (pageNumbers) {
+
+      pageNumbers.innerText =
+        currentPage;
+    }
+
+
+    if (btnPrev) {
+
+      btnPrev.disabled =
+        currentPage === 1;
+    }
+
+
+    if (btnNext) {
+
+      btnNext.disabled =
+        currentPage >= totalPages;
+    }
+
+
+    /* -------------------------
+       Empty State
+       ------------------------- */
 
     if (pageData.length === 0) {
-      tableBody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-slate-400 font-medium">ไม่พบข้อมูลหนังสือรับในระบบ</td></tr>`;
+
+      tableBody.innerHTML = `
+        <tr>
+          <td colspan="7"
+              class="py-12 text-center">
+
+            <div class="flex flex-col
+                        items-center
+                        justify-center
+                        gap-3
+                        text-slate-400">
+
+              <div class="w-12 h-12
+                          rounded-2xl
+                          bg-slate-100
+                          flex items-center
+                          justify-center">
+
+                <i class="fa-solid fa-folder-open
+                          text-xl"></i>
+
+              </div>
+
+              <span class="font-medium">
+                ไม่พบข้อมูลหนังสือรับในระบบ
+              </span>
+
+            </div>
+
+          </td>
+        </tr>
+      `;
+
       return;
     }
 
-    const currentYearBE = new Date().getFullYear() + 543;
 
-    tableBody.innerHTML = pageData.map((b, i) => `
-      <tr class="hover:bg-sky-50/60 transition-colors">
-        <td class="py-3 px-3 text-center font-medium text-slate-500">${startIdx + i + 1}</td>
-        <td class="py-3 px-3 text-center font-bold text-amber-700">${b.recNo}/${currentYearBE}</td>
-        <td class="py-3 px-3 font-semibold text-slate-700">${b.no || '-'}</td>
-        <td class="py-3 px-3 font-medium text-slate-800">${b.title}</td>
-        <td class="py-3 px-3 text-slate-600">${b.from}</td>
-        <td class="py-3 px-3 text-center text-slate-500">${formatDisplayDate(b.date || b.time)}</td>
-        <td class="py-3 px-3 text-center">
-          ${b.fileUrl ? `<a href="${b.fileUrl}" target="_blank" class="px-2.5 py-1 bg-sky-100 hover:bg-sky-200 text-sky-800 font-bold rounded-lg text-[11px] transition inline-flex items-center gap-1 shadow-sm"><i class="fa-solid fa-file-pdf text-red-500"></i> เปิดดู</a>` : '-'}
-        </td>
-      </tr>
-    `).join('');
+    const currentYearBE =
+      getCurrentYearBE();
+
+
+    /* -------------------------
+       Table Rows
+       ------------------------- */
+
+    tableBody.innerHTML =
+      pageData.map((b, i) => {
+
+        const recNo =
+          escapeHtml(
+            b.recNo || '-'
+          );
+
+        const bookNo =
+          escapeHtml(
+            b.no || '-'
+          );
+
+        const title =
+          escapeHtml(
+            b.title || '-'
+          );
+
+        const from =
+          escapeHtml(
+            b.from || '-'
+          );
+
+        const displayDate =
+          escapeHtml(
+            formatDisplayDate(
+              b.date || b.time
+            )
+          );
+
+        const url =
+          safeUrl(
+            b.fileUrl
+          );
+
+
+        const fileButton =
+          url
+            ? `
+              <a
+                href="${url}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="px-2.5 py-1
+                       bg-sky-100
+                       hover:bg-sky-200
+                       text-sky-800
+                       font-bold
+                       rounded-lg
+                       text-[11px]
+                       transition
+                       inline-flex
+                       items-center
+                       gap-1
+                       shadow-sm">
+
+                <i class="fa-solid fa-file-pdf
+                          text-red-500"></i>
+
+                เปิดดู
+              </a>
+            `
+            : '-';
+
+
+        return `
+          <tr
+            class="hover:bg-sky-50/60
+                   transition-colors
+                   border-b
+                   border-slate-100">
+
+            <td
+              class="py-3 px-3
+                     text-center
+                     font-medium
+                     text-slate-500">
+
+              ${startIdx + i + 1}
+
+            </td>
+
+
+            <td
+              class="py-3 px-3
+                     text-center
+                     font-bold
+                     text-amber-700">
+
+              ${recNo}/${currentYearBE}
+
+            </td>
+
+
+            <td
+              class="py-3 px-3
+                     font-semibold
+                     text-slate-700">
+
+              ${bookNo}
+
+            </td>
+
+
+            <td
+              class="py-3 px-3
+                     font-medium
+                     text-slate-800">
+
+              ${title}
+
+            </td>
+
+
+            <td
+              class="py-3 px-3
+                     text-slate-600">
+
+              ${from}
+
+            </td>
+
+
+            <td
+              class="py-3 px-3
+                     text-center
+                     text-slate-500">
+
+              ${displayDate}
+
+            </td>
+
+
+            <td
+              class="py-3 px-3
+                     text-center">
+
+              ${fileButton}
+
+            </td>
+
+          </tr>
+        `;
+
+      }).join('');
   }
 
+
+  /* =========================================================
+     PAGINATION
+     ========================================================= */
+
   function changePage(direction) {
-    const totalPages = Math.ceil(filteredBooks.length / pageSize) || 1;
+
+    const totalPages =
+      Math.ceil(
+        filteredBooks.length /
+        pageSize
+      ) || 1;
+
+
     currentPage += direction;
-    if (currentPage < 1) currentPage = 1;
-    if (currentPage > totalPages) currentPage = totalPages;
+
+
+    if (currentPage < 1) {
+      currentPage = 1;
+    }
+
+
+    if (currentPage > totalPages) {
+      currentPage = totalPages;
+    }
+
+
     renderTableData();
   }
 
+
+  /* =========================================================
+     REGISTER MENU
+     ========================================================= */
+
   function openRegisterModal() {
+
     switchSarabunMenu('add');
   }
 
-async function stampPdfOnClient(file, receiveNo, receiveDate) {
-    if (typeof PDFLib === 'undefined' || typeof fontkit === 'undefined') {
-      throw new Error("ไม่พบไลบรารี PDF-Lib หรือ fontkit");
+
+  /* =========================================================
+     PDF STAMP
+     ========================================================= */
+
+  async function stampPdfOnClient(
+    file,
+    receiveNo,
+    receiveDate
+  ) {
+
+    if (
+      typeof PDFLib === 'undefined' ||
+      typeof fontkit === 'undefined'
+    ) {
+
+      throw new Error(
+        "ไม่พบไลบรารี PDF-Lib หรือ fontkit"
+      );
     }
 
-    const arrayBuffer = await file.arrayBuffer();
-    const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
-    pdfDoc.registerFontkit(fontkit);
+
+    /* -------------------------
+       Load PDF
+       ------------------------- */
+
+    const arrayBuffer =
+      await file.arrayBuffer();
+
+    const pdfDoc =
+      await PDFLib.PDFDocument.load(
+        arrayBuffer
+      );
+
+
+    pdfDoc.registerFontkit(
+      fontkit
+    );
+
+
+    /* -------------------------
+       Load Thai Font
+       ------------------------- */
 
     if (!cachedFontBytes) {
-      cachedFontBytes = await fetch("https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/sarabun/Sarabun-Bold.ttf")
-        .then(res => res.arrayBuffer());
+
+      cachedFontBytes =
+        await fetch(
+          "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/sarabun/Sarabun-Bold.ttf"
+        )
+          .then(res => {
+
+            if (!res.ok) {
+
+              throw new Error(
+                "ไม่สามารถโหลดฟอนต์ Sarabun ได้"
+              );
+            }
+
+            return res.arrayBuffer();
+          });
     }
 
-    const customFont = await pdfDoc.embedFont(cachedFontBytes);
-    const toThaiNum = (str) => String(str).replace(/[0-9]/g, m => ['๐','๑','๒','๓','๔','๕','๖','๗','๘','๙'][m]);
-    const thaiMonths = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
 
-    const now = new Date();
-    let targetDate = parseLocalDate(receiveDate) || now;
+    const customFont =
+      await pdfDoc.embedFont(
+        cachedFontBytes
+      );
 
-    const thaiDay = toThaiNum(targetDate.getDate());
-    const thaiMonth = thaiMonths[targetDate.getMonth()];
-    const thaiYear = toThaiNum(targetDate.getFullYear() + 543);
-    const formattedToday = `${thaiDay} ${thaiMonth} ${thaiYear}`;
 
-    const hh = String(now.getHours()).padStart(2, '0');
-    const mm = String(now.getMinutes()).padStart(2, '0');
-    const ss = String(now.getSeconds()).padStart(2, '0');
-    const formattedTime = toThaiNum(`${hh}:${mm}:${ss}`);
-    const thaiReceiveNo = toThaiNum(receiveNo);
+    /* -------------------------
+       Thai Number
+       ------------------------- */
 
-    // สีกรมท่าสำหรับตราประทับ
-    const inkColor = PDFLib.rgb(0.08, 0.18, 0.52);
-    const pages = pdfDoc.getPages();
-    const firstPage = pages[0];
-    const { width, height } = firstPage.getSize();
+    const toThaiNum =
+      (str) => {
 
-    // ย่อขนาดกล่องตราประทับลงเหลือ 155 x 68 พิกเซล
+        return String(str).replace(
+          /[0-9]/g,
+          m =>
+            [
+              '๐',
+              '๑',
+              '๒',
+              '๓',
+              '๔',
+              '๕',
+              '๖',
+              '๗',
+              '๘',
+              '๙'
+            ][m]
+        );
+      };
+
+
+    const thaiMonths = [
+      'มกราคม',
+      'กุมภาพันธ์',
+      'มีนาคม',
+      'เมษายน',
+      'พฤษภาคม',
+      'มิถุนายน',
+      'กรกฎาคม',
+      'สิงหาคม',
+      'กันยายน',
+      'ตุลาคม',
+      'พฤศจิกายน',
+      'ธันวาคม'
+    ];
+
+
+    /* -------------------------
+       Date / Time
+       ------------------------- */
+
+    const now =
+      new Date();
+
+
+    const targetDate =
+      parseLocalDate(receiveDate) ||
+      now;
+
+
+    const thaiDay =
+      toThaiNum(
+        targetDate.getDate()
+      );
+
+
+    const thaiMonth =
+      thaiMonths[
+        targetDate.getMonth()
+      ];
+
+
+    const thaiYear =
+      toThaiNum(
+        targetDate.getFullYear() + 543
+      );
+
+
+    const formattedToday =
+      `${thaiDay} ${thaiMonth} ${thaiYear}`;
+
+
+    const hh =
+      String(
+        now.getHours()
+      ).padStart(2, '0');
+
+
+    const mm =
+      String(
+        now.getMinutes()
+      ).padStart(2, '0');
+
+
+    const ss =
+      String(
+        now.getSeconds()
+      ).padStart(2, '0');
+
+
+    const formattedTime =
+      toThaiNum(
+        `${hh}:${mm}:${ss}`
+      );
+
+
+    const thaiReceiveNo =
+      toThaiNum(
+        receiveNo
+      );
+
+
+    /* -------------------------
+       Stamp Color
+       ------------------------- */
+
+    const inkColor =
+      PDFLib.rgb(
+        0.08,
+        0.18,
+        0.52
+      );
+
+
+    const pages =
+      pdfDoc.getPages();
+
+
+    const firstPage =
+      pages[0];
+
+
+    if (!firstPage) {
+
+      throw new Error(
+        "ไม่พบหน้าเอกสาร PDF"
+      );
+    }
+
+
+    const {
+      width,
+      height
+    } =
+      firstPage.getSize();
+
+
+    /* -------------------------
+       Stamp Position
+       ------------------------- */
+
     const stampWidth = 155;
     const stampHeight = 68;
     const margin = 15;
-    const x = width - stampWidth - margin;
-    const y = height - stampHeight - margin;
 
-    // 1. วาดกรอบสี่เหลี่ยมซ้อน 2 ชั้น (Double Border)
+
+    const x =
+      width -
+      stampWidth -
+      margin;
+
+
+    const y =
+      height -
+      stampHeight -
+      margin;
+
+
+    /* -------------------------
+       Outer Border
+       ------------------------- */
+
     firstPage.drawRectangle({
+
       x: x,
+
       y: y,
-      width: stampWidth,
-      height: stampHeight,
-      borderColor: inkColor,
-      borderWidth: 1.4
+
+      width:
+        stampWidth,
+
+      height:
+        stampHeight,
+
+      borderColor:
+        inkColor,
+
+      borderWidth:
+        1.4
     });
+
+
+    /* -------------------------
+       Inner Border
+       ------------------------- */
 
     const innerPadding = 2;
+
+
     firstPage.drawRectangle({
-      x: x + innerPadding,
-      y: y + innerPadding,
-      width: stampWidth - (innerPadding * 2),
-      height: stampHeight - (innerPadding * 2),
-      borderColor: inkColor,
-      borderWidth: 0.6
+
+      x:
+        x +
+        innerPadding,
+
+      y:
+        y +
+        innerPadding,
+
+      width:
+        stampWidth -
+        (innerPadding * 2),
+
+      height:
+        stampHeight -
+        (innerPadding * 2),
+
+      borderColor:
+        inkColor,
+
+      borderWidth:
+        0.6
     });
 
-    // 2. ชื่อโรงเรียน (ปรับฟอนต์เหลือ 9.5 pt)
-    firstPage.drawText("โรงเรียนพิมานพิทยาสรรค์", {
-      x: x + 8,
-      y: y + 51,
-      size: 9.5,
-      font: customFont,
-      color: inkColor
-    });
 
-    // 3. ฟังก์ชันสำหรับวาดเส้นประ
-    const drawDottedLine = (startX, startY, endX) => {
-      const dashLength = 1.2;
-      const gapLength = 1.2;
-      let currentX = startX;
-      while (currentX < endX) {
-        firstPage.drawLine({
-          start: { x: currentX, y: startY },
-          end: { x: Math.min(currentX + dashLength, endX), y: startY },
-          thickness: 0.5,
-          color: inkColor
-        });
-        currentX += dashLength + gapLength;
+    /* -------------------------
+       School Name
+       ------------------------- */
+
+    firstPage.drawText(
+      "โรงเรียนพิมานพิทยาสรรค์",
+      {
+
+        x:
+          x + 8,
+
+        y:
+          y + 51,
+
+        size:
+          9.5,
+
+        font:
+          customFont,
+
+        color:
+          inkColor
       }
-    };
+    );
 
-    // 4. ข้อความ + เส้นประแต่ละบรรทัด (ปรับฟอนต์เหลือ 8.5 pt)
-    const labelX = x + 8;
-    const valueX = x + 38;
-    const lineStartX = x + 34;
-    const lineEndX = x + stampWidth - 8;
 
-    // บรรทัดที่ 1: รับที่
-    firstPage.drawText("รับที่", { x: labelX, y: y + 36, size: 8.5, font: customFont, color: inkColor });
-    firstPage.drawText(thaiReceiveNo, { x: valueX, y: y + 36, size: 8.5, font: customFont, color: inkColor });
-    drawDottedLine(lineStartX, y + 34, lineEndX);
+    /* -------------------------
+       Dotted Line
+       ------------------------- */
 
-    // บรรทัดที่ 2: วันที่
-    firstPage.drawText("วันที่", { x: labelX, y: y + 21, size: 8.5, font: customFont, color: inkColor });
-    firstPage.drawText(formattedToday, { x: valueX, y: y + 21, size: 8.5, font: customFont, color: inkColor });
-    drawDottedLine(lineStartX, y + 20, lineEndX);
+    const drawDottedLine =
+      (
+        startX,
+        startY,
+        endX
+      ) => {
 
-    // บรรทัดที่ 3: เวลา
-    firstPage.drawText("เวลา", { x: labelX, y: y + 6, size: 8.5, font: customFont, color: inkColor });
-    firstPage.drawText(formattedTime, { x: valueX, y: y + 6, size: 8.5, font: customFont, color: inkColor });
-    drawDottedLine(lineStartX, y + 5, lineEndX);
+        const dashLength = 1.2;
+        const gapLength = 1.2;
 
-    const stampedPdfBytes = await pdfDoc.save();
+        let currentX =
+          startX;
 
-    let binary = '';
-    const bytes = new Uint8Array(stampedPdfBytes);
-    const len = bytes.byteLength;
-    const chunkSize = 8192;
-    for (let i = 0; i < len; i += chunkSize) {
-      binary += String.fromCharCode.apply(null, bytes.subarray(i, Math.min(i + chunkSize, len)));
-    }
-    return 'data:application/pdf;base64,' + btoa(binary);
-  }
 
-  async function handleRegisterBook(e) {
-    if (e && typeof e.preventDefault === 'function') e.preventDefault();
-    
-    const btn = document.getElementById('btnSubmitBook');
-    if (btn) {
-      btn.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin"></i> กำลังประทับตราและบันทึก...`;
-      btn.disabled = true;
-    }
+        while (
+          currentX < endX
+        ) {
 
-    try {
-      const fileInput = document.getElementById('bookPdf');
-      if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
-        showAlert("กรุณาเลือกไฟล์ PDF หนังสือเข้า", "แจ้งเตือน", "warning");
-        if (btn) {
-          btn.innerHTML = `<i class="fa-solid fa-stamp"></i> <span>ลงรับและประทับตราหนังสือ</span>`;
-          btn.disabled = false;
-        }
-        return;
-      }
+          firstPage.drawLine({
 
-      const file = fileInput.files[0];
-      const recNo = document.getElementById('bookRecNo')?.value || '';
-      const bookNo = document.getElementById('bookNo')?.value || '';
-      const bookDate = document.getElementById('bookDate')?.value || '';
-      const receiveDate = document.getElementById('receiveDateInput')?.value || '';
-      const bookFrom = document.getElementById('bookFrom')?.value || '';
-      const bookTitle = document.getElementById('bookTitle')?.value || '';
+            start: {
+              x:
+                currentX,
 
-      const stampedBase64 = await stampPdfOnClient(file, recNo, receiveDate);
+              y:
+                startY
+            },
 
-      const payload = {
-        action: 'SAVE_NEW_DOC',
-        data: {
-          receiveNo: recNo,
-          bookNo: bookNo,
-          receiveDate: receiveDate,
-          bookDate: bookDate,
-          fromDept: bookFrom,
-          title: bookTitle,
-          fileData: stampedBase64
+            end: {
+
+              x:
+                Math.min(
+                  currentX +
+                  dashLength,
+                  endX
+                ),
+
+              y:
+                startY
+            },
+
+            thickness:
+              0.5,
+
+            color:
+              inkColor
+          });
+
+
+          currentX +=
+            dashLength +
+            gapLength;
         }
       };
 
-      const response = await fetch(GAS_URL, {
-        method: 'POST',
-        body: JSON.stringify(payload)
-      });
 
-      const res = await response.json();
+    /* -------------------------
+       Stamp Text Positions
+       ------------------------- */
+
+    const labelX =
+      x + 8;
+
+    const valueX =
+      x + 38;
+
+    const lineStartX =
+      x + 34;
+
+    const lineEndX =
+      x +
+      stampWidth -
+      8;
+
+
+    /* -------------------------
+       Receive Number
+       ------------------------- */
+
+    firstPage.drawText(
+      "รับที่",
+      {
+
+        x:
+          labelX,
+
+        y:
+          y + 36,
+
+        size:
+          8.5,
+
+        font:
+          customFont,
+
+        color:
+          inkColor
+      }
+    );
+
+
+    firstPage.drawText(
+      thaiReceiveNo,
+      {
+
+        x:
+          valueX,
+
+        y:
+          y + 36,
+
+        size:
+          8.5,
+
+        font:
+          customFont,
+
+        color:
+          inkColor
+      }
+    );
+
+
+    drawDottedLine(
+      lineStartX,
+      y + 34,
+      lineEndX
+    );
+
+
+    /* -------------------------
+       Date
+       ------------------------- */
+
+    firstPage.drawText(
+      "วันที่",
+      {
+
+        x:
+          labelX,
+
+        y:
+          y + 21,
+
+        size:
+          8.5,
+
+        font:
+          customFont,
+
+        color:
+          inkColor
+      }
+    );
+
+
+    firstPage.drawText(
+      formattedToday,
+      {
+
+        x:
+          valueX,
+
+        y:
+          y + 21,
+
+        size:
+          8.5,
+
+        font:
+          customFont,
+
+        color:
+          inkColor
+      }
+    );
+
+
+    drawDottedLine(
+      lineStartX,
+      y + 20,
+      lineEndX
+    );
+
+
+    /* -------------------------
+       Time
+       ------------------------- */
+
+    firstPage.drawText(
+      "เวลา",
+      {
+
+        x:
+          labelX,
+
+        y:
+          y + 6,
+
+        size:
+          8.5,
+
+        font:
+          customFont,
+
+        color:
+          inkColor
+      }
+    );
+
+
+    firstPage.drawText(
+      formattedTime,
+      {
+
+        x:
+          valueX,
+
+        y:
+          y + 6,
+
+        size:
+          8.5,
+
+        font:
+          customFont,
+
+        color:
+          inkColor
+      }
+    );
+
+
+    drawDottedLine(
+      lineStartX,
+      y + 5,
+      lineEndX
+    );
+
+
+    /* -------------------------
+       Save PDF
+       ------------------------- */
+
+    const stampedPdfBytes =
+      await pdfDoc.save();
+
+
+    /* -------------------------
+       Convert to Base64
+       ------------------------- */
+
+    let binary = '';
+
+    const bytes =
+      new Uint8Array(
+        stampedPdfBytes
+      );
+
+    const len =
+      bytes.byteLength;
+
+    const chunkSize =
+      8192;
+
+
+    for (
+      let i = 0;
+      i < len;
+      i += chunkSize
+    ) {
+
+      binary +=
+        String.fromCharCode.apply(
+          null,
+          bytes.subarray(
+            i,
+            Math.min(
+              i + chunkSize,
+              len
+            )
+          )
+        );
+    }
+
+
+    return (
+      'data:application/pdf;base64,' +
+      btoa(binary)
+    );
+  }
+
+
+  /* =========================================================
+     REGISTER BOOK
+     ========================================================= */
+
+  async function handleRegisterBook(e) {
+
+    if (
+      e &&
+      typeof e.preventDefault ===
+      'function'
+    ) {
+
+      e.preventDefault();
+    }
+
+
+    // ป้องกันการกดปุ่มซ้ำ
+    if (isRegisteringBook) {
+      return;
+    }
+
+
+    isRegisteringBook = true;
+
+
+    const btn =
+      document.getElementById(
+        'btnSubmitBook'
+      );
+
+
+    if (btn) {
+
+      btn.innerHTML =
+        `<i class="fa-solid fa-circle-notch animate-spin"></i> ` +
+        `กำลังประทับตราและบันทึก...`;
+
+      btn.disabled = true;
+    }
+
+
+    try {
+
+      /* -------------------------
+         Check PDF
+         ------------------------- */
+
+      const fileInput =
+        document.getElementById(
+          'bookPdf'
+        );
+
+
+      if (
+        !fileInput ||
+        !fileInput.files ||
+        fileInput.files.length === 0
+      ) {
+
+        showAlert(
+          "กรุณาเลือกไฟล์ PDF หนังสือเข้า",
+          "แจ้งเตือน",
+          "warning"
+        );
+
+        return;
+      }
+
+
+      const file =
+        fileInput.files[0];
+
+
+      /* -------------------------
+         Get Form Data
+         ------------------------- */
+
+      const recNo =
+        document.getElementById(
+          'bookRecNo'
+        )?.value || '';
+
+
+      const bookNo =
+        document.getElementById(
+          'bookNo'
+        )?.value || '';
+
+
+      const bookDate =
+        document.getElementById(
+          'bookDate'
+        )?.value || '';
+
+
+      const receiveDate =
+        document.getElementById(
+          'receiveDateInput'
+        )?.value || '';
+
+
+      const bookFrom =
+        document.getElementById(
+          'bookFrom'
+        )?.value || '';
+
+
+      const bookTitle =
+        document.getElementById(
+          'bookTitle'
+        )?.value || '';
+
+
+      /* -------------------------
+         Stamp PDF
+         ------------------------- */
+
+      const stampedBase64 =
+        await stampPdfOnClient(
+          file,
+          recNo,
+          receiveDate
+        );
+
+
+      /* -------------------------
+         Save to GAS
+         ------------------------- */
+
+      const payload = {
+
+        action:
+          'SAVE_NEW_DOC',
+
+        data: {
+
+          receiveNo:
+            recNo,
+
+          bookNo:
+            bookNo,
+
+          receiveDate:
+            receiveDate,
+
+          bookDate:
+            bookDate,
+
+          fromDept:
+            bookFrom,
+
+          title:
+            bookTitle,
+
+          fileData:
+            stampedBase64
+        }
+      };
+
+
+      const res =
+        await postToGas(
+          payload
+        );
+
+
+      /* -------------------------
+         Success
+         ------------------------- */
 
       if (res.success) {
-        const form = document.getElementById('sarabunRegisterForm');
-        if (form) form.reset();
-        
+
+        const form =
+          document.getElementById(
+            'sarabunRegisterForm'
+          );
+
+
+        if (form) {
+          form.reset();
+        }
+
+
+        // โหลดข้อมูลใหม่
         await loadDocsData();
+
+
+        // อัปเดตเลขรับถัดไป
         updateNextRecNo();
-        switchSarabunMenu('registered');
-        
-        const currentYearBE = new Date().getFullYear() + 543;
-        showAlert(`ลงรับหนังสือเลขที่ ${recNo}/${currentYearBE} และประทับตราเรียบร้อยแล้ว`, "ลงรับสำเร็จ", "success");
+
+
+        // กลับหน้ารายการ
+        switchSarabunMenu(
+          'registered'
+        );
+
+
+        const currentYearBE =
+          getCurrentYearBE();
+
+
+        showAlert(
+          `ลงรับหนังสือเลขที่ ${recNo}/${currentYearBE} และประทับตราเรียบร้อยแล้ว`,
+          "ลงรับสำเร็จ",
+          "success"
+        );
+
+
       } else {
-        showAlert(res.message || "เกิดข้อผิดพลาดในการบันทึกข้อมูล", "บันทึกไม่สำเร็จ", "error");
+
+        showAlert(
+          res.message ||
+          "เกิดข้อผิดพลาดในการบันทึกข้อมูล",
+          "บันทึกไม่สำเร็จ",
+          "error"
+        );
       }
+
+
     } catch (err) {
-      console.error(err);
-      showAlert("เกิดข้อผิดพลาด: " + err.message, "เกิดข้อผิดพลาด", "error");
+
+      console.error(
+        "Register book error:",
+        err
+      );
+
+
+      showAlert(
+        "เกิดข้อผิดพลาด: " +
+        (err?.message || err),
+        "เกิดข้อผิดพลาด",
+        "error"
+      );
+
+
     } finally {
+
+      isRegisteringBook = false;
+
+
       if (btn) {
-        btn.innerHTML = `<i class="fa-solid fa-stamp"></i> <span>ลงรับและประทับตราหนังสือ</span>`;
+
+        btn.innerHTML =
+          `<i class="fa-solid fa-stamp"></i> ` +
+          `<span>ลงรับและประทับตราหนังสือ</span>`;
+
         btn.disabled = false;
       }
     }
   }
-  
-  function logout() {
-    currentUser = null;
-    targetRoleGroup = 'SARABUN';
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('targetRoleGroup');
 
-    document.getElementById('mainDashboard')?.classList.add('hidden');
-    document.getElementById('portalSection')?.classList.remove('hidden');
+
+  /* =========================================================
+     LOGOUT
+     ========================================================= */
+
+  function logout() {
+
+    currentUser = null;
+
+    targetRoleGroup =
+      'SARABUN';
+
+
+    incomingBooks = [];
+
+    filteredBooks = [];
+
+    currentPage = 1;
+
+    isLoadingData = false;
+
+    isLoggingIn = false;
+
+    isRegisteringBook = false;
+
+
+    localStorage.removeItem(
+      'currentUser'
+    );
+
+    localStorage.removeItem(
+      'targetRoleGroup'
+    );
+
+
+    document
+      .getElementById('mainDashboard')
+      ?.classList.add('hidden');
+
+
+    document
+      .getElementById('portalSection')
+      ?.classList.remove('hidden');
+
+
+    // เคลียร์ช่องค้นหา
+    const searchInput =
+      document.getElementById(
+        'searchInput'
+      );
+
+    if (searchInput) {
+      searchInput.value = '';
+    }
+
+
+    // กลับหน้าเริ่มต้น
+    currentSarabunTab =
+      'registered';
   }
+
+
+  /* =========================================================
+     OPTIONAL: CLOSE ALERT WHEN CLICK OUTSIDE
+     ========================================================= */
+
+  document.addEventListener(
+    'click',
+    (event) => {
+
+      const modal =
+        document.getElementById(
+          'alertModal'
+        );
+
+      if (!modal) {
+        return;
+      }
+
+
+      // ไม่บังคับปิด Modal
+      // เพื่อรักษาพฤติกรรมเดิมของระบบ
+    }
+  );
+
 </script>
   
 </body>
