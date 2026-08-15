@@ -501,6 +501,7 @@
       </button>
     </div>
   </div>
+  
 <!-- ================= JavaScript ================= -->
 <script>
   const GAS_URL = "https://script.google.com/macros/s/AKfycbxauMbrEeIaDNAN_U0DvffmUVN5vfbUqpNOpmVSPvtMZ9qbl0WfTcxB2JnvcRxkOfQm/exec"; 
@@ -516,6 +517,7 @@
   const pageSize = 20;
 
   let cachedFontBytes = null;
+  let isLoadingData = false;
 
   function warmupServer() {
     fetch(GAS_URL, {
@@ -536,7 +538,7 @@
       img.src = SCHOOL_LOGO_URL;
     });
 
-    // Bind Search Event (ใช้ 'input' เพื่อรองรับทั้งการพิมพ์และ Paste)
+    // Bind Search Event
     const searchInput = document.getElementById('searchInput');
     if (searchInput) {
       searchInput.addEventListener('input', filterDocs);
@@ -563,6 +565,7 @@
         const userInfoEl = document.getElementById('userInfo');
         if (userInfoEl) userInfoEl.innerText = `${currentUser.name} • ${currentUser.position}`;
 
+        // โหลดข้อมูลให้เสร็จ 100% ก่อนจึงเริ่มวาดแดชบอร์ด
         await loadDocsData();
         loadRoleDashboard();
       } catch (err) {
@@ -683,6 +686,7 @@
         const userInfoEl = document.getElementById('userInfo');
         if (userInfoEl) userInfoEl.innerText = `${currentUser.name} • ${currentUser.position}`;
         
+        // รอให้ดึงข้อมูลหนังสือรับเสร็จสมบูรณ์ก่อนเปิดหน้า Dashboard
         await loadDocsData();
         loadRoleDashboard();
       } else {
@@ -722,6 +726,10 @@
 
   async function loadDocsData() {
     if (!currentUser) return;
+    
+    isLoadingData = true;
+    renderLoadingState(); // แสดง UI กำลังโหลดในตารางทันที
+
     try {
       const payload = {
         action: 'GET_DOCS_BY_ROLE',
@@ -753,6 +761,24 @@
     } catch (err) {
       console.error("Error loading docs:", err);
       incomingBooks = [];
+    } finally {
+      isLoadingData = false;
+    }
+  }
+
+  function renderLoadingState() {
+    const tableBody = document.getElementById('bookTableBody');
+    if (tableBody) {
+      tableBody.innerHTML = `
+        <tr>
+          <td colspan="7" class="py-12 text-center text-slate-500 font-medium">
+            <div class="flex flex-col items-center justify-center gap-2">
+              <i class="fa-solid fa-circle-notch animate-spin text-2xl text-sky-600"></i>
+              <span>กำลังดึงข้อมูลหนังสือรับจากระบบ...</span>
+            </div>
+          </td>
+        </tr>
+      `;
     }
   }
 
@@ -771,11 +797,9 @@
     }, 0);
     const nextNumber = maxRecNo + 1;
     
-    // อัปเดตข้อความแสดงเลขรับถัดไป
     const el = document.getElementById('nextRegNo');
     if (el) el.innerText = `${nextNumber}/${currentYearBE}`;
 
-    // อัปเดตค่าลงในช่อง Input ของฟอร์มลงรับให้อัตโนมัติ
     const recInput = document.getElementById('bookRecNo');
     if (recInput) recInput.value = nextNumber;
   }
@@ -784,7 +808,6 @@
     currentSarabunTab = tabName;
     currentPage = 1;
     
-    // 1. จัดการสถานะปุ่ม Active ใน Sidebar
     const btnAdd = document.getElementById('menuBtnAddBook');
     const btnReg = document.getElementById('menuBtnRegistered');
     const btnRet = document.getElementById('menuBtnReturned');
@@ -793,18 +816,15 @@
       if (btn) btn.classList.remove('active', 'bg-sky-700', 'text-white');
     });
 
-    // 2. ดึง Element ฟอร์มและตาราง
     const addSection = document.getElementById('sarabunAddFormSection');
     const tableSection = document.getElementById('sarabunTableSection');
 
-    // 3. สลับการแสดงผล
     if (tabName === 'add') {
       if (btnAdd) btnAdd.classList.add('active', 'bg-sky-700', 'text-white');
       
       if (addSection) addSection.classList.remove('hidden');
       if (tableSection) tableSection.classList.add('hidden');
 
-      // เติมค่าตั้งต้นให้อัตโนมัติ (วันที่ปัจจุบัน และ เลขรับถัดไป)
       const receiveDateInput = document.getElementById('receiveDateInput');
       if (receiveDateInput && !receiveDateInput.value) {
         const today = new Date().toISOString().split('T')[0];
@@ -821,15 +841,18 @@
         btnRet.classList.add('active', 'bg-sky-700', 'text-white');
       }
       
-      // กรองข้อมูลและแสดงผลตารางตาม Tab และคำค้นหา
       filterDocs();
     }
   }
 
   function filterDocs() {
+    if (isLoadingData) {
+      renderLoadingState();
+      return;
+    }
+
     const q = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
 
-    // 1. กรองตาม Tab ปัจจุบัน
     let baseList = [];
     if (currentSarabunTab === 'registered') {
       baseList = incomingBooks.filter(b => b.status === 'COMPLETED' || b.status === 'REGISTERED' || b.status === 'PENDING_DIRECTOR');
@@ -839,7 +862,6 @@
       baseList = [...incomingBooks];
     }
 
-    // 2. กรองตามคำค้นหา
     if (q) {
       filteredBooks = baseList.filter(b => 
         (b.recNo && String(b.recNo).toLowerCase().includes(q)) ||
@@ -856,6 +878,11 @@
   }
 
   function renderTableData() {
+    if (isLoadingData) {
+      renderLoadingState();
+      return;
+    }
+
     const tableBody = document.getElementById('bookTableBody');
     const pageStart = document.getElementById('pageStart');
     const pageEnd = document.getElementById('pageEnd');
@@ -970,7 +997,6 @@
 
     const stampedPdfBytes = await pdfDoc.save();
 
-    // แปลง ArrayBuffer เป็น Base64 string เพื่อลดความเสี่ยง Stack Overflow จาก String.fromCharCode Large Arguments
     let binary = '';
     const bytes = new Uint8Array(stampedPdfBytes);
     const len = bytes.byteLength;
@@ -1009,7 +1035,6 @@
       const bookFrom = document.getElementById('bookFrom')?.value || '';
       const bookTitle = document.getElementById('bookTitle')?.value || '';
 
-      // ประทับตรา PDF บนฝั่ง Client
       const stampedBase64 = await stampPdfOnClient(file, recNo, receiveDate);
 
       const payload = {
