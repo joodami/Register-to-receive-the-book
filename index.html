@@ -943,7 +943,7 @@
     switchSarabunMenu('add');
   }
 
-  async function stampPdfOnClient(file, receiveNo, receiveDate) {
+ async function stampPdfOnClient(file, receiveNo, receiveDate) {
     if (typeof PDFLib === 'undefined' || typeof fontkit === 'undefined') {
       throw new Error("ไม่พบไลบรารี PDF-Lib หรือ fontkit");
     }
@@ -975,25 +975,81 @@
     const formattedTime = toThaiNum(`${hh}:${mm}:${ss}`);
     const thaiReceiveNo = toThaiNum(receiveNo);
 
+    // สีกรมท่าสำหรับตราประทับ
     const inkColor = PDFLib.rgb(0.08, 0.18, 0.52);
     const pages = pdfDoc.getPages();
     const firstPage = pages[0];
     const { width, height } = firstPage.getSize();
 
-    const stampWidth = 160;
-    const stampHeight = 78;
+    // ขนาดกล่องตราประทับ
+    const stampWidth = 200;
+    const stampHeight = 90;
     const margin = 15;
     const x = width - stampWidth - margin;
     const y = height - stampHeight - margin;
 
-    firstPage.drawRectangle({ x, y, width: stampWidth, height: stampHeight, borderColor: inkColor, borderWidth: 1.5 });
-    firstPage.drawText("โรงเรียนพิมานพิทยาสรรค์", { x: x + 10, y: y + 58, size: 11, font: customFont, color: inkColor });
-    firstPage.drawText("รับที่", { x: x + 10, y: y + 40, size: 10, font: customFont, color: inkColor });
-    firstPage.drawText(thaiReceiveNo, { x: x + 36, y: y + 40, size: 10, font: customFont, color: inkColor });
-    firstPage.drawText("วันที่", { x: x + 10, y: y + 23, size: 10, font: customFont, color: inkColor });
-    firstPage.drawText(formattedToday, { x: x + 36, y: y + 23, size: 10, font: customFont, color: inkColor });
-    firstPage.drawText("เวลา", { x: x + 10, y: y + 6, size: 10, font: customFont, color: inkColor });
-    firstPage.drawText(formattedTime, { x: x + 36, y: y + 6, size: 10, font: customFont, color: inkColor });
+    // 1. วาดกรอบสี่เหลี่ยมซ้อน 2 ชั้น (Double Border)
+    // กรอบนอก (เส้นหนา)
+    firstPage.drawRectangle({
+      x: x,
+      y: y,
+      width: stampWidth,
+      height: stampHeight,
+      borderColor: inkColor,
+      borderWidth: 1.8
+    });
+
+    // กรอบใน (เส้นบาง)
+    const innerPadding = 2.5;
+    firstPage.drawRectangle({
+      x: x + innerPadding,
+      y: y + innerPadding,
+      width: stampWidth - (innerPadding * 2),
+      height: stampHeight - (innerPadding * 2),
+      borderColor: inkColor,
+      borderWidth: 0.8
+    });
+
+    // 2. ชื่อโรงเรียน (กึ่งกลางกล่อง)
+    firstPage.drawText("โรงเรียนพิมานพิทยาสรรค์", {
+      x: x + 12,
+      y: y + 66,
+      size: 13,
+      font: customFont,
+      color: inkColor
+    });
+
+    // 3. ฟังก์ชันสำหรับวาดเส้นประ
+    const drawDottedLine = (startX, startY, endX) => {
+      const dashLength = 1.5;
+      const gapLength = 1.5;
+      let currentX = startX;
+      while (currentX < endX) {
+        firstPage.drawLine({
+          start: { x: currentX, y: startY },
+          end: { x: Math.min(currentX + dashLength, endX), y: startY },
+          thickness: 0.6,
+          color: inkColor
+        });
+        currentX += dashLength + gapLength;
+      }
+    };
+
+    // 4. ข้อความ + เส้นประแต่ละบรรทัด
+    // บรรทัดที่ 1: รับที่
+    firstPage.drawText("รับที่", { x: x + 12, y: y + 46, size: 11, font: customFont, color: inkColor });
+    firstPage.drawText(thaiReceiveNo, { x: x + 48, y: y + 46, size: 11, font: customFont, color: inkColor });
+    drawDottedLine(x + 42, y + 44, x + stampWidth - 12);
+
+    // บรรทัดที่ 2: วันที่
+    firstPage.drawText("วันที่", { x: x + 12, y: y + 26, size: 11, font: customFont, color: inkColor });
+    firstPage.drawText(formattedToday, { x: x + 48, y: y + 26, size: 11, font: customFont, color: inkColor });
+    drawDottedLine(x + 42, y + 24, x + stampWidth - 12);
+
+    // บรรทัดที่ 3: เวลา
+    firstPage.drawText("เวลา", { x: x + 12, y: y + 7, size: 11, font: customFont, color: inkColor });
+    firstPage.drawText(formattedTime, { x: x + 48, y: y + 7, size: 11, font: customFont, color: inkColor });
+    drawDottedLine(x + 42, y + 5, x + stampWidth - 12);
 
     const stampedPdfBytes = await pdfDoc.save();
 
