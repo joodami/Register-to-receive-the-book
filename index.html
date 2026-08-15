@@ -501,7 +501,6 @@
       </button>
     </div>
   </div>
-
 <!-- ================= JavaScript ================= -->
 <script>
   const GAS_URL = "https://script.google.com/macros/s/AKfycbxauMbrEeIaDNAN_U0DvffmUVN5vfbUqpNOpmVSPvtMZ9qbl0WfTcxB2JnvcRxkOfQm/exec"; 
@@ -765,6 +764,7 @@
   }
 
   function updateNextRecNo() {
+    const currentYearBE = new Date().getFullYear() + 543;
     const maxRecNo = incomingBooks.reduce((max, b) => {
       const num = parseInt(String(b.recNo).replace(/[^0-9]/g, ''), 10);
       return !isNaN(num) && num > max ? num : max;
@@ -773,7 +773,7 @@
     
     // อัปเดตข้อความแสดงเลขรับถัดไป
     const el = document.getElementById('nextRegNo');
-    if (el) el.innerText = `${nextNumber}/2569`;
+    if (el) el.innerText = `${nextNumber}/${currentYearBE}`;
 
     // อัปเดตค่าลงในช่อง Input ของฟอร์มลงรับให้อัตโนมัติ
     const recInput = document.getElementById('bookRecNo');
@@ -887,10 +887,12 @@
       return;
     }
 
+    const currentYearBE = new Date().getFullYear() + 543;
+
     tableBody.innerHTML = pageData.map((b, i) => `
       <tr class="hover:bg-sky-50/60 transition-colors">
         <td class="py-3 px-3 text-center font-medium text-slate-500">${startIdx + i + 1}</td>
-        <td class="py-3 px-3 text-center font-bold text-amber-700">${b.recNo}/2569</td>
+        <td class="py-3 px-3 text-center font-bold text-amber-700">${b.recNo}/${currentYearBE}</td>
         <td class="py-3 px-3 font-semibold text-slate-700">${b.no || '-'}</td>
         <td class="py-3 px-3 font-medium text-slate-800">${b.title}</td>
         <td class="py-3 px-3 text-slate-600">${b.from}</td>
@@ -960,18 +962,21 @@
     firstPage.drawRectangle({ x, y, width: stampWidth, height: stampHeight, borderColor: inkColor, borderWidth: 1.5 });
     firstPage.drawText("โรงเรียนพิมานพิทยาสรรค์", { x: x + 10, y: y + 58, size: 11, font: customFont, color: inkColor });
     firstPage.drawText("รับที่", { x: x + 10, y: y + 40, size: 10, font: customFont, color: inkColor });
-    firstPage.drawText(thaiReceiveNo, { x: x + 36, y: y + 41, size: 10, font: customFont, color: inkColor });
+    firstPage.drawText(thaiReceiveNo, { x: x + 36, y: y + 40, size: 10, font: customFont, color: inkColor });
     firstPage.drawText("วันที่", { x: x + 10, y: y + 23, size: 10, font: customFont, color: inkColor });
-    firstPage.drawText(formattedToday, { x: x + 36, y: y + 24, size: 10, font: customFont, color: inkColor });
+    firstPage.drawText(formattedToday, { x: x + 36, y: y + 23, size: 10, font: customFont, color: inkColor });
     firstPage.drawText("เวลา", { x: x + 10, y: y + 6, size: 10, font: customFont, color: inkColor });
-    firstPage.drawText(formattedTime, { x: x + 36, y: y + 7, size: 10, font: customFont, color: inkColor });
+    firstPage.drawText(formattedTime, { x: x + 36, y: y + 6, size: 10, font: customFont, color: inkColor });
 
     const stampedPdfBytes = await pdfDoc.save();
+
+    // แปลง ArrayBuffer เป็น Base64 string เพื่อลดความเสี่ยง Stack Overflow จาก String.fromCharCode Large Arguments
     let binary = '';
     const bytes = new Uint8Array(stampedPdfBytes);
-    const chunkSize = 0x8000;
-    for (let i = 0; i < bytes.length; i += chunkSize) {
-      binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize));
+    const len = bytes.byteLength;
+    const chunkSize = 8192;
+    for (let i = 0; i < len; i += chunkSize) {
+      binary += String.fromCharCode.apply(null, bytes.subarray(i, Math.min(i + chunkSize, len)));
     }
     return 'data:application/pdf;base64,' + btoa(binary);
   }
@@ -1034,7 +1039,9 @@
         await loadDocsData();
         updateNextRecNo();
         switchSarabunMenu('registered');
-        showAlert(`ลงรับหนังสือเลขที่ ${recNo}/2569 และประทับตราเรียบร้อยแล้ว`, "ลงรับสำเร็จ", "success");
+        
+        const currentYearBE = new Date().getFullYear() + 543;
+        showAlert(`ลงรับหนังสือเลขที่ ${recNo}/${currentYearBE} และประทับตราเรียบร้อยแล้ว`, "ลงรับสำเร็จ", "success");
       } else {
         showAlert(res.message || "เกิดข้อผิดพลาดในการบันทึกข้อมูล", "บันทึกไม่สำเร็จ", "error");
       }
