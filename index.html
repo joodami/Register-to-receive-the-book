@@ -943,7 +943,7 @@
     switchSarabunMenu('add');
   }
 
- async function stampPdfOnClient(file, receiveNo, receiveDate) {
+async function stampPdfOnClient(file, receiveNo, receiveDate) {
     if (typeof PDFLib === 'undefined' || typeof fontkit === 'undefined') {
       throw new Error("ไม่พบไลบรารี PDF-Lib หรือ fontkit");
     }
@@ -981,75 +981,78 @@
     const firstPage = pages[0];
     const { width, height } = firstPage.getSize();
 
-    // ขนาดกล่องตราประทับ
-    const stampWidth = 200;
-    const stampHeight = 90;
+    // ย่อขนาดกล่องตราประทับลงเหลือ 155 x 68 พิกเซล
+    const stampWidth = 155;
+    const stampHeight = 68;
     const margin = 15;
     const x = width - stampWidth - margin;
     const y = height - stampHeight - margin;
 
     // 1. วาดกรอบสี่เหลี่ยมซ้อน 2 ชั้น (Double Border)
-    // กรอบนอก (เส้นหนา)
     firstPage.drawRectangle({
       x: x,
       y: y,
       width: stampWidth,
       height: stampHeight,
       borderColor: inkColor,
-      borderWidth: 1.8
+      borderWidth: 1.4
     });
 
-    // กรอบใน (เส้นบาง)
-    const innerPadding = 2.5;
+    const innerPadding = 2;
     firstPage.drawRectangle({
       x: x + innerPadding,
       y: y + innerPadding,
       width: stampWidth - (innerPadding * 2),
       height: stampHeight - (innerPadding * 2),
       borderColor: inkColor,
-      borderWidth: 0.8
+      borderWidth: 0.6
     });
 
-    // 2. ชื่อโรงเรียน (กึ่งกลางกล่อง)
+    // 2. ชื่อโรงเรียน (ปรับฟอนต์เหลือ 9.5 pt)
     firstPage.drawText("โรงเรียนพิมานพิทยาสรรค์", {
-      x: x + 12,
-      y: y + 66,
-      size: 13,
+      x: x + 8,
+      y: y + 51,
+      size: 9.5,
       font: customFont,
       color: inkColor
     });
 
     // 3. ฟังก์ชันสำหรับวาดเส้นประ
     const drawDottedLine = (startX, startY, endX) => {
-      const dashLength = 1.5;
-      const gapLength = 1.5;
+      const dashLength = 1.2;
+      const gapLength = 1.2;
       let currentX = startX;
       while (currentX < endX) {
         firstPage.drawLine({
           start: { x: currentX, y: startY },
           end: { x: Math.min(currentX + dashLength, endX), y: startY },
-          thickness: 0.6,
+          thickness: 0.5,
           color: inkColor
         });
         currentX += dashLength + gapLength;
       }
     };
 
-    // 4. ข้อความ + เส้นประแต่ละบรรทัด
+    // 4. ข้อความ + เส้นประแต่ละบรรทัด (ปรับฟอนต์เหลือ 8.5 pt)
+    const labelX = x + 8;
+    const valueX = x + 38;
+    const lineStartX = x + 34;
+    const lineEndX = x + stampWidth - 8;
+
     // บรรทัดที่ 1: รับที่
-    firstPage.drawText("รับที่", { x: x + 12, y: y + 46, size: 11, font: customFont, color: inkColor });
-    firstPage.drawText(thaiReceiveNo, { x: x + 48, y: y + 46, size: 11, font: customFont, color: inkColor });
-    drawDottedLine(x + 42, y + 44, x + stampWidth - 12);
+    firstPage.drawText("รับที่", { x: labelX, y: y + 36, size: 8.5, font: customFont, color: inkColor });
+    firstPage.drawText(thaiReceiveNo, { x: valueX, y: y + 36, size: 8.5, font: customFont, color: inkColor });
+    drawDottedLine(lineStartX, y + 34, lineEndX);
 
     // บรรทัดที่ 2: วันที่
-    firstPage.drawText("วันที่", { x: x + 12, y: y + 26, size: 11, font: customFont, color: inkColor });
-    firstPage.drawText(formattedToday, { x: x + 48, y: y + 26, size: 11, font: customFont, color: inkColor });
-    drawDottedLine(x + 42, y + 24, x + stampWidth - 12);
+    firstPage.drawText("วันที่", { x: labelX, y: y + 21, size: 8.5, font: customFont, color: inkColor });
+    firstPage.drawText(formattedToday, { x: valueX, y: y + 21, size: 8.5, font: customFont, color: inkColor });
+    drawDottedLine(lineStartX, y + 20, lineEndX);
 
     // บรรทัดที่ 3: เวลา
-    firstPage.drawText("เวลา", { x: x + 12, y: y + 7, size: 11, font: customFont, color: inkColor });
-    firstPage.drawText(formattedTime, { x: x + 48, y: y + 7, size: 11, font: customFont, color: inkColor });
-    drawDottedLine(x + 42, y + 5, x + stampWidth - 12);
+    firstPage.drawText("เวลา", { x: labelX, y: y + 6, size: 8.5, font: customFont, color: inkColor });
+    firstPage.drawText(formattedTime, { x: valueX, y: y + 6, size: 8.5, font: customFont, color: inkColor });
+    drawDottedLine(lineStartX, y + 5, lineEndX);
 
     const stampedPdfBytes = await pdfDoc.save();
 
