@@ -138,106 +138,103 @@
     <!-- ส่วนกล่องเนื้อหาการเลือกแอปพลิเคชัน -->
     <div class="max-w-5xl mx-auto px-4 pb-6">
       
-     <!-- STEP 1: หน้าเลือกไอคอนระบบ (New Modern Interactive Cards) -->
-<div id="appSelectSection">
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+   <!-- STEP 1: หน้าเลือกไอคอนระบบ (Compact Mobile Layout - เห็นครบ 3 ระบบในหน้าเดียว) -->
+<div id="appSelectSection" class="max-w-4xl mx-auto px-1 sm:px-4">
+  <!-- grid-cols-2 บนมือถือ (การ์ดที่ 3 ขยายเต็มความกว้าง) และ grid-cols-3 บนจอคอม -->
+  <div class="grid grid-cols-2 md:grid-cols-3 gap-2.5 sm:gap-4 md:gap-6">
     
     <!-- CARD 1: ระบบผู้บริหาร -->
     <div onclick="selectAppSystem('EXEC', 'ระบบผู้บริหาร')" 
-         class="group relative bg-white/85 backdrop-blur-xl p-6 rounded-3xl border border-white/80 shadow-lg hover:shadow-2xl hover:shadow-amber-500/20 hover:-translate-y-2 transition-all duration-300 cursor-pointer text-center overflow-hidden flex flex-col justify-between">
+         class="group relative bg-white/90 backdrop-blur-xl p-3 sm:p-5 rounded-2xl border border-white shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer text-center overflow-hidden flex flex-col justify-between">
       
-      <!-- Ambient Glow Background -->
-      <div class="absolute -top-12 -right-12 w-32 h-32 bg-amber-400/20 rounded-full blur-2xl group-hover:bg-amber-400/35 transition-all duration-500"></div>
+      <div class="absolute -top-8 -right-8 w-20 h-20 bg-amber-400/20 rounded-full blur-xl group-hover:bg-amber-400/35 transition-all"></div>
 
-      <!-- Corner Badge / Status -->
-      <div class="absolute top-4 right-4 px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-700 border border-amber-500/20 text-[10px] font-bold flex items-center gap-1">
-        <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
-        <span>ฝ่ายบริหาร</span>
+      <!-- Badge ขนาดเล็ก -->
+      <div class="absolute top-2 right-2 px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-700 border border-amber-500/20 text-[9px] font-bold flex items-center gap-1">
+        <span class="w-1 h-1 rounded-full bg-amber-500 animate-pulse"></span>
+        <span class="hidden sm:inline">ฝ่ายบริหาร</span>
+        <span class="sm:hidden">บริหาร</span>
       </div>
 
       <div class="pt-2">
-        <!-- 3D Icon Box with Light Ring -->
-        <div class="relative w-20 h-20 mx-auto mb-4 flex items-center justify-center">
-          <div class="absolute inset-0 bg-amber-400/30 rounded-2xl blur-md group-hover:blur-lg transition-all duration-300"></div>
-          <div class="icon-3d-box relative w-16 h-16 bg-gradient-to-br from-amber-400 via-orange-500 to-amber-600 rounded-2xl flex items-center justify-center text-white text-3xl shadow-lg shadow-orange-500/30 border-t border-l border-white/50">
-            <i class="fa-solid fa-user-tie drop-shadow-[0_4px_6px_rgba(0,0,0,0.3)]"></i>
+        <!-- 3D Icon Box ขนาดกะทัดรัด (10x10 บนมือถือ) -->
+        <div class="relative w-10 h-10 sm:w-14 sm:h-14 mx-auto mb-2 flex items-center justify-center">
+          <div class="absolute inset-0 bg-amber-400/25 rounded-xl blur-sm"></div>
+          <div class="icon-3d-box relative w-10 h-10 sm:w-14 sm:h-14 bg-gradient-to-br from-amber-400 via-orange-500 to-amber-600 rounded-xl flex items-center justify-center text-white text-lg sm:text-2xl shadow-md shadow-orange-500/30 border-t border-l border-white/50">
+            <i class="fa-solid fa-user-tie drop-shadow"></i>
           </div>
         </div>
 
-        <h3 class="font-bold text-slate-800 text-lg group-hover:text-amber-600 transition-colors">ระบบผู้บริหาร</h3>
-        <p class="text-xs text-slate-500 mt-1.5 font-medium leading-relaxed">เกษียณหนังสือ พิจารณา และสั่งการเอกสาร</p>
+        <h3 class="font-bold text-slate-800 text-xs sm:text-base group-hover:text-amber-600 transition-colors">ระบบผู้บริหาร</h3>
+        <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5 line-clamp-2">เกษียณหนังสือ พิจารณา และสั่งการ</p>
       </div>
 
-      <!-- Card Action Footer -->
-      <div class="mt-5 pt-3 border-t border-slate-100 flex items-center justify-center gap-2 text-xs font-bold text-amber-600 group-hover:translate-x-1 transition-transform">
-        <span>เข้าสู่ระบบสั่งการ</span>
-        <i class="fa-solid fa-circle-arrow-right text-sm"></i>
+      <div class="mt-2 pt-1.5 border-t border-slate-100 flex items-center justify-center gap-1 text-[10px] sm:text-xs font-bold text-amber-600">
+        <span>เข้าสู่ระบบ</span>
+        <i class="fa-solid fa-chevron-right text-[9px] group-hover:translate-x-0.5 transition-transform"></i>
       </div>
     </div>
 
     <!-- CARD 2: งานสารบรรณ -->
     <div onclick="selectAppSystem('SARABUN', 'ระบบงานสารบรรณ')" 
-         class="group relative bg-white/85 backdrop-blur-xl p-6 rounded-3xl border border-white/80 shadow-lg hover:shadow-2xl hover:shadow-sky-500/20 hover:-translate-y-2 transition-all duration-300 cursor-pointer text-center overflow-hidden flex flex-col justify-between">
+         class="group relative bg-white/90 backdrop-blur-xl p-3 sm:p-5 rounded-2xl border border-white shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer text-center overflow-hidden flex flex-col justify-between">
       
-      <!-- Ambient Glow Background -->
-      <div class="absolute -top-12 -right-12 w-32 h-32 bg-sky-400/20 rounded-full blur-2xl group-hover:bg-sky-400/35 transition-all duration-500"></div>
+      <div class="absolute -top-8 -right-8 w-20 h-20 bg-sky-400/20 rounded-full blur-xl group-hover:bg-sky-400/35 transition-all"></div>
 
-      <!-- Corner Badge / Status -->
-      <div class="absolute top-4 right-4 px-2.5 py-1 rounded-full bg-sky-500/10 text-sky-700 border border-sky-500/20 text-[10px] font-bold flex items-center gap-1">
-        <span class="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse"></span>
-        <span>ศูนย์สารบรรณ</span>
+      <!-- Badge ขนาดเล็ก -->
+      <div class="absolute top-2 right-2 px-1.5 py-0.5 rounded-full bg-sky-500/10 text-sky-700 border border-sky-500/20 text-[9px] font-bold flex items-center gap-1">
+        <span class="w-1 h-1 rounded-full bg-sky-500 animate-pulse"></span>
+        <span class="hidden sm:inline">ศูนย์สารบรรณ</span>
+        <span class="sm:hidden">สารบรรณ</span>
       </div>
 
       <div class="pt-2">
-        <!-- 3D Icon Box with Light Ring -->
-        <div class="relative w-20 h-20 mx-auto mb-4 flex items-center justify-center">
-          <div class="absolute inset-0 bg-sky-400/30 rounded-2xl blur-md group-hover:blur-lg transition-all duration-300"></div>
-          <div class="icon-3d-box relative w-16 h-16 bg-gradient-to-br from-sky-400 via-blue-600 to-indigo-700 rounded-2xl flex items-center justify-center text-white text-3xl shadow-lg shadow-blue-500/30 border-t border-l border-white/50">
-            <i class="fa-solid fa-file-signature drop-shadow-[0_4px_6px_rgba(0,0,0,0.3)]"></i>
+        <!-- 3D Icon Box ขนาดกะทัดรัด -->
+        <div class="relative w-10 h-10 sm:w-14 sm:h-14 mx-auto mb-2 flex items-center justify-center">
+          <div class="absolute inset-0 bg-sky-400/25 rounded-xl blur-sm"></div>
+          <div class="icon-3d-box relative w-10 h-10 sm:w-14 sm:h-14 bg-gradient-to-br from-sky-400 via-blue-600 to-indigo-700 rounded-xl flex items-center justify-center text-white text-lg sm:text-2xl shadow-md shadow-blue-500/30 border-t border-l border-white/50">
+            <i class="fa-solid fa-file-signature drop-shadow"></i>
           </div>
         </div>
 
-        <h3 class="font-bold text-slate-800 text-lg group-hover:text-sky-600 transition-colors">งานสารบรรณ</h3>
-        <p class="text-xs text-slate-500 mt-1.5 font-medium leading-relaxed">ลงรับหนังสือเข้า จัดการเอกสาร และออกเลขรับ</p>
+        <h3 class="font-bold text-slate-800 text-xs sm:text-base group-hover:text-sky-600 transition-colors">งานสารบรรณ</h3>
+        <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5 line-clamp-2">ลงรับหนังสือ จัดการเอกสาร ออกเลข</p>
       </div>
 
-      <!-- Card Action Footer -->
-      <div class="mt-5 pt-3 border-t border-slate-100 flex items-center justify-center gap-2 text-xs font-bold text-sky-600 group-hover:translate-x-1 transition-transform">
-        <span>เข้าสู่ระบบลงทะเบียน</span>
-        <i class="fa-solid fa-circle-arrow-right text-sm"></i>
+      <div class="mt-2 pt-1.5 border-t border-slate-100 flex items-center justify-center gap-1 text-[10px] sm:text-xs font-bold text-sky-600">
+        <span>เข้าสู่ระบบ</span>
+        <i class="fa-solid fa-chevron-right text-[9px] group-hover:translate-x-0.5 transition-transform"></i>
       </div>
     </div>
 
-    <!-- CARD 3: ครูและบุคลากร -->
+    <!-- CARD 3: ครูและบุคลากร (บนมือถือขยายเต็ม 2 คอลัมน์ / จอคอมปรับเป็น 1 คอลัมน์ปกติ) -->
     <div onclick="selectAppSystem('TEACHER', 'ระบบครูและบุคลากร')" 
-         class="group relative bg-white/85 backdrop-blur-xl p-6 rounded-3xl border border-white/80 shadow-lg hover:shadow-2xl hover:shadow-emerald-500/20 hover:-translate-y-2 transition-all duration-300 cursor-pointer text-center overflow-hidden flex flex-col justify-between">
+         class="col-span-2 md:col-span-1 group relative bg-white/90 backdrop-blur-xl p-3 sm:p-5 rounded-2xl border border-white shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer text-center overflow-hidden flex flex-col justify-between">
       
-      <!-- Ambient Glow Background -->
-      <div class="absolute -top-12 -right-12 w-32 h-32 bg-emerald-400/20 rounded-full blur-2xl group-hover:bg-emerald-400/35 transition-all duration-500"></div>
+      <div class="absolute -top-8 -right-8 w-20 h-20 bg-emerald-400/20 rounded-full blur-xl group-hover:bg-emerald-400/35 transition-all"></div>
 
-      <!-- Corner Badge / Status -->
-      <div class="absolute top-4 right-4 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-700 border border-emerald-500/20 text-[10px] font-bold flex items-center gap-1">
-        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+      <!-- Badge ขนาดเล็ก -->
+      <div class="absolute top-2 right-2 px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 border border-emerald-500/20 text-[9px] font-bold flex items-center gap-1">
+        <span class="w-1 h-1 rounded-full bg-emerald-500 animate-pulse"></span>
         <span>บุคลากร</span>
       </div>
 
       <div class="pt-2">
-        <!-- 3D Icon Box with Light Ring -->
-        <div class="relative w-20 h-20 mx-auto mb-4 flex items-center justify-center">
-          <div class="absolute inset-0 bg-emerald-400/30 rounded-2xl blur-md group-hover:blur-lg transition-all duration-300"></div>
-          <div class="icon-3d-box relative w-16 h-16 bg-gradient-to-br from-emerald-400 via-teal-600 to-emerald-700 rounded-2xl flex items-center justify-center text-white text-3xl shadow-lg shadow-teal-500/30 border-t border-l border-white/50">
-            <i class="fa-solid fa-chalkboard-user drop-shadow-[0_4px_6px_rgba(0,0,0,0.3)]"></i>
+        <!-- 3D Icon Box ขนาดกะทัดรัด -->
+        <div class="relative w-10 h-10 sm:w-14 sm:h-14 mx-auto mb-2 flex items-center justify-center">
+          <div class="absolute inset-0 bg-emerald-400/25 rounded-xl blur-sm"></div>
+          <div class="icon-3d-box relative w-10 h-10 sm:w-14 sm:h-14 bg-gradient-to-br from-emerald-400 via-teal-600 to-emerald-700 rounded-xl flex items-center justify-center text-white text-lg sm:text-2xl shadow-md shadow-teal-500/30 border-t border-l border-white/50">
+            <i class="fa-solid fa-chalkboard-user drop-shadow"></i>
           </div>
         </div>
 
-        <h3 class="font-bold text-slate-800 text-lg group-hover:text-emerald-600 transition-colors">ครูและบุคลากร</h3>
-        <p class="text-xs text-slate-500 mt-1.5 font-medium leading-relaxed">ติดตามหนังสือ ติดตามเรื่อง และรับทราบเอกสาร</p>
+        <h3 class="font-bold text-slate-800 text-xs sm:text-base group-hover:text-emerald-600 transition-colors">ครูและบุคลากร</h3>
+        <p class="text-[10px] sm:text-xs text-slate-500 mt-0.5 line-clamp-2">ติดตามหนังสือ และรับทราบเอกสาร</p>
       </div>
 
-      <!-- Card Action Footer -->
-      <div class="mt-5 pt-3 border-t border-slate-100 flex items-center justify-center gap-2 text-xs font-bold text-emerald-600 group-hover:translate-x-1 transition-transform">
-        <span>เข้าสู่ระบบติดตามเอกสาร</span>
-        <i class="fa-solid fa-circle-arrow-right text-sm"></i>
+      <div class="mt-2 pt-1.5 border-t border-slate-100 flex items-center justify-center gap-1 text-[10px] sm:text-xs font-bold text-emerald-600">
+        <span>เข้าสู่ระบบ</span>
+        <i class="fa-solid fa-chevron-right text-[9px] group-hover:translate-x-0.5 transition-transform"></i>
       </div>
     </div>
 
