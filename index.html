@@ -3,2205 +3,578 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-
   <title>ระบบลงทะเบียนรับหนังสือเข้า - โรงเรียนพิมานพิทยาสรรค์</title>
-
-  <!-- Tailwind CSS -->
+  
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- FontAwesome -->
-  <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-  <!-- Sarabun -->
-  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
-
-  <!-- PDF -->
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts: Sarabun -->
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <!-- pdf-lib & fontkit -->
   <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
   <script src="https://unpkg.com/@pdf-lib/fontkit@1.1.1/dist/fontkit.umd.min.js"></script>
-
-
+  
   <style>
-
-    /* =====================================================
-       GOVERNMENT DESIGN SYSTEM
-       ===================================================== */
-
     :root {
-      --gov-navy: #12304a;
-      --gov-navy-dark: #0b2235;
-      --gov-blue: #1d5f8a;
-      --gov-blue-light: #eaf3f8;
-
-      --gov-gold: #c8a84e;
-      --gov-gold-light: #f7f1dc;
-
-      --gov-bg: #f4f7fa;
-      --gov-border: #d9e1e8;
-
-      --text-main: #243746;
-      --text-muted: #687783;
-
-      --success: #16805b;
-      --warning: #b7791f;
-      --danger: #b42318;
-
-      --radius: 14px;
+      --primary: #0f2b48;
+      --primary-light: #1a5276;
+      --accent-gold: #d4af37;
+      --bg: #e0f2fe;
+      --main-gradient: linear-gradient(135deg, #0c2340 0%, #0f2b48 50%, #1e3a8a 100%);
     }
-
-
-    /* =====================================================
-       BASE
-       ===================================================== */
-
-    html,
-    body {
-      min-height: 100%;
-    }
-
-    body {
-      font-family: 'Sarabun', sans-serif;
-      background: var(--gov-bg);
-      color: var(--text-main);
-
+    
+    body { 
+      font-family: 'Sarabun', sans-serif; 
+      background-color: var(--bg);
       -webkit-tap-highlight-color: transparent;
-
       user-select: none;
-
-      overflow-x: hidden;
     }
 
-
-    /* =====================================================
-       BACKGROUND
-       ===================================================== */
-
-    .gov-background {
-      background:
-        linear-gradient(
-          180deg,
-          #f7f9fb 0%,
-          #f3f6f9 100%
-        );
-    }
-
-
-    /* =====================================================
-       COMMON CARD
-       ===================================================== */
+    .bg-main-gradient { background: var(--main-gradient); }
 
     .official-card {
-      background: #ffffff;
-      border: 1px solid var(--gov-border);
-      border-radius: var(--radius);
-
-      box-shadow:
-        0 2px 8px rgba(15, 43, 72, 0.05);
-
-      transition:
-        box-shadow .2s ease,
-        border-color .2s ease;
+      background: rgba(255, 255, 255, 0.98);
+      border: 1px solid #cbd5e1;
+      box-shadow: 0 4px 20px -2px rgba(15, 43, 72, 0.08);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
-
-    .official-card:hover {
-      border-color: #c6d5df;
-
-      box-shadow:
-        0 5px 18px rgba(15, 43, 72, 0.08);
-    }
-
-
-    /* =====================================================
-       GOVERNMENT HEADER
-       ===================================================== */
-
-    .gov-header {
-      background:
-        linear-gradient(
-          90deg,
-          var(--gov-navy-dark),
-          var(--gov-navy)
-        );
-
-      color: white;
-
-      border-bottom:
-        3px solid var(--gov-gold);
-    }
-
-
-    .gov-header-line {
-      height: 3px;
-
-      background:
-        linear-gradient(
-          90deg,
-          var(--gov-gold),
-          #e1c86b,
-          var(--gov-gold)
-        );
-    }
-
-
-    /* =====================================================
-       SYSTEM TAB
-       ===================================================== */
-
-    .system-tab-button {
-      transition:
-        background-color .2s ease,
-        color .2s ease,
-        border-color .2s ease,
-        transform .15s ease;
-    }
-
-    .system-tab-button:hover {
-      background: #f4f7fa;
-    }
-
-    .system-tab-active {
-      background: #ffffff !important;
-
-      color: var(--gov-navy) !important;
-
-      font-weight: 700 !important;
-
-      border:
-        1px solid #9fb8c8 !important;
-
-      box-shadow:
-        0 2px 7px rgba(15, 43, 72, .08) !important;
-
-      transform: none !important;
-    }
-
-
-    /* =====================================================
-       SIDEBAR
-       ===================================================== */
-
-    .sidebar-menu-btn {
-      transition:
-        background-color .18s ease,
-        color .18s ease,
-        border-color .18s ease;
-    }
-
-    .sidebar-menu-btn:hover {
-      background: #f1f6f9;
-      color: var(--gov-navy);
-    }
-
-    .sidebar-menu-btn.active {
-      background: var(--gov-navy);
-
-      color: #ffffff;
-
-      font-weight: 600;
-
-      box-shadow:
-        0 3px 8px rgba(15, 43, 72, .14);
-    }
-
-    .sidebar-menu-btn.active i {
-      color: var(--gov-gold-light) !important;
-    }
-
-
-    /* =====================================================
-       FORM
-       ===================================================== */
-
-    .gov-label {
-      display: block;
-
-      font-size: 13px;
-
-      font-weight: 600;
-
-      color: #334e5f;
-
-      margin-bottom: 6px;
-    }
-
-    .gov-input {
-      width: 100%;
-
-      background: #ffffff;
-
-      border:
-        1px solid #cbd5dc;
-
-      border-radius: 9px;
-
-      padding:
-        9px 12px;
-
-      font-size: 13px;
-
-      color: var(--text-main);
-
-      outline: none;
-
-      transition:
-        border-color .18s ease,
-        box-shadow .18s ease;
-    }
-
-    .gov-input:focus {
-      border-color: var(--gov-blue);
-
-      box-shadow:
-        0 0 0 3px rgba(29, 95, 138, .10);
-    }
-
-    .gov-input::placeholder {
-      color: #9aa8b2;
-    }
-
-
-    /* =====================================================
-       PRIMARY BUTTON
-       ===================================================== */
-
-    .gov-primary-btn {
-      background: var(--gov-navy);
-
-      color: white;
-
-      border:
-        1px solid var(--gov-navy);
-
-      border-radius: 9px;
-
-      transition:
-        background-color .18s ease,
-        box-shadow .18s ease,
-        transform .1s ease;
-    }
-
-    .gov-primary-btn:hover {
-      background: #173d5b;
-
-      box-shadow:
-        0 4px 12px rgba(15, 43, 72, .18);
-    }
-
-    .gov-primary-btn:active {
-      transform: translateY(1px);
-    }
-
-
-    /* =====================================================
-       GOLD ACCENT
-       ===================================================== */
-
-    .gov-section-title {
-      border-left:
-        4px solid var(--gov-gold);
-    }
-
-
-    /* =====================================================
-       TABLE
-       ===================================================== */
-
-    .gov-table thead {
-      background: var(--gov-navy);
-
-      color: #ffffff;
-    }
-
-    .gov-table th {
-      font-weight: 600;
-
-      white-space: nowrap;
-    }
-
-    .gov-table tbody tr {
-      transition:
-        background-color .15s ease;
-    }
-
-    .gov-table tbody tr:hover {
-      background: #f3f7fa;
-    }
-
-
-    /* =====================================================
-       STATUS
-       ===================================================== */
-
-    .status-badge {
-      display: inline-flex;
-
-      align-items: center;
-
-      gap: 5px;
-
-      padding:
-        4px 9px;
-
-      border-radius: 999px;
-
-      font-size: 11px;
-
-      font-weight: 600;
-    }
-
-
-    /* =====================================================
-       MOBILE NAVIGATION
-       ===================================================== */
 
     .floating-nav {
-      background: rgba(255,255,255,.98);
-
-      border:
-        1px solid #d6e0e7;
-
-      box-shadow:
-        0 -4px 20px rgba(15,43,72,.10);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 10px 30px -5px rgba(15, 43, 72, 0.12), 0 0 1px 1px rgba(0,0,0,0.05);
     }
-
-
-    /* =====================================================
-       MODAL
-       ===================================================== */
-
-    .gov-modal-overlay {
-      background:
-        rgba(9, 27, 42, .55);
-
-      backdrop-filter:
-        blur(3px);
-    }
-
-    .gov-modal {
-      background: white;
-
-      border-radius: 16px;
-
-      border:
-        1px solid #d4dee6;
-
-      box-shadow:
-        0 20px 60px rgba(9, 27, 42, .22);
-    }
-
-
-    /* =====================================================
-       ANIMATION
-       ===================================================== */
 
     .page-transition {
-      animation:
-        fadeIn .25s ease-out;
+      animation: fadeIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     @keyframes fadeIn {
-
-      from {
-        opacity: 0;
-        transform: translateY(5px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
+    .pb-safe { padding-bottom: max(1.25rem, env(safe-area-inset-bottom)); }
+    .pt-safe { padding-top: max(1rem, env(safe-area-inset-top)); }
 
-    /* =====================================================
-       SAFE AREA
-       ===================================================== */
-
-    .pb-safe {
-      padding-bottom:
-        max(1.25rem, env(safe-area-inset-bottom));
+    .system-tab-button {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .system-tab-active {
+      background-color: #ffffff !important;
+      color: #0f2b48 !important;
+      font-weight: 800 !important;
+      border: 2.5px solid #0284c7 !important;
+      box-shadow: 0 6px 16px rgba(2, 132, 199, 0.2) !important;
+      transform: translateY(-2px);
     }
 
-    .pt-safe {
-      padding-top:
-        max(1rem, env(safe-area-inset-top));
+    .sidebar-menu-btn {
+      transition: all 0.2s ease;
     }
-
-
-    /* =====================================================
-       SCROLLBAR
-       ===================================================== */
-
-    ::-webkit-scrollbar {
-      width: 7px;
-      height: 7px;
+    .sidebar-menu-btn.active {
+      background-color: #0284c7;
+      color: #ffffff;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
     }
-
-    ::-webkit-scrollbar-track {
-      background: #eef2f5;
+    .sidebar-menu-btn.active i {
+      color: #ffffff !important;
     }
-
-    ::-webkit-scrollbar-thumb {
-      background: #b7c5cf;
-      border-radius: 10px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: #8ea2b0;
-    }
-
-
-    /* =====================================================
-       MOBILE
-       ===================================================== */
-
-    @media (max-width: 767px) {
-
-      .official-card {
-        border-radius: 12px;
-      }
-
-      .gov-table {
-        min-width: 760px;
-      }
-
-    }
-
   </style>
-
 </head>
+<body class="bg-sky-100/60 min-h-full text-slate-800 flex flex-col justify-between selection:bg-sky-500 selection:text-white antialiased relative overflow-x-hidden">
 
-
-<body class="gov-background min-h-full text-slate-800 flex flex-col">
-
-
-  <!-- =====================================================
-       BACKGROUND
-       ===================================================== -->
-
-  <div class="fixed inset-0 pointer-events-none z-0">
-
-    <div class="absolute inset-0
-                bg-[linear-gradient(rgba(18,48,74,.025)_1px,transparent_1px),linear-gradient(90deg,rgba(18,48,74,.025)_1px,transparent_1px)]
-                bg-[size:32px_32px]">
-    </div>
-
+  <!-- ================= BACKGROUND GRAPHICS ================= -->
+  <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+    <div class="absolute -top-24 -left-20 w-96 h-96 bg-sky-300/40 rounded-full blur-3xl"></div>
+    <div class="absolute top-1/3 -right-20 w-80 h-80 bg-blue-400/25 rounded-full blur-3xl"></div>
+    <div class="absolute -bottom-20 left-1/4 w-96 h-96 bg-sky-200/50 rounded-full blur-3xl"></div>
+    <div class="absolute inset-0 bg-[radial-gradient(#0284c7_1px,transparent_1px)] [background-size:24px_24px] opacity-[0.07]"></div>
   </div>
 
+  <!-- ================= 1. หน้าแรก LANDING PAGE ================= -->
+  <div id="portalSection" class="min-h-screen w-full flex flex-col justify-between relative z-10 overflow-x-hidden">
+    
+    <div class="container mx-auto px-2 md:px-4 pt-safe py-4 flex-grow flex flex-col items-center max-w-5xl">
+      
+      <!-- Banner แถบหัวข้อหลัก -->
+      <div class="w-full rounded-2xl md:rounded-3xl bg-gradient-to-r from-[#0a1f35] via-[#0f2b48] to-[#1e3a8a] border-2 border-sky-400/80 p-4 md:p-6 shadow-xl relative overflow-hidden text-white mb-3">
+        <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-sky-300 via-cyan-400 to-blue-400"></div>
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-sky-400/20 via-transparent to-transparent pointer-events-none"></div>
 
-
-  <!-- =====================================================
-       1. LANDING PAGE
-       ===================================================== -->
-
-  <div id="portalSection"
-       class="min-h-screen w-full flex flex-col relative z-10">
-
-
-    <div class="w-full max-w-6xl mx-auto px-3 md:px-6 pt-safe py-5">
-
-
-      <!-- =================================================
-           HEADER
-           ================================================= -->
-
-      <header class="gov-header rounded-xl overflow-hidden shadow-md">
-
-        <div class="gov-header-line"></div>
-
-        <div class="px-4 md:px-7 py-4 md:py-5">
-
-          <div class="flex items-center justify-between gap-4">
-
-
-            <!-- LOGO + TITLE -->
-
-            <div class="flex items-center gap-3 md:gap-4">
-
-              <div class="w-14 h-14 md:w-16 md:h-16
-                          bg-white rounded-xl
-                          flex items-center justify-center
-                          p-1.5 shrink-0">
-
-                <img id="portalSchoolLogo"
-                     src="https://raw.githubusercontent.com/joodami/school-assets/main/logo.png"
-                     alt="ตราโรงเรียนพิมานพิทยาสรรค์"
-                     class="w-full h-full object-contain">
-
-              </div>
-
-
-              <div>
-
-                <p class="text-[11px] md:text-xs
-                          text-slate-300
-                          font-medium mb-0.5">
-                  โรงเรียนพิมานพิทยาสรรค์
-                </p>
-
-                <h1 class="text-lg md:text-2xl
-                           font-bold
-                           text-white
-                           leading-tight">
-                  ระบบสารบรรณอิเล็กทรอนิกส์
-                </h1>
-
-                <p class="text-[11px] md:text-xs
-                          text-slate-300
-                          mt-1">
-                  ระบบลงทะเบียนรับหนังสือเข้า
-                </p>
-
-              </div>
-
+        <div class="flex flex-col md:flex-row items-center justify-between gap-3 relative z-10">
+          <div class="flex items-center gap-3.5 text-center md:text-left">
+            <div class="w-14 h-14 md:w-16 md:h-16 p-1.5 bg-white/95 rounded-2xl border-2 border-sky-300 shadow-md flex items-center justify-center shrink-0">
+              <img id="portalSchoolLogo" 
+                   src="https://raw.githubusercontent.com/joodami/school-assets/main/logo.png" 
+                   alt="ตราโรงเรียนพิมานพิทยาสรรค์" 
+                   class="w-full h-full object-contain filter drop-shadow">
             </div>
 
-
-            <!-- SYSTEM STATUS -->
-
-            <div class="hidden md:flex
-                        items-center gap-2
-                        px-3 py-2
-                        rounded-lg
-                        border border-white/15
-                        bg-white/5
-                        text-xs text-slate-200">
-
-              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-
-              <span>ระบบพร้อมให้บริการ</span>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </header>
-
-
-
-      <!-- =================================================
-           STEP INFORMATION
-           ================================================= -->
-
-      <div class="flex justify-center my-4">
-
-        <div class="inline-flex items-center gap-2
-                    bg-white
-                    border border-slate-200
-                    rounded-lg
-                    px-4 py-2
-                    text-xs md:text-sm
-                    text-slate-600
-                    shadow-sm">
-
-          <i class="fa-solid fa-circle-info text-[#1d5f8a]"></i>
-
-          <span>
-            ขั้นตอนที่ 1 : โปรดเลือกระบบเข้าใช้งานตามบทบาทของคุณก่อนลงชื่อเข้าใช้
-          </span>
-
-        </div>
-
-      </div>
-
-
-
-      <!-- =================================================
-           LOGIN PANEL
-           ================================================= -->
-
-      <section class="official-card overflow-hidden">
-
-
-        <!-- SYSTEM TABS -->
-
-        <div class="border-b border-slate-200 bg-slate-50 p-2">
-
-          <div class="grid grid-cols-3 gap-1">
-
-
-            <button type="button"
-                    id="tab-EXEC"
-                    onclick="switchSystemTab('EXEC', 'ระบบฝ่ายบริหาร (ผอ. / รอง ผอ.)', 'bg-[#0f2b48]', 'fa-user-tie')"
-                    class="system-tab-button
-                           py-3 px-2
-                           rounded-lg
-                           flex flex-col md:flex-row
-                           items-center justify-center
-                           gap-1.5
-                           text-xs md:text-sm
-                           font-semibold
-                           text-slate-600">
-
-              <i class="fa-solid fa-user-tie text-blue-700"></i>
-
-              <span>ฝ่ายบริหาร</span>
-
-            </button>
-
-
-
-            <button type="button"
-                    id="tab-SARABUN"
-                    onclick="switchSystemTab('SARABUN', 'ระบบงานสารบรรณโรงเรียน', 'bg-[#0f2b48]', 'fa-folder-open')"
-                    class="system-tab-button
-                           system-tab-active
-                           py-3 px-2
-                           rounded-lg
-                           flex flex-col md:flex-row
-                           items-center justify-center
-                           gap-1.5
-                           text-xs md:text-sm
-                           font-semibold">
-
-              <i class="fa-solid fa-folder-open text-[#1d5f8a]"></i>
-
-              <span>งานสารบรรณโรงเรียน</span>
-
-            </button>
-
-
-
-            <button type="button"
-                    id="tab-TEACHER"
-                    onclick="switchSystemTab('TEACHER', 'ระบบครูและบุคลากร', 'bg-[#0f2b48]', 'fa-chalkboard-user')"
-                    class="system-tab-button
-                           py-3 px-2
-                           rounded-lg
-                           flex flex-col md:flex-row
-                           items-center justify-center
-                           gap-1.5
-                           text-xs md:text-sm
-                           font-semibold
-                           text-slate-600">
-
-              <i class="fa-solid fa-chalkboard-user text-teal-700"></i>
-
-              <span>ครูและบุคลากร</span>
-
-            </button>
-
-
-          </div>
-
-        </div>
-
-
-
-        <!-- LOGIN CONTENT -->
-
-        <div class="p-5 md:p-7">
-
-
-          <div class="flex flex-col md:flex-row
-                      md:items-center
-                      md:justify-between
-                      gap-2 mb-5 pb-3
-                      border-b border-slate-200">
-
-            <div class="flex items-center gap-2">
-
-              <span class="w-8 h-8
-                           rounded-lg
-                           bg-[#eaf3f8]
-                           text-[#1d5f8a]
-                           flex items-center justify-center">
-
-                <i class="fa-solid fa-right-to-bracket text-sm"></i>
-
-              </span>
-
-              <div>
-
-                <p class="text-[11px] text-slate-500">
-                  ระบบที่เลือก
-                </p>
-
-                <div id="activeSystemNameDisplay"
-                     class="text-sm font-bold text-slate-800">
-
-                  ระบบที่เลือก:
-                  <span class="text-[#12304a]">
-                    งานสารบรรณโรงเรียน
-                  </span>
-
-                </div>
-
-              </div>
-
-            </div>
-
-
-            <span class="text-xs text-slate-500">
-              ระบุชื่อผู้ใช้และรหัสผ่านเพื่อเข้าสู่ระบบ
-            </span>
-
-          </div>
-
-
-
-          <form id="loginForm"
-                onsubmit="handleLogin(event)"
-                class="space-y-4">
-
-            <input type="hidden"
-                   id="selectedRoleGroup"
-                   value="SARABUN">
-
-
-            <div class="grid grid-cols-1 md:grid-cols-5
-                        gap-4 items-end">
-
-
-              <!-- USERNAME -->
-
-              <div class="md:col-span-2">
-
-                <label class="gov-label">
-                  ชื่อผู้ใช้ :
-                </label>
-
-                <div class="relative">
-
-                  <span class="absolute inset-y-0 left-0
-                               flex items-center pl-3
-                               text-[#1d5f8a]">
-
-                    <i class="fa-solid fa-user text-sm"></i>
-
-                  </span>
-
-                  <input type="text"
-                         id="username"
-                         required
-                         placeholder="ระบุชื่อผู้ใช้งาน..."
-                         class="gov-input pl-10">
-
-                </div>
-
-              </div>
-
-
-
-              <!-- PASSWORD -->
-
-              <div class="md:col-span-2">
-
-                <label class="gov-label">
-                  รหัสผ่าน :
-                </label>
-
-                <div class="relative">
-
-                  <span class="absolute inset-y-0 left-0
-                               flex items-center pl-3
-                               text-[#1d5f8a]">
-
-                    <i class="fa-solid fa-lock text-sm"></i>
-
-                  </span>
-
-                  <input type="password"
-                         id="password"
-                         required
-                         placeholder="••••••••"
-                         class="gov-input pl-10">
-
-                </div>
-
-              </div>
-
-
-
-              <!-- LOGIN -->
-
-              <div>
-
-                <button type="submit"
-                        id="btnLogin"
-                        class="gov-primary-btn
-                               w-full
-                               py-2.5 px-4
-                               font-semibold
-                               text-sm
-                               flex items-center
-                               justify-center gap-2">
-
-                  <i class="fa-solid fa-right-to-bracket text-xs"></i>
-
-                  <span>เข้าสู่ระบบ</span>
-
-                </button>
-
-              </div>
-
-
-            </div>
-
-          </form>
-
-        </div>
-
-      </section>
-
-
-
-      <!-- =================================================
-           FOOTER
-           ================================================= -->
-
-      <footer class="text-center py-5">
-
-        <p class="text-xs text-slate-500">
-          โรงเรียนพิมานพิทยาสรรค์ © Piman Phityasan School
-        </p>
-
-        <p class="text-[10px] text-slate-400 mt-1">
-          ระบบสารบรรณอิเล็กทรอนิกส์
-        </p>
-
-      </footer>
-
-
-    </div>
-
-  </div>
-
-
-
-  <!-- =====================================================
-       2. LOGIN MODAL
-       ===================================================== -->
-
-  <div id="loginModal"
-       class="fixed inset-0
-              gov-modal-overlay
-              flex items-end md:items-center
-              justify-center
-              p-0 md:p-4
-              z-40 hidden">
-
-
-    <div class="gov-modal
-                w-full max-w-md
-                overflow-hidden
-                relative
-                page-transition">
-
-
-      <!-- WATERMARK -->
-
-      <img src="https://raw.githubusercontent.com/joodami/school-assets/main/logo.png"
-           alt="Watermark"
-           class="absolute
-                  -right-12
-                  -bottom-12
-                  w-56 h-56
-                  opacity-[0.035]
-                  pointer-events-none">
-
-
-      <!-- MOBILE HANDLE -->
-
-      <div class="w-12 h-1
-                  bg-slate-300
-                  rounded-full
-                  mx-auto my-3
-                  md:hidden">
-      </div>
-
-
-      <!-- MODAL HEADER -->
-
-      <div id="modalHeaderBg"
-           class="px-6 py-5
-                  text-white
-                  text-center
-                  relative
-                  bg-[#12304a]
-                  border-b-2
-                  border-[#c8a84e]">
-
-        <button type="button"
-                onclick="closeLoginModal()"
-                class="absolute
-                       top-4 right-4
-                       w-8 h-8
-                       rounded-lg
-                       bg-white/10
-                       hover:bg-white/20
-                       flex items-center
-                       justify-center">
-
-          <i class="fa-solid fa-xmark text-sm"></i>
-
-        </button>
-
-
-        <div class="flex items-center
-                    justify-center
-                    gap-3">
-
-          <img class="modalSchoolLogo
-                      w-12 h-12
-                      object-contain"
-               src="https://raw.githubusercontent.com/joodami/school-assets/main/logo.png"
-               alt="Logo">
-
-
-          <div class="text-left">
-
-            <h3 id="modalTitle"
-                class="text-base font-bold leading-tight">
-
-              เข้าสู่ระบบ
-
-            </h3>
-
-            <p class="text-xs text-slate-300 mt-1">
-              โรงเรียนพิมานพิทยาสรรค์
-            </p>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-
-
-  <!-- =====================================================
-       3. MAIN DASHBOARD
-       ===================================================== -->
-
-  <div id="mainDashboard"
-       class="hidden
-              min-h-screen
-              bg-[#f4f7fa]
-              flex flex-col
-              relative z-10">
-
-
-    <!-- ===================================================
-         HEADER
-         =================================================== -->
-
-    <header class="sticky top-0 z-30
-                   bg-white
-                   border-b
-                   border-slate-200
-                   shadow-sm
-                   pt-safe">
-
-      <div class="gov-header-line"></div>
-
-      <div class="px-3 md:px-6 py-3">
-
-        <div class="flex items-center
-                    justify-between
-                    gap-3">
-
-
-          <!-- LEFT -->
-
-          <div class="flex items-center gap-3">
-
-            <div class="w-10 h-10
-                        rounded-lg
-                        bg-slate-50
-                        border border-slate-200
-                        p-1">
-
-              <img class="headerSchoolLogo
-                          w-full h-full
-                          object-contain"
-                   src="https://raw.githubusercontent.com/joodami/school-assets/main/logo.png"
-                   alt="Logo">
-
-            </div>
-
-
-            <div class="border-l
-                        border-slate-200
-                        pl-3">
-
-              <h2 class="font-bold
-                         text-sm md:text-base
-                         text-[#12304a]
-                         leading-tight">
-
-                ระบบงานสารบรรณโรงเรียน
-
-              </h2>
-
-              <p id="userInfo"
-                 class="text-xs
-                        text-slate-500
-                        font-medium
-                        mt-0.5">
+            <div>
+              <h1 class="text-base md:text-2xl font-black text-white tracking-tight leading-tight">
+                ระบบสารบรรณอิเล็กทรอนิกส์
+              </h1>
+              <p class="text-sky-200 text-xs md:text-sm font-semibold tracking-wide">
+                โรงเรียนพิมานพิทยาสรรค์
               </p>
-
             </div>
-
           </div>
 
+          <div class="hidden md:flex items-center gap-2 bg-sky-950/80 border border-sky-400/50 px-4 py-2 rounded-xl text-xs font-bold text-sky-200 shadow-inner">
+            <i class="fa-solid fa-shield-halved text-cyan-400 text-sm"></i>
+            <span>ระบบรับหนังสือเข้าออนไลน์</span>
+          </div>
+        </div>
+      </div>
 
+      <!-- ข้อความแจ้งเตือนเลือกระบบ -->
+      <div class="flex items-center justify-center my-3">
+        <div class="inline-flex items-center gap-2 px-4 py-2 bg-slate-100/80 text-slate-700 rounded-full text-xs md:text-sm font-medium border border-slate-200/80 shadow-sm transition-all">
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+          </span>
+          <span>ขั้นตอนที่ 1 : โปรดเลือกระบบเข้าใช้งานตามบทบาทของคุณก่อนลงชื่อเข้าใช้</span>
+        </div>
+      </div>
 
-          <!-- LOGOUT -->
-
-          <button type="button"
-                  onclick="logout()"
-                  class="w-9 h-9
-                         rounded-lg
-                         bg-white
-                         border border-slate-200
-                         hover:bg-red-50
-                         hover:border-red-200
-                         text-red-600
-                         flex items-center
-                         justify-center
-                         transition"
-                  title="ออกจากระบบ">
-
-            <i class="fa-solid fa-power-off text-xs"></i>
-
+      <!-- แผงแท็บเลือกระบบ + ฟอร์มกรอกรหัสเข้าใช้งาน -->
+      <div class="w-full bg-white rounded-2xl border-2 border-sky-300 shadow-xl overflow-hidden mb-6">
+        
+        <div class="grid grid-cols-3 bg-slate-200/90 border-b-2 border-sky-200 text-xs md:text-sm font-bold text-slate-600 p-1.5 gap-1.5">
+          <button type="button" id="tab-EXEC" onclick="switchSystemTab('EXEC', 'ระบบฝ่ายบริหาร (ผอ. / รอง ผอ.)', 'bg-[#0f2b48]', 'fa-user-tie')" 
+                  class="system-tab-button py-3 px-2 rounded-xl flex flex-col md:flex-row items-center justify-center gap-1.5 transition-all hover:text-sky-700">
+            <i class="fa-solid fa-user-tie text-base text-blue-600"></i>
+            <span class="text-center">ฝ่ายบริหาร</span>
           </button>
 
+          <button type="button" id="tab-SARABUN" onclick="switchSystemTab('SARABUN', 'ระบบงานสารบรรณโรงเรียน', 'bg-[#0f2b48]', 'fa-folder-open')" 
+                  class="system-tab-button system-tab-active py-3 px-2 rounded-xl flex flex-col md:flex-row items-center justify-center gap-1.5 transition-all hover:text-sky-700">
+            <i class="fa-solid fa-folder-open text-base text-sky-600"></i>
+            <span class="text-center">งานสารบรรณโรงเรียน</span>
+          </button>
 
+          <button type="button" id="tab-TEACHER" onclick="switchSystemTab('TEACHER', 'ระบบครูและบุคลากร', 'bg-[#0f2b48]', 'fa-chalkboard-user')" 
+                  class="system-tab-button py-3 px-2 rounded-xl flex flex-col md:flex-row items-center justify-center gap-1.5 transition-all hover:text-sky-700">
+            <i class="fa-solid fa-chalkboard-user text-base text-teal-600"></i>
+            <span class="text-center">ครูและบุคลากร</span>
+          </button>
         </div>
 
+        <div class="p-4 md:p-6 bg-gradient-to-b from-sky-50/50 to-white">
+          <div class="flex items-center justify-between mb-4 pb-2 border-b border-slate-200">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-circle-check text-emerald-500 text-sm"></i>
+              <span id="activeSystemNameDisplay" class="text-xs md:text-sm font-bold text-slate-800">
+                ระบบที่เลือก: <span class="text-[#0f2b48] font-black underline decoration-amber-400 underline-offset-4">งานสารบรรณโรงเรียน</span>
+              </span>
+            </div>
+            <span class="text-[11px] text-slate-500 font-medium hidden md:inline">ระบุชื่อผู้ใช้และรหัสผ่านเพื่อเข้าสู่ระบบ</span>
+          </div>
+
+          <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+            <input type="hidden" id="selectedRoleGroup" value="SARABUN">
+            
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-3 items-center">
+              <div class="md:col-span-2 space-y-1">
+                <label class="text-xs font-bold text-slate-700 ml-1">ชื่อผู้ใช้ :</label>
+                <div class="relative">
+                  <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-sky-600">
+                    <i class="fa-solid fa-user text-sm"></i>
+                  </span>
+                  <input type="text" id="username" required placeholder="ระบุชื่อผู้ใช้งาน..." 
+                         class="w-full pl-10 pr-4 py-2.5 bg-white border-2 border-sky-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-sm outline-none transition-all text-slate-800 font-medium shadow-sm">
+                </div>
+              </div>
+
+              <div class="md:col-span-2 space-y-1">
+                <label class="text-xs font-bold text-slate-700 ml-1">รหัสผ่าน :</label>
+                <div class="relative">
+                  <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-sky-600">
+                    <i class="fa-solid fa-lock text-sm"></i>
+                  </span>
+                  <input type="password" id="password" required placeholder="••••••••" 
+                         class="w-full pl-10 pr-4 py-2.5 bg-white border-2 border-sky-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-sm outline-none transition-all text-slate-800 font-medium shadow-sm">
+                </div>
+              </div>
+
+              <div class="md:col-span-1 md:pt-5">
+                <button type="submit" id="btnLogin" 
+                        class="w-full py-2.5 px-4 bg-gradient-to-r from-sky-600 to-blue-700 hover:from-sky-700 hover:to-blue-800 active:scale-[0.98] text-white font-bold rounded-xl text-sm shadow-md shadow-sky-200 transition duration-200 flex items-center justify-center gap-2 border border-sky-400">
+                  <i class="fa-solid fa-right-to-bracket text-xs"></i>
+                  <span>เข้าสู่ระบบ</span>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
       </div>
 
+      <div class="w-full text-center py-3 text-[11px] text-sky-900 font-bold">
+        <p>โรงเรียนพิมานพิทยาสรรค์ © Piman Phityasan School</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= 2. MODAL LOG IN ================= -->
+  <div id="loginModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-end md:items-center justify-center p-0 md:p-4 z-40 hidden transition-all duration-300">
+    <div class="bg-white rounded-t-3xl md:rounded-3xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all border-2 border-sky-300 page-transition relative">
+      <img src="https://raw.githubusercontent.com/joodami/school-assets/main/logo.png" alt="Watermark" class="absolute -right-10 -bottom-10 w-60 h-60 opacity-5 pointer-events-none z-0">
+      <div class="w-12 h-1.5 bg-sky-200 rounded-full mx-auto my-2.5 md:hidden"></div>
+
+      <div id="modalHeaderBg" class="px-6 py-5 text-white text-center relative bg-gradient-to-r from-sky-500 via-blue-600 to-sky-600 border-b-2 border-sky-300 shadow-md z-10">
+        <button type="button" onclick="closeLoginModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+        <div class="flex items-center justify-center gap-3 mb-1">
+          <img class="modalSchoolLogo w-11 h-11 object-contain drop-shadow" src="https://raw.githubusercontent.com/joodami/school-assets/main/logo.png" alt="Logo">
+          <div class="text-left">
+            <h3 id="modalTitle" class="text-base font-black leading-tight text-white">เข้าสู่ระบบ</h3>
+            <p class="text-[11px] text-sky-100 font-medium">โรงเรียนพิมานพิทยาสรรค์</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= 3. DASHBOARD MAIN ================= -->
+  <div id="mainDashboard" class="hidden min-h-screen bg-sky-50/60 flex flex-col justify-between page-transition relative z-10">
+    
+    <!-- Top Header -->
+    <header class="bg-white/90 backdrop-blur-md border-b-2 border-sky-200 sticky top-0 z-30 px-3 md:px-6 py-3 pt-safe shadow-sm">
+      <div class="w-full flex justify-between items-center">
+        <div class="flex items-center gap-3">
+          <img class="headerSchoolLogo w-9 h-9 object-contain" src="https://raw.githubusercontent.com/joodami/school-assets/main/logo.png" alt="Logo">
+          <div class="border-l-2 border-sky-200 pl-3">
+            <h2 class="font-bold text-sm md:text-base text-slate-800 leading-tight">ระบบงานสารบรรณโรงเรียน</h2>
+            <p id="userInfo" class="text-xs text-sky-600 font-semibold"></p>
+          </div>
+        </div>
+
+        <button type="button" onclick="logout()" class="w-9 h-9 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl flex items-center justify-center text-xs transition border border-rose-200" title="ออกจากระบบ">
+          <i class="fa-solid fa-power-off"></i>
+        </button>
+      </div>
     </header>
 
-
-
-    <!-- ===================================================
-         MAIN
-         =================================================== -->
-
-    <main class="w-full
-                 px-3 md:px-6
-                 py-5
-                 flex-grow
-                 pb-28 md:pb-8">
-
-
-      <div id="roleContent"
-           class="w-full max-w-[1600px] mx-auto">
-
-
-        <div class="grid grid-cols-1
-                    md:grid-cols-12
-                    gap-5
-                    items-start">
-
-
-          <!-- =================================================
-               SIDEBAR
-               ================================================= -->
-
-          <aside class="md:col-span-3 lg:col-span-2
-                        official-card
-                        p-3">
-
-
-            <div class="px-2 pb-3 mb-2
-                        border-b border-slate-200">
-
-              <div class="flex items-center gap-2">
-
-                <span class="w-8 h-8
-                             rounded-lg
-                             bg-[#eaf3f8]
-                             text-[#1d5f8a]
-                             flex items-center
-                             justify-center">
-
-                  <i class="fa-solid fa-bars text-sm"></i>
-
-                </span>
-
-                <div>
-
-                  <p class="text-sm
-                            font-bold
-                            text-[#12304a]">
-
-                    เมนูสารบรรณ
-
-                  </p>
-
-                  <p class="text-[10px]
-                            text-slate-400">
-
-                    ระบบงานรับหนังสือ
-
-                  </p>
-
-                </div>
-
-              </div>
-
+    <!-- Main Container: ปรับเมนูชิดซ้ายเต็มขอบ -->
+    <main class="w-full px-2 md:px-6 py-4 flex-grow pb-28 md:pb-10">
+      <div id="roleContent" class="w-full">
+        
+        <!-- Layout Grid ฝั่งซ้ายชิดขอบ -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
+          
+          <!-- ฝั่งซ้าย: แถบเมนูสารบรรณ (Sidebar) -->
+          <div class="md:col-span-3 lg:col-span-2 bg-white/95 rounded-2xl p-3 border-2 border-sky-200 shadow-md">
+            <div class="text-xs font-bold text-sky-900 mb-2 px-2 pb-1.5 border-b border-sky-100 flex items-center gap-1.5">
+              <i class="fa-solid fa-bars text-sky-600"></i>
+              <span>เมนูสารบรรณ</span>
             </div>
-
-
-
-            <div class="space-y-1.5">
-
-
-              <button type="button"
-                      id="menuBtnAddBook"
-                      onclick="switchSarabunMenu('add')"
-                      class="sidebar-menu-btn
-                             active
-                             w-full
-                             flex items-center
-                             gap-3
-                             px-3 py-3
-                             rounded-lg
-                             text-sm
-                             font-semibold
-                             text-left">
-
-                <i class="fa-solid fa-file-circle-plus w-5 text-center"></i>
-
+            <!-- ฝั่ง Sidebar Menu -->
+            <div class="space-y-1">
+              <button type="button" id="menuBtnAddBook" onclick="switchSarabunMenu('add')" class="sidebar-menu-btn active w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all shadow-sm">
+                <i class="fa-solid fa-file-circle-plus"></i>
                 <span>นำหนังสือรับเข้าแฟ้ม</span>
-
               </button>
 
-
-
-              <button type="button"
-                      id="menuBtnRegistered"
-                      onclick="switchSarabunMenu('registered')"
-                      class="sidebar-menu-btn
-                             w-full
-                             flex items-center
-                             gap-3
-                             px-3 py-3
-                             rounded-lg
-                             text-sm
-                             font-semibold
-                             text-left
-                             text-slate-600">
-
-                <i class="fa-solid fa-list-check w-5 text-center"></i>
-
+              <button type="button" id="menuBtnRegistered" onclick="switchSarabunMenu('registered')" class="sidebar-menu-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all shadow-sm">
+                <i class="fa-solid fa-list-check"></i>
                 <span>หนังสือรับที่ลงทะเบียนแล้ว</span>
-
               </button>
 
-
-
-              <button type="button"
-                      id="menuBtnReturned"
-                      onclick="switchSarabunMenu('returned')"
-                      class="sidebar-menu-btn
-                             w-full
-                             flex items-center
-                             gap-3
-                             px-3 py-3
-                             rounded-lg
-                             text-sm
-                             font-semibold
-                             text-left
-                             text-slate-600">
-
-                <i class="fa-solid fa-arrow-rotate-left w-5 text-center"></i>
-
+              <button type="button" id="menuBtnReturned" onclick="switchSarabunMenu('returned')" class="sidebar-menu-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all shadow-sm">
+                <i class="fa-solid fa-arrow-rotate-left"></i>
                 <span>หนังสือรับส่งกลับจากฝ่ายบริหาร</span>
-
               </button>
-
-
             </div>
+          </div>
 
+          <!-- ฝั่งขวา: ส่วนแสดงผลเนื้อหา (Content Container) -->
+          <div class="md:col-span-9 lg:col-span-10 space-y-4">
 
-          </aside>
-
-
-
-          <!-- =================================================
-               CONTENT
-               ================================================= -->
-
-          <section class="md:col-span-9 lg:col-span-10
-                          space-y-5">
-
-
-
-            <!-- ===============================================
-                 REGISTER FORM
-                 =============================================== -->
-
-            <div id="sarabunAddFormSection"
-                 class="hidden
-                        official-card
-                        overflow-hidden
-                        page-transition">
-
-
-              <!-- FORM HEADER -->
-
-              <div class="bg-[#12304a]
-                          text-white
-                          px-5 py-4
-                          border-b-2
-                          border-[#c8a84e]">
-
-                <div class="flex items-center
-                            justify-between
-                            gap-3">
-
-                  <div class="flex items-center gap-3">
-
-                    <span class="w-9 h-9
-                                 rounded-lg
-                                 bg-white/10
-                                 flex items-center
-                                 justify-center">
-
-                      <i class="fa-solid fa-folder-plus
-                                text-[#e7d58a]"></i>
-
-                    </span>
-
-
-                    <div>
-
-                      <h3 class="font-bold
-                                 text-sm md:text-base">
-
-                        ลงรับหนังสือเข้าใหม่
-
-                      </h3>
-
-                      <p class="text-[11px]
-                                text-slate-300
-                                mt-0.5">
-
-                        เลขรับถัดไป:
-                        <span id="nextRegNo"
-                              class="text-[#e7d58a]
-                                     font-bold">
-
-                          4/2569
-
-                        </span>
-
-                      </p>
-
-                    </div>
-
-                  </div>
-
-
-                  <i class="fa-solid fa-file-circle-plus
-                            text-slate-400">
-                  </i>
-
+            <!-- 1. ฟอร์มลงรับหนังสือเข้าใหม่ (เริ่มต้นซ่อนไว้ ด้วยคลาส hidden) -->
+            <div id="sarabunAddFormSection" class="hidden bg-white rounded-2xl border-2 border-slate-700 shadow-md overflow-hidden page-transition">
+              <div class="bg-slate-800 text-amber-400 px-4 py-3 font-bold text-xs md:text-sm flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <i class="fa-solid fa-folder-plus"></i>
+                  <span>ลงรับหนังสือเข้าใหม่ (เลขรับถัดไป: <span id="nextRegNo">4/2569</span>)</span>
                 </div>
-
+                <i class="fa-solid fa-chevron-down text-xs"></i>
               </div>
-
-
-
-              <!-- FORM -->
-
-              <div class="p-5 md:p-7">
-
-                <form id="sarabunRegisterForm"
-                      onsubmit="handleRegisterBook(event)"
-                      class="space-y-5">
-
-
-                  <!-- DOCUMENT BASIC INFO -->
-
-                  <div>
-
-                    <div class="gov-section-title
-                                pl-3 mb-4">
-
-                      <h4 class="text-sm
-                                 font-bold
-                                 text-[#12304a]">
-
-                        ข้อมูลหนังสือ
-
-                      </h4>
-
-                      <p class="text-[11px]
-                                text-slate-500">
-
-                        กรุณากรอกข้อมูลให้ครบถ้วน
-
-                      </p>
-
+              <div class="p-4 md:p-6 bg-gradient-to-b from-sky-50/30 to-white">
+                
+                <!-- Form Inputs Area -->
+                <form id="sarabunRegisterForm" onsubmit="handleRegisterBook(event)" class="space-y-4">
+                  
+                  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- เลขรับ -->
+                    <div>
+                      <label class="block text-xs font-bold text-slate-700 mb-1">
+                        เลขรับหนังสือ <span class="text-rose-500">*</span>
+                      </label>
+                      <input type="text" id="bookRecNo" required placeholder="เช่น 4" 
+                             class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-sky-500 outline-none font-semibold text-amber-700 shadow-sm">
                     </div>
 
-
-                    <div class="grid
-                                grid-cols-1
-                                md:grid-cols-2
-                                lg:grid-cols-4
-                                gap-4">
-
-
-                      <!-- เลขรับ -->
-
-                      <div>
-
-                        <label class="gov-label">
-
-                          เลขรับหนังสือ
-                          <span class="text-red-500">*</span>
-
-                        </label>
-
-                        <input type="text"
-                               id="bookRecNo"
-                               required
-                               placeholder="เช่น 4"
-                               class="gov-input
-                                      font-semibold
-                                      text-[#12304a]">
-
-                      </div>
-
-
-
-                      <!-- เลขที่หนังสือ -->
-
-                      <div>
-
-                        <label class="gov-label">
-
-                          เลขที่หนังสือ
-                          <span class="text-red-500">*</span>
-
-                        </label>
-
-                        <input type="text"
-                               id="bookNo"
-                               required
-                               placeholder="เช่น ศธ 04001/ว123"
-                               class="gov-input">
-
-                      </div>
-
-
-
-                      <!-- วันที่หนังสือ -->
-
-                      <div>
-
-                        <label class="gov-label">
-
-                          ลงวันที่ (ในหนังสือ)
-                          <span class="text-red-500">*</span>
-
-                        </label>
-
-                        <input type="date"
-                               id="bookDate"
-                               required
-                               class="gov-input">
-
-                      </div>
-
-
-
-                      <!-- วันที่รับ -->
-
-                      <div>
-
-                        <label class="gov-label">
-
-                          วันที่ลงรับระบบ
-                          <span class="text-red-500">*</span>
-
-                        </label>
-
-                        <input type="date"
-                               id="receiveDateInput"
-                               required
-                               class="gov-input">
-
-                      </div>
-
-
+                    <!-- เลขที่หนังสือ -->
+                    <div>
+                      <label class="block text-xs font-bold text-slate-700 mb-1">
+                        เลขที่หนังสือ <span class="text-rose-500">*</span>
+                      </label>
+                      <input type="text" id="bookNo" required placeholder="เช่น ศธ 04001/ว123" 
+                             class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-sky-500 outline-none font-medium shadow-sm">
                     </div>
 
+                    <!-- ลงวันที่ในหนังสือ -->
+                    <div>
+                      <label class="block text-xs font-bold text-slate-700 mb-1">
+                        ลงวันที่ (ในหนังสือ) <span class="text-rose-500">*</span>
+                      </label>
+                      <input type="date" id="bookDate" required 
+                             class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-sky-500 outline-none shadow-sm">
+                    </div>
+
+                    <!-- วันที่ลงรับในระบบ -->
+                    <div>
+                      <label class="block text-xs font-bold text-slate-700 mb-1">
+                        วันที่ลงรับระบบ <span class="text-rose-500">*</span>
+                      </label>
+                      <input type="date" id="receiveDateInput" required 
+                             class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-sky-500 outline-none shadow-sm">
+                    </div>
                   </div>
 
-
-
-                  <!-- FROM / TITLE -->
-
-                  <div>
-
-                    <div class="grid
-                                grid-cols-1
-                                md:grid-cols-2
-                                gap-4">
-
-
-                      <!-- จาก -->
-
-                      <div>
-
-                        <label class="gov-label">
-
-                          จาก (หน่วยงานเจ้าของหนังสือ)
-                          <span class="text-red-500">*</span>
-
-                        </label>
-
-                        <input type="text"
-                               id="bookFrom"
-                               required
-                               placeholder="เช่น สำนักงานเขตพื้นที่การศึกษา..."
-                               class="gov-input">
-
-                      </div>
-
-
-
-                      <!-- เรื่อง -->
-
-                      <div>
-
-                        <label class="gov-label">
-
-                          เรื่อง
-                          <span class="text-red-500">*</span>
-
-                        </label>
-
-                        <input type="text"
-                               id="bookTitle"
-                               required
-                               placeholder="ระบุชื่อเรื่องหนังสือ..."
-                               class="gov-input">
-
-                      </div>
-
-
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- จาก -->
+                    <div>
+                      <label class="block text-xs font-bold text-slate-700 mb-1">
+                        จาก (หน่วยงานเจ้าของหนังสือ) <span class="text-rose-500">*</span>
+                      </label>
+                      <input type="text" id="bookFrom" required placeholder="เช่น สำนักงานเขตพื้นที่การศึกษา..." 
+                             class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-sky-500 outline-none shadow-sm">
                     </div>
 
+                    <!-- เรื่อง -->
+                    <div>
+                      <label class="block text-xs font-bold text-slate-700 mb-1">
+                        เรื่อง <span class="text-rose-500">*</span>
+                      </label>
+                      <input type="text" id="bookTitle" required placeholder="ระบุชื่อเรื่องหนังสือ..." 
+                             class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-sky-500 outline-none shadow-sm">
+                    </div>
                   </div>
 
-
-
-                  <!-- PDF -->
-
+                  <!-- แนบไฟล์ PDF -->
                   <div>
-
-                    <label class="gov-label">
-
-                      แนบไฟล์ PDF หนังสือเข้า
-                      <span class="text-red-500">*</span>
-
+                    <label class="block text-xs font-bold text-slate-700 mb-1">
+                      แนบไฟล์ PDF หนังสือเข้า <span class="text-rose-500">*</span>
                     </label>
-
-
-                    <div class="border
-                                border-dashed
-                                border-slate-300
-                                rounded-lg
-                                p-3
-                                bg-slate-50">
-
-                      <input type="file"
-                             id="bookPdf"
-                             accept="application/pdf"
-                             required
-                             class="w-full
-                                    text-xs
-                                    text-slate-600
-                                    file:mr-3
-                                    file:py-2
-                                    file:px-3
-                                    file:rounded-lg
-                                    file:border-0
-                                    file:text-xs
-                                    file:font-semibold
-                                    file:bg-[#eaf3f8]
-                                    file:text-[#1d5f8a]
-                                    hover:file:bg-[#dcebf3]
-                                    cursor-pointer">
-
-                    </div>
-
-
-                    <p class="text-[10px]
-                              text-slate-400
-                              mt-1.5">
-
-                      รองรับไฟล์เอกสาร PDF สำหรับประทับตรารับหนังสือ
-
-                    </p>
-
+                    <input type="file" id="bookPdf" accept="application/pdf" required 
+                           class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs text-slate-600 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-sky-100 file:text-sky-700 hover:file:bg-sky-200 cursor-pointer shadow-sm">
                   </div>
 
-
-
-                  <!-- ACTION -->
-
-                  <div class="pt-3
-                              border-t
-                              border-slate-200
-                              flex justify-end">
-
-
-                    <button type="submit"
-                            id="btnSubmitBook"
-                            class="gov-primary-btn
-                                   px-5 py-2.5
-                                   font-semibold
-                                   text-sm
-                                   flex items-center
-                                   gap-2">
-
+                  <!-- ปุ่มลงทะเบียน -->
+                  <div class="pt-2 flex justify-end">
+                    <button type="submit" id="btnSubmitBook" 
+                            class="px-6 py-2.5 bg-gradient-to-r from-sky-600 to-blue-700 hover:from-sky-700 hover:to-blue-800 text-white font-bold rounded-xl text-xs shadow-md transition duration-200 flex items-center gap-2">
                       <i class="fa-solid fa-stamp"></i>
-
-                      <span>
-                        ลงรับและประทับตราหนังสือ
-                      </span>
-
+                      <span>ลงรับและประทับตราหนังสือ</span>
                     </button>
-
-
                   </div>
-
 
                 </form>
 
               </div>
+            </div>
+
+            <!-- 2. ตารางหนังสือรับที่ลงทะเบียนแล้ว (แสดงเป็นหน้าแรก) -->
+            <div id="sarabunTableSection" class="bg-white/95 rounded-2xl border-2 border-sky-200 shadow-md p-4 md:p-5 page-transition">
+              <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 mb-4">
+                <div class="flex items-center gap-2">
+                  <i class="fa-solid fa-list-check text-sky-700"></i>
+                  <h3 class="font-bold text-slate-800 text-sm md:text-base">รายการหนังสือรับทั้งหมด</h3>
+                </div>
+                <div class="relative w-full md:w-72">
+                  <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                    <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                  </span>
+                  <input type="text" id="searchInput" placeholder="ค้นหาเลขที่หนังสือ, เรื่อง, ผู้ส่ง..." 
+                         class="w-full pl-9 pr-3 py-1.5 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-sky-500 outline-none">
+                </div>
+              </div>
+
+              <!-- Table Body -->
+              <div class="overflow-x-auto rounded-xl border border-slate-200">
+                <table class="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr class="bg-[#0f2b48] text-white font-bold text-center">
+                      <th class="py-2.5 px-3 border-b border-slate-700 w-12">ลำดับ</th>
+                      <th class="py-2.5 px-3 border-b border-slate-700 w-24">เลขรับ</th>
+                      <th class="py-2.5 px-3 border-b border-slate-700 w-36">เลขที่หนังสือ</th>
+                      <th class="py-2.5 px-3 border-b border-slate-700 text-left">เรื่อง</th>
+                      <th class="py-2.5 px-3 border-b border-slate-700 w-44">จาก</th>
+                      <th class="py-2.5 px-3 border-b border-slate-700 w-28">วันที่ลงรับ</th>
+                      <th class="py-2.5 px-3 border-b border-slate-700 w-24">จัดการ</th>
+                    </tr>
+                  </thead>
+                  <tbody id="bookTableBody" class="divide-y divide-slate-200 text-slate-700">
+                    <!-- รายการตารางจะโหลดผ่าน JavaScript -->
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Pagination (แบ่งหน้าละ 20 รายการ) -->
+              <div class="flex flex-col md:flex-row items-center justify-between gap-3 mt-4 text-xs text-slate-600 font-medium">
+                <div id="paginationInfo">
+                  แสดง <span id="pageStart">1</span> - <span id="pageEnd">20</span> จากทั้งหมด <span id="totalItems">0</span> รายการ
+                </div>
+                <div class="flex items-center gap-1">
+                  <button type="button" id="btnPrevPage" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-lg text-slate-600 disabled:opacity-50 transition">ก่อนหน้า</button>
+                  <span id="pageNumbers" class="px-3 py-1 font-bold text-sky-700">1</span>
+                  <button type="button" id="btnNextPage" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-lg text-slate-600 disabled:opacity-50 transition">ถัดไป</button>
+                </div>
+              </div>
 
             </div>
 
-
-
-            <!-- ===============================================
-                 REGISTERED TABLE
-                 =============================================== -->
-
-            <div id="sarabunTableSection"
-                 class="official-card
-                        overflow-hidden
-                        page-transition">
-
-
-              <!-- TABLE HEADER -->
-
-              <div class="px-5 py-4
-                          border-b
-                          border-slate-200
-                          bg-white">
-
-
-                <div class="flex flex-col
-                            md:flex-row
-                            justify-between
-                            items-start
-                            md:items-center
-                            gap-3">
-
-
-                  <div class="flex items-center gap-3">
-
-                    <span class="w-9 h-9
-                                 rounded-lg
-                                 bg-[#eaf3f8]
-                                 text-[#1d5f8a]
-                                 flex items-center
-                                 justify-center">
-
-                      <i class="fa-solid fa-list-check"></i>
-
-                    </span>
-
-
-                    <div>
-
-                      <h3 class="font-bold
-                                 text-[#12304a]
-                                 text-sm md:text-base">
-
-                        รายการหนังสือรับทั้งหมด
-
-                      </h3>
-
-                      <p class="text-[11px]
-                                text-slate-400
-                                mt-0.5">
-
-                        ทะเบียนหนังสือรับของโรงเรียน
-
-                      </p>
-
-                    </div>
-
-                  </div>
-
-
-
-                  <!-- SEARCH -->
-
-                  <div class="relative
-                              w-full md:w-80">
-
-                    <span class="absolute
-                                 inset-y-0
-                                 left-0
-                                 flex items-center
-                                 pl-3
-                                 text-slate-400">
-
-                      <i class="fa-solid fa-magnifying-glass text-xs"></i>
-
-                    </span>
-
-                    <input type="text"
-                           id="searchInput"
-                           placeholder="ค้นหาเลขที่หนังสือ, เรื่อง, ผู้ส่ง..."
-                           class="gov-input pl-9">
-
-                  </div>
-
-
-                </div>
-
-              </div>
-
-
-
-              <!-- TABLE -->
-
-              <div class="p-4 md:p-5">
-
-                <div class="overflow-x-auto
-                            rounded-lg
-                            border
-                            border-slate-200">
-
-                  <table class="gov-table
-                                w-full
-                                text-left
-                                border-collapse
-                                text-xs">
-
-
-                    <thead>
-
-                      <tr class="font-semibold
-                                 text-center">
-
-                        <th class="py-3 px-3
-                                   border-b
-                                   border-white/10
-                                   w-12">
-
-                          ลำดับ
-
-                        </th>
-
-                        <th class="py-3 px-3
-                                   border-b
-                                   border-white/10
-                                   w-24">
-
-                          เลขรับ
-
-                        </th>
-
-                        <th class="py-3 px-3
-                                   border-b
-                                   border-white/10
-                                   w-36">
-
-                          เลขที่หนังสือ
-
-                        </th>
-
-                        <th class="py-3 px-3
-                                   border-b
-                                   border-white/10
-                                   text-left">
-
-                          เรื่อง
-
-                        </th>
-
-                        <th class="py-3 px-3
-                                   border-b
-                                   border-white/10
-                                   w-44">
-
-                          จาก
-
-                        </th>
-
-                        <th class="py-3 px-3
-                                   border-b
-                                   border-white/10
-                                   w-28">
-
-                          วันที่ลงรับ
-
-                        </th>
-
-                        <th class="py-3 px-3
-                                   border-b
-                                   border-white/10
-                                   w-24">
-
-                          จัดการ
-
-                        </th>
-
-                      </tr>
-
-                    </thead>
-
-
-                    <tbody id="bookTableBody"
-                           class="divide-y
-                                  divide-slate-100
-                                  text-slate-700">
-
-                      <!-- JavaScript โหลดข้อมูล -->
-
-                    </tbody>
-
-
-                  </table>
-
-                </div>
-
-
-
-                <!-- PAGINATION -->
-
-                <div class="flex flex-col
-                            md:flex-row
-                            items-center
-                            justify-between
-                            gap-3
-                            mt-4
-                            text-xs
-                            text-slate-500">
-
-
-                  <div id="paginationInfo">
-
-                    แสดง
-                    <span id="pageStart"
-                          class="font-semibold text-slate-700">
-                      1
-                    </span>
-
-                    -
-
-                    <span id="pageEnd"
-                          class="font-semibold text-slate-700">
-                      20
-                    </span>
-
-                    จากทั้งหมด
-
-                    <span id="totalItems"
-                          class="font-semibold text-slate-700">
-                      0
-                    </span>
-
-                    รายการ
-
-                  </div>
-
-
-
-                  <div class="flex items-center gap-1">
-
-
-                    <button type="button"
-                            id="btnPrevPage"
-                            class="px-3 py-1.5
-                                   bg-white
-                                   hover:bg-slate-50
-                                   border
-                                   border-slate-300
-                                   rounded-lg
-                                   text-slate-600
-                                   disabled:opacity-40
-                                   transition">
-
-                      ก่อนหน้า
-
-                    </button>
-
-
-                    <span id="pageNumbers"
-                          class="px-3 py-1.5
-                                 font-bold
-                                 text-[#1d5f8a]">
-
-                      1
-
-                    </span>
-
-
-                    <button type="button"
-                            id="btnNextPage"
-                            class="px-3 py-1.5
-                                   bg-white
-                                   hover:bg-slate-50
-                                   border
-                                   border-slate-300
-                                   rounded-lg
-                                   text-slate-600
-                                   disabled:opacity-40
-                                   transition">
-
-                      ถัดไป
-
-                    </button>
-
-
-                  </div>
-
-                </div>
-
-              </div>
-
-
-            </div>
-
-
-          </section>
-
+          </div>
 
         </div>
 
       </div>
-
     </main>
 
-
-
-    <!-- ===================================================
-         MOBILE NAVIGATION
-         =================================================== -->
-
-    <div class="fixed
-                bottom-3
-                left-0
-                right-0
-                z-30
-                px-3
-                max-w-md
-                mx-auto
-                block md:hidden">
-
-      <nav class="floating-nav
-                 rounded-xl
-                 p-1.5
-                 flex
-                 justify-around
-                 items-center">
-
-
-        <button type="button"
-                onclick="loadRoleDashboard()"
-                class="flex flex-col
-                       items-center
-                       justify-center
-                       w-full
-                       py-2
-                       text-[#1d5f8a]">
-
-          <div class="w-8 h-7
-                      rounded-lg
-                      bg-[#eaf3f8]
-                      flex items-center
-                      justify-center">
-
+    <!-- Floating Navigation Bar (แสดงเฉพาะบนมือถือ ซ่อนบนคอมพิวเตอร์ด้วย md:hidden) -->
+    <div class="fixed bottom-4 left-0 right-0 z-30 px-4 max-w-md mx-auto block md:hidden">
+      <nav class="floating-nav bg-white/95 backdrop-blur-xl rounded-2xl p-1.5 border-2 border-sky-200 shadow-2xl shadow-sky-300/50 flex justify-around items-center">
+        <button type="button" onclick="loadRoleDashboard()" class="flex flex-col items-center justify-center w-full py-2 text-sky-600 transition group">
+          <div class="w-9 h-7 bg-sky-100 rounded-lg flex items-center justify-center text-sky-600 font-bold shadow-sm">
             <i class="fa-solid fa-house-chimney text-sm"></i>
-
           </div>
-
-          <span class="text-[10px]
-                       mt-1
-                       font-semibold">
-
-            หน้าแรก
-
-          </span>
-
+          <span class="text-[10px] mt-1 font-bold">หน้าแรก</span>
         </button>
 
-
-
-        <button type="button"
-                onclick="openRegisterModal()"
-                class="flex flex-col
-                       items-center
-                       justify-center
-                       w-full
-                       py-2
-                       text-slate-500
-                       hover:text-[#1d5f8a]">
-
-          <div class="w-8 h-7
-                      flex items-center
-                      justify-center">
-
+        <button type="button" onclick="openRegisterModal()" class="flex flex-col items-center justify-center w-full py-2 text-slate-500 hover:text-sky-600 transition group">
+          <div class="w-9 h-7 rounded-lg flex items-center justify-center">
             <i class="fa-solid fa-circle-plus text-sm"></i>
-
           </div>
-
-          <span class="text-[10px] mt-1">
-            ลงรับ
-          </span>
-
+          <span class="text-[10px] mt-1 font-medium">ลงรับ</span>
         </button>
 
-
-
-        <button type="button"
-                onclick="switchSarabunMenu('registered')"
-                class="flex flex-col
-                       items-center
-                       justify-center
-                       w-full
-                       py-2
-                       text-slate-500
-                       hover:text-[#1d5f8a]">
-
-          <div class="w-8 h-7
-                      flex items-center
-                      justify-center">
-
+        <button type="button" onclick="switchSarabunMenu('registered')" class="flex flex-col items-center justify-center w-full py-2 text-slate-500 hover:text-sky-600 transition group">
+          <div class="w-9 h-7 rounded-lg flex items-center justify-center">
             <i class="fa-solid fa-receipt text-sm"></i>
-
           </div>
-
-          <span class="text-[10px] mt-1">
-            ทะเบียน
-          </span>
-
+          <span class="text-[10px] mt-1 font-medium">ทะเบียน</span>
         </button>
 
-
-
-        <button type="button"
-                onclick="logout()"
-                class="flex flex-col
-                       items-center
-                       justify-center
-                       w-full
-                       py-2
-                       text-red-500
-                       hover:text-red-700">
-
-          <div class="w-8 h-7
-                      flex items-center
-                      justify-center">
-
+        <button type="button" onclick="logout()" class="flex flex-col items-center justify-center w-full py-2 text-rose-500 hover:text-rose-700 transition group">
+          <div class="w-9 h-7 rounded-lg flex items-center justify-center">
             <i class="fa-solid fa-arrow-right-from-bracket text-sm"></i>
-
           </div>
-
-          <span class="text-[10px] mt-1">
-            ออก
-          </span>
-
+          <span class="text-[10px] mt-1 font-medium">ออก</span>
         </button>
-
-
       </nav>
-
     </div>
-
 
   </div>
 
-
-
-  <!-- =====================================================
-       4. CUSTOM ALERT MODAL
-       ===================================================== -->
-
-  <div id="alertModal"
-       class="fixed inset-0
-              gov-modal-overlay
-              flex items-center
-              justify-center
-              p-4
-              z-50
-              hidden">
-
-
-    <div class="gov-modal
-                w-full max-w-sm
-                overflow-hidden
-                text-center
-                page-transition">
-
-
-      <div class="p-6">
-
-
-        <div id="alertIconContainer"
-             class="w-14 h-14
-                    rounded-xl
-                    flex items-center
-                    justify-center
-                    mx-auto
-                    mb-4
-                    text-xl
-                    bg-[#eaf3f8]
-                    text-[#1d5f8a]
-                    border border-slate-200">
-
-          <i id="alertIcon"
-             class="fa-solid">
-          </i>
-
-        </div>
-
-
-        <h3 id="alertTitle"
-            class="text-base
-                   font-bold
-                   text-[#12304a]
-                   mb-1">
-
-          แจ้งเตือน
-
-        </h3>
-
-
-        <p id="alertMessage"
-           class="text-slate-600
-                  text-xs
-                  leading-relaxed
-                  mb-6
-                  px-2">
-        </p>
-
-
-        <button type="button"
-                onclick="closeAlertModal()"
-                class="gov-primary-btn
-                       w-full
-                       py-2.5
-                       font-semibold
-                       text-sm">
-
-          ตกลง
-
-        </button>
-
-
+  <!-- ================= 4. CUSTOM ALERT MODAL ================= -->
+  <div id="alertModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden transition-all duration-300">
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden text-center p-6 page-transition border-2 border-sky-300">
+      <div id="alertIconContainer" class="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-inner transition-all bg-sky-100 text-sky-600 border border-sky-300">
+        <i id="alertIcon" class="fa-solid"></i>
       </div>
 
+      <h3 id="alertTitle" class="text-base font-bold text-slate-800 mb-1 leading-tight">แจ้งเตือน</h3>
+      <p id="alertMessage" class="text-slate-600 text-xs font-normal leading-relaxed mb-6 px-2"></p>
+
+      <button type="button" onclick="closeAlertModal()" 
+              class="w-full py-3 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 active:scale-[0.98] text-white font-bold rounded-xl text-sm shadow-md transition duration-200">
+        ตกลง
+      </button>
     </div>
-
   </div>
-
-
-
-  <!-- =====================================================
-       JavaScript
-       ใช้ JavaScript เดิมของคุณต่อจากตรงนี้
-       ===================================================== -->
-
   
 <!-- ================= JavaScript ================= -->
 <script>
-  /* =========================================================
-     CONFIGURATION
-     ========================================================= */
-  const GAS_URL = "https://script.google.com/macros/s/AKfycbxauMbrEeIaDNAN_U0DvffmUVN5vfbUqpNOpmVSPvtMZ9qbl0WfTcxB2JnvcRxkOfQm/exec";
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbxauMbrEeIaDNAN_U0DvffmUVN5vfbUqpNOpmVSPvtMZ9qbl0WfTcxB2JnvcRxkOfQm/exec"; 
   const SCHOOL_LOGO_URL = "https://raw.githubusercontent.com/joodami/school-assets/main/logo.png";
 
-  /* =========================================================
-     GLOBAL STATE
-     ========================================================= */
   let currentUser = null;
   let targetRoleGroup = 'SARABUN';
-  let currentSarabunTab = 'registered';
+  let currentSarabunTab = 'registered'; // 'add', 'registered', 'returned'
 
   let incomingBooks = [];
   let filteredBooks = [];
-
   let currentPage = 1;
   const pageSize = 20;
 
   let cachedFontBytes = null;
   let isLoadingData = false;
 
-  // ป้องกันการกดบันทึกซ้ำ
-  let isRegisteringBook = false;
-
-  // ป้องกันการ Login ซ้ำ
-  let isLoggingIn = false;
-
-
-  /* =========================================================
-     UTILITY FUNCTIONS
-     ========================================================= */
-
-  /**
-   * Escape HTML
-   * ป้องกันข้อมูลจาก Google Sheet ที่มีอักขระพิเศษ
-   * ทำให้ HTML ตารางผิดรูป
-   */
-  function escapeHtml(value) {
-    if (value === null || value === undefined) return '';
-
-    return String(value)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
+  function warmupServer() {
+    fetch(GAS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: JSON.stringify({ action: 'PING' })
+    }).catch(() => {});
   }
 
+  document.addEventListener("DOMContentLoaded", async () => {
+    warmupServer();
 
-  /**
-   * Escape URL สำหรับใช้ใน href
-   */
-  function safeUrl(url) {
-    if (!url) return '';
+    // Set Logos
+    const portalLogo = document.getElementById('portalSchoolLogo');
+    if (portalLogo) portalLogo.src = SCHOOL_LOGO_URL;
 
-    const value = String(url).trim();
+    document.querySelectorAll('.modalSchoolLogo, .headerSchoolLogo').forEach(img => {
+      img.src = SCHOOL_LOGO_URL;
+    });
 
-    if (
-      value.startsWith('https://') ||
-      value.startsWith('http://')
-    ) {
-      return escapeHtml(value);
+    // Bind Search Event
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+      searchInput.addEventListener('input', filterDocs);
     }
 
-    return '';
-  }
+    // Bind Pagination Events
+    const btnPrev = document.getElementById('btnPrevPage');
+    const btnNext = document.getElementById('btnNextPage');
+    if (btnPrev) btnPrev.addEventListener('click', () => changePage(-1));
+    if (btnNext) btnNext.addEventListener('click', () => changePage(1));
 
+    // Restore Session
+    const savedUser = localStorage.getItem('currentUser');
+    const savedRoleGroup = localStorage.getItem('targetRoleGroup');
 
-  /**
-   * แสดงข้อความแจ้งเตือน
-   */
+    if (savedUser) {
+      try {
+        currentUser = JSON.parse(savedUser);
+        if (savedRoleGroup) targetRoleGroup = savedRoleGroup;
+
+        document.getElementById('portalSection')?.classList.add('hidden');
+        document.getElementById('mainDashboard')?.classList.remove('hidden');
+        
+        const userInfoEl = document.getElementById('userInfo');
+        if (userInfoEl) userInfoEl.innerText = `${currentUser.name} • ${currentUser.position}`;
+
+        // โหลดข้อมูลให้เสร็จ 100% ก่อนจึงเริ่มวาดแดชบอร์ด
+        await loadDocsData();
+        loadRoleDashboard();
+      } catch (err) {
+        console.error("Restore session error:", err);
+        logout();
+      }
+    }
+  });
+
   function showAlert(message, title = 'แจ้งเตือน', type = 'error') {
     const modal = document.getElementById('alertModal');
     const iconContainer = document.getElementById('alertIconContainer');
@@ -2214,2347 +587,568 @@
     titleEl.innerText = title;
     messageEl.innerText = message;
 
-    if (iconContainer && icon) {
-
-      if (type === 'error') {
-        iconContainer.className =
-          "w-14 h-14 bg-red-50 text-red-600 border border-red-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-sm";
-
-        icon.className = "fa-solid fa-triangle-exclamation";
-
-      } else if (type === 'success') {
-        iconContainer.className =
-          "w-14 h-14 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-sm";
-
-        icon.className = "fa-solid fa-circle-check";
-
-      } else if (type === 'warning') {
-        iconContainer.className =
-          "w-14 h-14 bg-amber-50 text-amber-600 border border-amber-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-sm";
-
-        icon.className = "fa-solid fa-circle-exclamation";
-
-      } else {
-        iconContainer.className =
-          "w-14 h-14 bg-sky-100 text-[#0f2b48] border border-sky-300 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-sm";
-
-        icon.className = "fa-solid fa-circle-info";
-      }
+    if (type === 'error') {
+      iconContainer.className = "w-14 h-14 bg-red-50 text-red-600 border border-red-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-sm";
+      icon.className = "fa-solid fa-triangle-exclamation";
+    } else if (type === 'success') {
+      iconContainer.className = "w-14 h-14 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-sm";
+      icon.className = "fa-solid fa-circle-check";
+    } else if (type === 'warning') {
+      iconContainer.className = "w-14 h-14 bg-amber-50 text-amber-600 border border-amber-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-sm";
+      icon.className = "fa-solid fa-circle-exclamation";
+    } else {
+      iconContainer.className = "w-14 h-14 bg-sky-100 text-[#0f2b48] border border-sky-300 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-sm";
+      icon.className = "fa-solid fa-circle-info";
     }
 
     modal.classList.remove('hidden');
   }
 
-
-  /**
-   * ปิด Alert Modal
-   */
   function closeAlertModal() {
     const modal = document.getElementById('alertModal');
-
-    if (modal) {
-      modal.classList.add('hidden');
-    }
+    if (modal) modal.classList.add('hidden');
   }
 
-
-  /**
-   * แปลงวันที่แบบ Local
-   * ป้องกันปัญหา Date ถูกเลื่อน 1 วันจาก Timezone
-   */
-  function parseLocalDate(dateStr) {
-    if (!dateStr) return null;
-
-    if (
-      typeof dateStr === 'string' &&
-      dateStr.includes('-')
-    ) {
-      const cleanStr = dateStr.split('T')[0];
-      const parts = cleanStr.split('-');
-
-      if (parts.length === 3) {
-        const year = parseInt(parts[0], 10);
-        const month = parseInt(parts[1], 10) - 1;
-        const day = parseInt(parts[2], 10);
-
-        const date = new Date(year, month, day);
-
-        return isNaN(date.getTime()) ? null : date;
-      }
-    }
-
-    const d = new Date(dateStr);
-
-    return isNaN(d.getTime()) ? null : d;
-  }
-
-
-  /**
-   * แสดงวันที่ในรูปแบบภาษาไทย
-   */
-  function formatDisplayDate(dateStr) {
-    if (!dateStr) return '-';
-
-    const d = parseLocalDate(dateStr);
-
-    if (!d) {
-      return String(dateStr).split('T')[0];
-    }
-
-    const thaiMonths = [
-      'ม.ค.',
-      'ก.พ.',
-      'มี.ค.',
-      'เม.ย.',
-      'พ.ค.',
-      'มิ.ย.',
-      'ก.ค.',
-      'ส.ค.',
-      'ก.ย.',
-      'ต.ค.',
-      'พ.ย.',
-      'ธ.ค.'
-    ];
-
-    return `${d.getDate()} ${thaiMonths[d.getMonth()]} ${d.getFullYear() + 543}`;
-  }
-
-
-  /**
-   * คืนค่าปี พ.ศ. ปัจจุบัน
-   */
-  function getCurrentYearBE() {
-    return new Date().getFullYear() + 543;
-  }
-
-
-  /* =========================================================
-     SERVER CONNECTION
-     ========================================================= */
-
-  /**
-   * Warm up GAS
-   * ช่วยให้ Server พร้อมก่อนการใช้งานจริง
-   */
-  function warmupServer() {
-    fetch(GAS_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      body: JSON.stringify({
-        action: 'PING'
-      })
-    }).catch(() => {});
-  }
-
-
-  /**
-   * ส่งข้อมูลไปยัง GAS
-   */
-  async function postToGas(payload) {
-    const response = await fetch(GAS_URL, {
-      method: 'POST',
-      body: JSON.stringify(payload)
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP Error ${response.status}`);
-    }
-
-    return await response.json();
-  }
-
-
-  /* =========================================================
-     INITIALIZATION
-     ========================================================= */
-
-  document.addEventListener("DOMContentLoaded", async () => {
-
-    warmupServer();
-
-    /* -------------------------
-       Set School Logo
-       ------------------------- */
-
-    const portalLogo =
-      document.getElementById('portalSchoolLogo');
-
-    if (portalLogo) {
-      portalLogo.src = SCHOOL_LOGO_URL;
-    }
-
-    document
-      .querySelectorAll('.modalSchoolLogo, .headerSchoolLogo')
-      .forEach(img => {
-        img.src = SCHOOL_LOGO_URL;
-      });
-
-
-    /* -------------------------
-       Search Event
-       ------------------------- */
-
-    const searchInput =
-      document.getElementById('searchInput');
-
-    if (searchInput) {
-      searchInput.addEventListener('input', filterDocs);
-    }
-
-
-    /* -------------------------
-       Pagination Events
-       ------------------------- */
-
-    const btnPrev =
-      document.getElementById('btnPrevPage');
-
-    const btnNext =
-      document.getElementById('btnNextPage');
-
-    if (btnPrev) {
-      btnPrev.addEventListener('click', () => {
-        changePage(-1);
-      });
-    }
-
-    if (btnNext) {
-      btnNext.addEventListener('click', () => {
-        changePage(1);
-      });
-    }
-
-
-    /* -------------------------
-       Restore Session
-       ------------------------- */
-
-    const savedUser =
-      localStorage.getItem('currentUser');
-
-    const savedRoleGroup =
-      localStorage.getItem('targetRoleGroup');
-
-
-    if (savedUser) {
-
-      try {
-
-        currentUser = JSON.parse(savedUser);
-
-        if (savedRoleGroup) {
-          targetRoleGroup = savedRoleGroup;
-        }
-
-        document
-          .getElementById('portalSection')
-          ?.classList.add('hidden');
-
-        document
-          .getElementById('mainDashboard')
-          ?.classList.remove('hidden');
-
-
-        const userInfoEl =
-          document.getElementById('userInfo');
-
-        if (userInfoEl && currentUser) {
-          userInfoEl.innerText =
-            `${currentUser.name} • ${currentUser.position}`;
-        }
-
-
-        // โหลดข้อมูลให้เสร็จก่อนสร้าง Dashboard
-        await loadDocsData();
-
-        loadRoleDashboard();
-
-      } catch (err) {
-
-        console.error(
-          "Restore session error:",
-          err
-        );
-
-        logout();
-      }
-    }
-  });
-
-
-  /* =========================================================
-     SYSTEM TAB
-     ========================================================= */
-
-  function switchSystemTab(
-    roleGroup,
-    roleTitle,
-    headerBgClass,
-    iconClass
-  ) {
-
-    const selectedInput =
-      document.getElementById('selectedRoleGroup');
-
-    if (selectedInput) {
-      selectedInput.value = roleGroup;
-    }
-
+  function switchSystemTab(roleGroup, roleTitle, headerBgClass, iconClass) {
+    const selectedInput = document.getElementById('selectedRoleGroup');
+    if (selectedInput) selectedInput.value = roleGroup;
     targetRoleGroup = roleGroup;
 
+    document.querySelectorAll('.system-tab-button').forEach(btn => {
+      btn.classList.remove('system-tab-active');
+    });
+    const activeBtn = document.getElementById('tab-' + roleGroup);
+    if (activeBtn) activeBtn.classList.add('system-tab-active');
 
-    document
-      .querySelectorAll('.system-tab-button')
-      .forEach(btn => {
-        btn.classList.remove('system-tab-active');
-      });
-
-
-    const activeBtn =
-      document.getElementById('tab-' + roleGroup);
-
-    if (activeBtn) {
-      activeBtn.classList.add('system-tab-active');
-    }
-
-
-    const display =
-      document.getElementById('activeSystemNameDisplay');
-
+    const display = document.getElementById('activeSystemNameDisplay');
     if (display) {
-
-      const cleanTitle =
-        String(roleTitle || '').replace('ระบบ', '');
-
-      display.innerHTML =
-        'ระบบที่เลือก: ' +
-        `<span class="text-[#0f2b48] font-black underline decoration-amber-400 underline-offset-4">` +
-        `${escapeHtml(cleanTitle)}` +
-        `</span>`;
+      let cleanTitle = roleTitle.replace('ระบบ', '');
+      display.innerHTML = 'ระบบที่เลือก: <span class="text-[#0f2b48] font-black underline decoration-amber-400 underline-offset-4">' + cleanTitle + '</span>';
     }
   }
 
-
-  /* =========================================================
-     LOGIN
-     ========================================================= */
-
   async function handleLogin(e) {
-
     if (e && typeof e.preventDefault === 'function') {
       e.preventDefault();
     }
 
-
-    // ป้องกันกด Login ซ้ำ
-    if (isLoggingIn) {
-      return;
+    const selectedInput = document.getElementById('selectedRoleGroup');
+    if (selectedInput && selectedInput.value) {
+      targetRoleGroup = selectedInput.value;
     }
 
-    isLoggingIn = true;
-
-
-    const selectedInput =
-      document.getElementById('selectedRoleGroup');
-
-    if (
-      selectedInput &&
-      selectedInput.value
-    ) {
-      targetRoleGroup =
-        selectedInput.value;
-    }
-
-
-    const btn =
-      document.getElementById('btnLogin');
-
-
+    const btn = document.getElementById('btnLogin');
     if (btn) {
-
-      btn.innerHTML =
-        `<i class="fa-solid fa-circle-notch animate-spin text-xs"></i> ` +
-        `<span>กำลังตรวจสอบ...</span>`;
-
+      btn.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin text-xs"></i> <span>กำลังตรวจสอบ...</span>`;
       btn.disabled = true;
     }
 
-
     const payload = {
       action: 'LOGIN',
-
       data: {
-        username:
-          document.getElementById('username')?.value || '',
-
-        password:
-          document.getElementById('password')?.value || ''
+        username: document.getElementById('username')?.value || '',
+        password: document.getElementById('password')?.value || ''
       }
     };
 
-
     try {
+      const response = await fetch(GAS_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
 
-      const res =
-        await postToGas(payload);
-
+      const res = await response.json();
 
       if (res.success) {
-
-        const userRole =
-          res.user.role;
-
+        const userRole = res.user.role;
         let hasPermission = false;
-
-
-        if (
-          targetRoleGroup === 'SARABUN' &&
-          userRole === 'SARABUN'
-        ) {
-          hasPermission = true;
-
-        } else if (
-          targetRoleGroup === 'EXEC' &&
-          (
-            userRole === 'DIRECTOR' ||
-            userRole === 'VICE_DIRECTOR'
-          )
-        ) {
-          hasPermission = true;
-
-        } else if (
-          targetRoleGroup === 'TEACHER' &&
-          (
-            userRole === 'TEACHER' ||
-            userRole === 'STAFF'
-          )
-        ) {
-          hasPermission = true;
-        }
-
+        
+        if (targetRoleGroup === 'SARABUN' && userRole === 'SARABUN') hasPermission = true;
+        else if (targetRoleGroup === 'EXEC' && (userRole === 'DIRECTOR' || userRole === 'VICE_DIRECTOR')) hasPermission = true;
+        else if (targetRoleGroup === 'TEACHER' && (userRole === 'TEACHER' || userRole === 'STAFF')) hasPermission = true;
 
         if (!hasPermission) {
-
-          showAlert(
-            "คุณไม่มีสิทธิ์เข้าใช้งานในส่วนนี้ กรุณาเลือกระบบเข้าใช้งานให้ตรงกับสิทธิ์ของคุณ",
-            "ไม่มีสิทธิ์เข้าถึงระบบ",
-            "error"
-          );
-
+          showAlert("คุณไม่มีสิทธิ์เข้าใช้งานในส่วนนี้ กรุณาเลือกระบบเข้าใช้งานให้ตรงกับสิทธิ์ของคุณ", "ไม่มีสิทธิ์เข้าถึงระบบ", "error");
+          if (btn) {
+            btn.innerHTML = `<i class="fa-solid fa-right-to-bracket text-xs"></i> <span>เข้าสู่ระบบ</span>`;
+            btn.disabled = false;
+          }
           return;
         }
 
-
         currentUser = res.user;
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        localStorage.setItem('targetRoleGroup', targetRoleGroup);
 
-
-        localStorage.setItem(
-          'currentUser',
-          JSON.stringify(currentUser)
-        );
-
-        localStorage.setItem(
-          'targetRoleGroup',
-          targetRoleGroup
-        );
-
-
-        document
-          .getElementById('portalSection')
-          ?.classList.add('hidden');
-
-        document
-          .getElementById('mainDashboard')
-          ?.classList.remove('hidden');
-
-
-        const userInfoEl =
-          document.getElementById('userInfo');
-
-        if (userInfoEl) {
-
-          userInfoEl.innerText =
-            `${currentUser.name} • ${currentUser.position}`;
-        }
-
-
-        // โหลดข้อมูลให้เสร็จก่อนเปิด Dashboard
+        document.getElementById('portalSection')?.classList.add('hidden');
+        document.getElementById('mainDashboard')?.classList.remove('hidden');
+        
+        const userInfoEl = document.getElementById('userInfo');
+        if (userInfoEl) userInfoEl.innerText = `${currentUser.name} • ${currentUser.position}`;
+        
+        // รอให้ดึงข้อมูลหนังสือรับเสร็จสมบูรณ์ก่อนเปิดหน้า Dashboard
         await loadDocsData();
-
         loadRoleDashboard();
-
-
       } else {
-
-        showAlert(
-          res.message ||
-          "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง",
-          "เข้าสู่ระบบไม่สำเร็จ",
-          "error"
-        );
+        showAlert(res.message || "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง", "เข้าสู่ระบบไม่สำเร็จ", "error");
       }
-
-
     } catch (err) {
-
-      console.error(
-        "Login error:",
-        err
-      );
-
-      showAlert(
-        "ไม่สามารถเชื่อมต่อกับระบบได้ กรุณาลองใหม่อีกครั้ง",
-        "เกิดข้อผิดพลาด",
-        "error"
-      );
-
+      showAlert("ไม่สามารถเชื่อมต่อกับระบบได้ กรุณาลองใหม่อีกครั้ง", "เกิดข้อผิดพลาด", "error");
+      console.error(err);
     } finally {
-
-      isLoggingIn = false;
-
       if (btn) {
-
-        btn.innerHTML =
-          `<i class="fa-solid fa-right-to-bracket text-xs"></i> ` +
-          `<span>เข้าสู่ระบบ</span>`;
-
+        btn.innerHTML = `<i class="fa-solid fa-right-to-bracket text-xs"></i> <span>เข้าสู่ระบบ</span>`;
         btn.disabled = false;
       }
     }
   }
 
+  function parseLocalDate(dateStr) {
+    if (!dateStr) return null;
+    if (typeof dateStr === 'string' && dateStr.includes('-')) {
+      const cleanStr = dateStr.split('T')[0];
+      const parts = cleanStr.split('-');
+      if (parts.length === 3) {
+        return new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+      }
+    }
+    const d = new Date(dateStr);
+    return isNaN(d.getTime()) ? null : d;
+  }
 
-  /* =========================================================
-     LOAD DOCUMENT DATA
-     ========================================================= */
+  function formatDisplayDate(dateStr) {
+    if (!dateStr) return '-';
+    const d = parseLocalDate(dateStr);
+    if (!d) return String(dateStr).split('T')[0];
+    const thaiMonths = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+    return `${d.getDate()} ${thaiMonths[d.getMonth()]} ${d.getFullYear() + 543}`;
+  }
 
   async function loadDocsData() {
-
-    if (!currentUser) {
-      return;
-    }
-
-
+    if (!currentUser) return;
+    
     isLoadingData = true;
-
-    renderLoadingState();
-
+    renderLoadingState(); // แสดง UI กำลังโหลดในตารางทันที
 
     try {
-
       const payload = {
         action: 'GET_DOCS_BY_ROLE',
-
         data: {
-          role:
-            currentUser.role,
-
-          userId:
-            currentUser.userId ||
-            currentUser.username ||
-            currentUser.id ||
-            ''
+          role: currentUser.role,
+          userId: currentUser.userId || currentUser.username || currentUser.id || ''
         }
       };
-
-
-      const res =
-        await postToGas(payload);
-
-
-      if (
-        res.success &&
-        Array.isArray(res.docs)
-      ) {
-
-        incomingBooks =
-          res.docs.map(doc => ({
-
-            recNo:
-              doc.receiveNo ||
-              doc.recNo ||
-              '',
-
-            no:
-              doc.bookNo ||
-              doc.no ||
-              '',
-
-            date:
-              doc.receiveDate ||
-              doc.date ||
-              '',
-
-            from:
-              doc.fromDept ||
-              doc.from ||
-              '',
-
-            title:
-              doc.title ||
-              '',
-
-            fileUrl:
-              doc.fileUrl ||
-              doc.url ||
-              '',
-
-            status:
-              doc.status ||
-              'PENDING_DIRECTOR',
-
-            time:
-              doc.receiveTime ||
-              doc.time ||
-              doc.receiveDate ||
-              ''
-          }));
-
+      const response = await fetch(GAS_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+      const res = await response.json();
+      
+      if (res.success && res.docs) {
+        incomingBooks = res.docs.map(doc => ({
+          recNo: doc.receiveNo || doc.recNo || '',
+          no: doc.bookNo || doc.no || '',
+          date: doc.receiveDate || doc.date || '',
+          from: doc.fromDept || doc.from || '',
+          title: doc.title || '',
+          fileUrl: doc.fileUrl || doc.url || '',
+          status: doc.status || 'PENDING_DIRECTOR',
+          time: doc.receiveTime || doc.time || doc.receiveDate || ''
+        }));
       } else {
-
         incomingBooks = [];
       }
-
-
     } catch (err) {
-
-      console.error(
-        "Error loading docs:",
-        err
-      );
-
+      console.error("Error loading docs:", err);
       incomingBooks = [];
-
     } finally {
-
       isLoadingData = false;
     }
   }
 
-
-  /* =========================================================
-     LOADING STATE
-     ========================================================= */
-
   function renderLoadingState() {
-
-    const tableBody =
-      document.getElementById('bookTableBody');
-
-    if (!tableBody) {
-      return;
-    }
-
-
-    tableBody.innerHTML = `
-      <tr>
-        <td colspan="7"
-            class="py-12 text-center text-slate-500 font-medium">
-
-          <div class="flex flex-col items-center justify-center gap-2">
-
-            <div class="w-10 h-10 rounded-full
-                        bg-sky-50
-                        flex items-center justify-center">
-
-              <i class="fa-solid fa-circle-notch
-                        animate-spin
-                        text-xl
-                        text-sky-600"></i>
-
+    const tableBody = document.getElementById('bookTableBody');
+    if (tableBody) {
+      tableBody.innerHTML = `
+        <tr>
+          <td colspan="7" class="py-12 text-center text-slate-500 font-medium">
+            <div class="flex flex-col items-center justify-center gap-2">
+              <i class="fa-solid fa-circle-notch animate-spin text-2xl text-sky-600"></i>
+              <span>กำลังดึงข้อมูลหนังสือรับจากระบบ...</span>
             </div>
-
-            <span>
-              กำลังดึงข้อมูลหนังสือรับจากระบบ...
-            </span>
-
-          </div>
-
-        </td>
-      </tr>
-    `;
+          </td>
+        </tr>
+      `;
+    }
   }
 
-
-  /* =========================================================
-     ROLE DASHBOARD
-     ========================================================= */
-
   function loadRoleDashboard() {
-
-    if (
-      currentUser &&
-      currentUser.role === 'SARABUN'
-    ) {
-
+    if (currentUser && currentUser.role === 'SARABUN') {
       updateNextRecNo();
-
       switchSarabunMenu('registered');
     }
   }
 
-
-  /* =========================================================
-     RECEIVE NUMBER
-     ========================================================= */
-
   function updateNextRecNo() {
+    const currentYearBE = new Date().getFullYear() + 543;
+    const maxRecNo = incomingBooks.reduce((max, b) => {
+      const num = parseInt(String(b.recNo).replace(/[^0-9]/g, ''), 10);
+      return !isNaN(num) && num > max ? num : max;
+    }, 0);
+    const nextNumber = maxRecNo + 1;
+    
+    const el = document.getElementById('nextRegNo');
+    if (el) el.innerText = `${nextNumber}/${currentYearBE}`;
 
-    const currentYearBE =
-      getCurrentYearBE();
-
-
-    const maxRecNo =
-      incomingBooks.reduce(
-        (max, b) => {
-
-          const num =
-            parseInt(
-              String(b.recNo)
-                .replace(/[^0-9]/g, ''),
-              10
-            );
-
-          return (
-            !isNaN(num) &&
-            num > max
-          )
-            ? num
-            : max;
-
-        },
-        0
-      );
-
-
-    const nextNumber =
-      maxRecNo + 1;
-
-
-    const el =
-      document.getElementById('nextRegNo');
-
-    if (el) {
-
-      el.innerText =
-        `${nextNumber}/${currentYearBE}`;
-    }
-
-
-    const recInput =
-      document.getElementById('bookRecNo');
-
-    if (recInput) {
-
-      recInput.value =
-        nextNumber;
-    }
+    const recInput = document.getElementById('bookRecNo');
+    if (recInput) recInput.value = nextNumber;
   }
-
-
-  /* =========================================================
-     SARABUN MENU
-     ========================================================= */
 
   function switchSarabunMenu(tabName) {
-
-    currentSarabunTab =
-      tabName;
-
+    currentSarabunTab = tabName;
     currentPage = 1;
+    
+    const btnAdd = document.getElementById('menuBtnAddBook');
+    const btnReg = document.getElementById('menuBtnRegistered');
+    const btnRet = document.getElementById('menuBtnReturned');
 
+    [btnAdd, btnReg, btnRet].forEach(btn => {
+      if (btn) btn.classList.remove('active', 'bg-sky-700', 'text-white');
+    });
 
-    const btnAdd =
-      document.getElementById('menuBtnAddBook');
-
-    const btnReg =
-      document.getElementById('menuBtnRegistered');
-
-    const btnRet =
-      document.getElementById('menuBtnReturned');
-
-
-    [btnAdd, btnReg, btnRet]
-      .forEach(btn => {
-
-        if (btn) {
-
-          btn.classList.remove(
-            'active',
-            'bg-sky-700',
-            'text-white'
-          );
-        }
-      });
-
-
-    const addSection =
-      document.getElementById(
-        'sarabunAddFormSection'
-      );
-
-    const tableSection =
-      document.getElementById(
-        'sarabunTableSection'
-      );
-
-
-    /* -------------------------
-       ADD
-       ------------------------- */
+    const addSection = document.getElementById('sarabunAddFormSection');
+    const tableSection = document.getElementById('sarabunTableSection');
 
     if (tabName === 'add') {
+      if (btnAdd) btnAdd.classList.add('active', 'bg-sky-700', 'text-white');
+      
+      if (addSection) addSection.classList.remove('hidden');
+      if (tableSection) tableSection.classList.add('hidden');
 
-      if (btnAdd) {
-
-        btnAdd.classList.add(
-          'active',
-          'bg-sky-700',
-          'text-white'
-        );
+      const receiveDateInput = document.getElementById('receiveDateInput');
+      if (receiveDateInput && !receiveDateInput.value) {
+        const today = new Date().toISOString().split('T')[0];
+        receiveDateInput.value = today;
       }
-
-
-      if (addSection) {
-
-        addSection.classList.remove(
-          'hidden'
-        );
-      }
-
-
-      if (tableSection) {
-
-        tableSection.classList.add(
-          'hidden'
-        );
-      }
-
-
-      const receiveDateInput =
-        document.getElementById(
-          'receiveDateInput'
-        );
-
-
-      if (
-        receiveDateInput &&
-        !receiveDateInput.value
-      ) {
-
-        const now =
-          new Date();
-
-        const yyyy =
-          now.getFullYear();
-
-        const mm =
-          String(
-            now.getMonth() + 1
-          ).padStart(2, '0');
-
-        const dd =
-          String(
-            now.getDate()
-          ).padStart(2, '0');
-
-        receiveDateInput.value =
-          `${yyyy}-${mm}-${dd}`;
-      }
-
-
       updateNextRecNo();
+    } else {
+      if (addSection) addSection.classList.add('hidden');
+      if (tableSection) tableSection.classList.remove('hidden');
 
-
-      return;
+      if (tabName === 'registered' && btnReg) {
+        btnReg.classList.add('active', 'bg-sky-700', 'text-white');
+      } else if (tabName === 'returned' && btnRet) {
+        btnRet.classList.add('active', 'bg-sky-700', 'text-white');
+      }
+      
+      filterDocs();
     }
-
-
-    /* -------------------------
-       TABLE
-       ------------------------- */
-
-    if (addSection) {
-
-      addSection.classList.add(
-        'hidden'
-      );
-    }
-
-
-    if (tableSection) {
-
-      tableSection.classList.remove(
-        'hidden'
-      );
-    }
-
-
-    if (
-      tabName === 'registered' &&
-      btnReg
-    ) {
-
-      btnReg.classList.add(
-        'active',
-        'bg-sky-700',
-        'text-white'
-      );
-
-    } else if (
-      tabName === 'returned' &&
-      btnRet
-    ) {
-
-      btnRet.classList.add(
-        'active',
-        'bg-sky-700',
-        'text-white'
-      );
-    }
-
-
-    filterDocs();
   }
-
-
-  /* =========================================================
-     SEARCH / FILTER
-     ========================================================= */
 
   function filterDocs() {
-
     if (isLoadingData) {
-
       renderLoadingState();
-
       return;
     }
 
-
-    const q =
-      (
-        document
-          .getElementById('searchInput')
-          ?.value || ''
-      )
-        .trim()
-        .toLowerCase();
-
+    const q = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
 
     let baseList = [];
-
-
-    if (
-      currentSarabunTab ===
-      'registered'
-    ) {
-
-      baseList =
-        incomingBooks.filter(
-          b =>
-            b.status === 'COMPLETED' ||
-            b.status === 'REGISTERED' ||
-            b.status === 'PENDING_DIRECTOR'
-        );
-
-    } else if (
-      currentSarabunTab ===
-      'returned'
-    ) {
-
-      baseList =
-        incomingBooks.filter(
-          b =>
-            b.status === 'RETURNED' ||
-            b.status === 'EXECUTED'
-        );
-
+    if (currentSarabunTab === 'registered') {
+      baseList = incomingBooks.filter(b => b.status === 'COMPLETED' || b.status === 'REGISTERED' || b.status === 'PENDING_DIRECTOR');
+    } else if (currentSarabunTab === 'returned') {
+      baseList = incomingBooks.filter(b => b.status === 'RETURNED' || b.status === 'EXECUTED');
     } else {
-
-      baseList =
-        [...incomingBooks];
+      baseList = [...incomingBooks];
     }
-
 
     if (q) {
-
-      filteredBooks =
-        baseList.filter(b => {
-
-          return (
-
-            (
-              b.recNo &&
-              String(b.recNo)
-                .toLowerCase()
-                .includes(q)
-            ) ||
-
-            (
-              b.no &&
-              String(b.no)
-                .toLowerCase()
-                .includes(q)
-            ) ||
-
-            (
-              b.title &&
-              String(b.title)
-                .toLowerCase()
-                .includes(q)
-            ) ||
-
-            (
-              b.from &&
-              String(b.from)
-                .toLowerCase()
-                .includes(q)
-            )
-          );
-        });
-
+      filteredBooks = baseList.filter(b => 
+        (b.recNo && String(b.recNo).toLowerCase().includes(q)) ||
+        (b.no && String(b.no).toLowerCase().includes(q)) ||
+        (b.title && String(b.title).toLowerCase().includes(q)) ||
+        (b.from && String(b.from).toLowerCase().includes(q))
+      );
     } else {
-
-      filteredBooks =
-        baseList;
+      filteredBooks = baseList;
     }
-
 
     currentPage = 1;
-
     renderTableData();
   }
-
-
-  /* =========================================================
-     TABLE RENDER
-     ========================================================= */
 
   function renderTableData() {
-
     if (isLoadingData) {
-
       renderLoadingState();
-
       return;
     }
 
+    const tableBody = document.getElementById('bookTableBody');
+    const pageStart = document.getElementById('pageStart');
+    const pageEnd = document.getElementById('pageEnd');
+    const totalItems = document.getElementById('totalItems');
+    const pageNumbers = document.getElementById('pageNumbers');
+    const btnPrev = document.getElementById('btnPrevPage');
+    const btnNext = document.getElementById('btnNextPage');
 
-    const tableBody =
-      document.getElementById(
-        'bookTableBody'
-      );
+    if (!tableBody) return;
 
-    const pageStart =
-      document.getElementById(
-        'pageStart'
-      );
+    const total = filteredBooks.length;
+    const totalPages = Math.ceil(total / pageSize) || 1;
+    if (currentPage > totalPages) currentPage = totalPages;
 
-    const pageEnd =
-      document.getElementById(
-        'pageEnd'
-      );
+    const startIdx = (currentPage - 1) * pageSize;
+    const endIdx = Math.min(startIdx + pageSize, total);
+    const pageData = filteredBooks.slice(startIdx, endIdx);
 
-    const totalItems =
-      document.getElementById(
-        'totalItems'
-      );
+    if (totalItems) totalItems.innerText = total;
+    if (pageStart) pageStart.innerText = total > 0 ? startIdx + 1 : 0;
+    if (pageEnd) pageEnd.innerText = endIdx;
+    if (pageNumbers) pageNumbers.innerText = currentPage;
 
-    const pageNumbers =
-      document.getElementById(
-        'pageNumbers'
-      );
-
-    const btnPrev =
-      document.getElementById(
-        'btnPrevPage'
-      );
-
-    const btnNext =
-      document.getElementById(
-        'btnNextPage'
-      );
-
-
-    if (!tableBody) {
-      return;
-    }
-
-
-    const total =
-      filteredBooks.length;
-
-
-    const totalPages =
-      Math.ceil(
-        total / pageSize
-      ) || 1;
-
-
-    if (
-      currentPage >
-      totalPages
-    ) {
-
-      currentPage =
-        totalPages;
-    }
-
-
-    const startIdx =
-      (currentPage - 1) *
-      pageSize;
-
-
-    const endIdx =
-      Math.min(
-        startIdx + pageSize,
-        total
-      );
-
-
-    const pageData =
-      filteredBooks.slice(
-        startIdx,
-        endIdx
-      );
-
-
-    /* -------------------------
-       Pagination Info
-       ------------------------- */
-
-    if (totalItems) {
-
-      totalItems.innerText =
-        total;
-    }
-
-
-    if (pageStart) {
-
-      pageStart.innerText =
-        total > 0
-          ? startIdx + 1
-          : 0;
-    }
-
-
-    if (pageEnd) {
-
-      pageEnd.innerText =
-        endIdx;
-    }
-
-
-    if (pageNumbers) {
-
-      pageNumbers.innerText =
-        currentPage;
-    }
-
-
-    if (btnPrev) {
-
-      btnPrev.disabled =
-        currentPage === 1;
-    }
-
-
-    if (btnNext) {
-
-      btnNext.disabled =
-        currentPage >= totalPages;
-    }
-
-
-    /* -------------------------
-       Empty State
-       ------------------------- */
+    if (btnPrev) btnPrev.disabled = (currentPage === 1);
+    if (btnNext) btnNext.disabled = (currentPage >= totalPages);
 
     if (pageData.length === 0) {
-
-      tableBody.innerHTML = `
-        <tr>
-          <td colspan="7"
-              class="py-12 text-center">
-
-            <div class="flex flex-col
-                        items-center
-                        justify-center
-                        gap-3
-                        text-slate-400">
-
-              <div class="w-12 h-12
-                          rounded-2xl
-                          bg-slate-100
-                          flex items-center
-                          justify-center">
-
-                <i class="fa-solid fa-folder-open
-                          text-xl"></i>
-
-              </div>
-
-              <span class="font-medium">
-                ไม่พบข้อมูลหนังสือรับในระบบ
-              </span>
-
-            </div>
-
-          </td>
-        </tr>
-      `;
-
+      tableBody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-slate-400 font-medium">ไม่พบข้อมูลหนังสือรับในระบบ</td></tr>`;
       return;
     }
 
+    const currentYearBE = new Date().getFullYear() + 543;
 
-    const currentYearBE =
-      getCurrentYearBE();
-
-
-    /* -------------------------
-       Table Rows
-       ------------------------- */
-
-    tableBody.innerHTML =
-      pageData.map((b, i) => {
-
-        const recNo =
-          escapeHtml(
-            b.recNo || '-'
-          );
-
-        const bookNo =
-          escapeHtml(
-            b.no || '-'
-          );
-
-        const title =
-          escapeHtml(
-            b.title || '-'
-          );
-
-        const from =
-          escapeHtml(
-            b.from || '-'
-          );
-
-        const displayDate =
-          escapeHtml(
-            formatDisplayDate(
-              b.date || b.time
-            )
-          );
-
-        const url =
-          safeUrl(
-            b.fileUrl
-          );
-
-
-        const fileButton =
-          url
-            ? `
-              <a
-                href="${url}"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="px-2.5 py-1
-                       bg-sky-100
-                       hover:bg-sky-200
-                       text-sky-800
-                       font-bold
-                       rounded-lg
-                       text-[11px]
-                       transition
-                       inline-flex
-                       items-center
-                       gap-1
-                       shadow-sm">
-
-                <i class="fa-solid fa-file-pdf
-                          text-red-500"></i>
-
-                เปิดดู
-              </a>
-            `
-            : '-';
-
-
-        return `
-          <tr
-            class="hover:bg-sky-50/60
-                   transition-colors
-                   border-b
-                   border-slate-100">
-
-            <td
-              class="py-3 px-3
-                     text-center
-                     font-medium
-                     text-slate-500">
-
-              ${startIdx + i + 1}
-
-            </td>
-
-
-            <td
-              class="py-3 px-3
-                     text-center
-                     font-bold
-                     text-amber-700">
-
-              ${recNo}/${currentYearBE}
-
-            </td>
-
-
-            <td
-              class="py-3 px-3
-                     font-semibold
-                     text-slate-700">
-
-              ${bookNo}
-
-            </td>
-
-
-            <td
-              class="py-3 px-3
-                     font-medium
-                     text-slate-800">
-
-              ${title}
-
-            </td>
-
-
-            <td
-              class="py-3 px-3
-                     text-slate-600">
-
-              ${from}
-
-            </td>
-
-
-            <td
-              class="py-3 px-3
-                     text-center
-                     text-slate-500">
-
-              ${displayDate}
-
-            </td>
-
-
-            <td
-              class="py-3 px-3
-                     text-center">
-
-              ${fileButton}
-
-            </td>
-
-          </tr>
-        `;
-
-      }).join('');
+    tableBody.innerHTML = pageData.map((b, i) => `
+      <tr class="hover:bg-sky-50/60 transition-colors">
+        <td class="py-3 px-3 text-center font-medium text-slate-500">${startIdx + i + 1}</td>
+        <td class="py-3 px-3 text-center font-bold text-amber-700">${b.recNo}/${currentYearBE}</td>
+        <td class="py-3 px-3 font-semibold text-slate-700">${b.no || '-'}</td>
+        <td class="py-3 px-3 font-medium text-slate-800">${b.title}</td>
+        <td class="py-3 px-3 text-slate-600">${b.from}</td>
+        <td class="py-3 px-3 text-center text-slate-500">${formatDisplayDate(b.date || b.time)}</td>
+        <td class="py-3 px-3 text-center">
+          ${b.fileUrl ? `<a href="${b.fileUrl}" target="_blank" class="px-2.5 py-1 bg-sky-100 hover:bg-sky-200 text-sky-800 font-bold rounded-lg text-[11px] transition inline-flex items-center gap-1 shadow-sm"><i class="fa-solid fa-file-pdf text-red-500"></i> เปิดดู</a>` : '-'}
+        </td>
+      </tr>
+    `).join('');
   }
 
-
-  /* =========================================================
-     PAGINATION
-     ========================================================= */
-
   function changePage(direction) {
-
-    const totalPages =
-      Math.ceil(
-        filteredBooks.length /
-        pageSize
-      ) || 1;
-
-
+    const totalPages = Math.ceil(filteredBooks.length / pageSize) || 1;
     currentPage += direction;
-
-
-    if (currentPage < 1) {
-      currentPage = 1;
-    }
-
-
-    if (currentPage > totalPages) {
-      currentPage = totalPages;
-    }
-
-
+    if (currentPage < 1) currentPage = 1;
+    if (currentPage > totalPages) currentPage = totalPages;
     renderTableData();
   }
 
-
-  /* =========================================================
-     REGISTER MENU
-     ========================================================= */
-
   function openRegisterModal() {
-
     switchSarabunMenu('add');
   }
 
-
-  /* =========================================================
-     PDF STAMP
-     ========================================================= */
-
-  async function stampPdfOnClient(
-    file,
-    receiveNo,
-    receiveDate
-  ) {
-
-    if (
-      typeof PDFLib === 'undefined' ||
-      typeof fontkit === 'undefined'
-    ) {
-
-      throw new Error(
-        "ไม่พบไลบรารี PDF-Lib หรือ fontkit"
-      );
+async function stampPdfOnClient(file, receiveNo, receiveDate) {
+    if (typeof PDFLib === 'undefined' || typeof fontkit === 'undefined') {
+      throw new Error("ไม่พบไลบรารี PDF-Lib หรือ fontkit");
     }
 
-
-    /* -------------------------
-       Load PDF
-       ------------------------- */
-
-    const arrayBuffer =
-      await file.arrayBuffer();
-
-    const pdfDoc =
-      await PDFLib.PDFDocument.load(
-        arrayBuffer
-      );
-
-
-    pdfDoc.registerFontkit(
-      fontkit
-    );
-
-
-    /* -------------------------
-       Load Thai Font
-       ------------------------- */
+    const arrayBuffer = await file.arrayBuffer();
+    const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
+    pdfDoc.registerFontkit(fontkit);
 
     if (!cachedFontBytes) {
-
-      cachedFontBytes =
-        await fetch(
-          "https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/sarabun/Sarabun-Bold.ttf"
-        )
-          .then(res => {
-
-            if (!res.ok) {
-
-              throw new Error(
-                "ไม่สามารถโหลดฟอนต์ Sarabun ได้"
-              );
-            }
-
-            return res.arrayBuffer();
-          });
+      cachedFontBytes = await fetch("https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/sarabun/Sarabun-Bold.ttf")
+        .then(res => res.arrayBuffer());
     }
 
+    const customFont = await pdfDoc.embedFont(cachedFontBytes);
+    const toThaiNum = (str) => String(str).replace(/[0-9]/g, m => ['๐','๑','๒','๓','๔','๕','๖','๗','๘','๙'][m]);
+    const thaiMonths = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
 
-    const customFont =
-      await pdfDoc.embedFont(
-        cachedFontBytes
-      );
+    const now = new Date();
+    let targetDate = parseLocalDate(receiveDate) || now;
 
+    const thaiDay = toThaiNum(targetDate.getDate());
+    const thaiMonth = thaiMonths[targetDate.getMonth()];
+    const thaiYear = toThaiNum(targetDate.getFullYear() + 543);
+    const formattedToday = `${thaiDay} ${thaiMonth} ${thaiYear}`;
 
-    /* -------------------------
-       Thai Number
-       ------------------------- */
+    const hh = String(now.getHours()).padStart(2, '0');
+    const mm = String(now.getMinutes()).padStart(2, '0');
+    const ss = String(now.getSeconds()).padStart(2, '0');
+    const formattedTime = toThaiNum(`${hh}:${mm}:${ss}`);
+    const thaiReceiveNo = toThaiNum(receiveNo);
 
-    const toThaiNum =
-      (str) => {
+    // สีกรมท่าสำหรับตราประทับ
+    const inkColor = PDFLib.rgb(0.08, 0.18, 0.52);
+    const pages = pdfDoc.getPages();
+    const firstPage = pages[0];
+    const { width, height } = firstPage.getSize();
 
-        return String(str).replace(
-          /[0-9]/g,
-          m =>
-            [
-              '๐',
-              '๑',
-              '๒',
-              '๓',
-              '๔',
-              '๕',
-              '๖',
-              '๗',
-              '๘',
-              '๙'
-            ][m]
-        );
-      };
-
-
-    const thaiMonths = [
-      'มกราคม',
-      'กุมภาพันธ์',
-      'มีนาคม',
-      'เมษายน',
-      'พฤษภาคม',
-      'มิถุนายน',
-      'กรกฎาคม',
-      'สิงหาคม',
-      'กันยายน',
-      'ตุลาคม',
-      'พฤศจิกายน',
-      'ธันวาคม'
-    ];
-
-
-    /* -------------------------
-       Date / Time
-       ------------------------- */
-
-    const now =
-      new Date();
-
-
-    const targetDate =
-      parseLocalDate(receiveDate) ||
-      now;
-
-
-    const thaiDay =
-      toThaiNum(
-        targetDate.getDate()
-      );
-
-
-    const thaiMonth =
-      thaiMonths[
-        targetDate.getMonth()
-      ];
-
-
-    const thaiYear =
-      toThaiNum(
-        targetDate.getFullYear() + 543
-      );
-
-
-    const formattedToday =
-      `${thaiDay} ${thaiMonth} ${thaiYear}`;
-
-
-    const hh =
-      String(
-        now.getHours()
-      ).padStart(2, '0');
-
-
-    const mm =
-      String(
-        now.getMinutes()
-      ).padStart(2, '0');
-
-
-    const ss =
-      String(
-        now.getSeconds()
-      ).padStart(2, '0');
-
-
-    const formattedTime =
-      toThaiNum(
-        `${hh}:${mm}:${ss}`
-      );
-
-
-    const thaiReceiveNo =
-      toThaiNum(
-        receiveNo
-      );
-
-
-    /* -------------------------
-       Stamp Color
-       ------------------------- */
-
-    const inkColor =
-      PDFLib.rgb(
-        0.08,
-        0.18,
-        0.52
-      );
-
-
-    const pages =
-      pdfDoc.getPages();
-
-
-    const firstPage =
-      pages[0];
-
-
-    if (!firstPage) {
-
-      throw new Error(
-        "ไม่พบหน้าเอกสาร PDF"
-      );
-    }
-
-
-    const {
-      width,
-      height
-    } =
-      firstPage.getSize();
-
-
-    /* -------------------------
-       Stamp Position
-       ------------------------- */
-
+    // ย่อขนาดกล่องตราประทับลงเหลือ 155 x 68 พิกเซล
     const stampWidth = 155;
     const stampHeight = 68;
     const margin = 15;
+    const x = width - stampWidth - margin;
+    const y = height - stampHeight - margin;
 
-
-    const x =
-      width -
-      stampWidth -
-      margin;
-
-
-    const y =
-      height -
-      stampHeight -
-      margin;
-
-
-    /* -------------------------
-       Outer Border
-       ------------------------- */
-
+    // 1. วาดกรอบสี่เหลี่ยมซ้อน 2 ชั้น (Double Border)
     firstPage.drawRectangle({
-
       x: x,
-
       y: y,
-
-      width:
-        stampWidth,
-
-      height:
-        stampHeight,
-
-      borderColor:
-        inkColor,
-
-      borderWidth:
-        1.4
+      width: stampWidth,
+      height: stampHeight,
+      borderColor: inkColor,
+      borderWidth: 1.4
     });
-
-
-    /* -------------------------
-       Inner Border
-       ------------------------- */
 
     const innerPadding = 2;
-
-
     firstPage.drawRectangle({
-
-      x:
-        x +
-        innerPadding,
-
-      y:
-        y +
-        innerPadding,
-
-      width:
-        stampWidth -
-        (innerPadding * 2),
-
-      height:
-        stampHeight -
-        (innerPadding * 2),
-
-      borderColor:
-        inkColor,
-
-      borderWidth:
-        0.6
+      x: x + innerPadding,
+      y: y + innerPadding,
+      width: stampWidth - (innerPadding * 2),
+      height: stampHeight - (innerPadding * 2),
+      borderColor: inkColor,
+      borderWidth: 0.6
     });
 
+    // 2. ชื่อโรงเรียน (ปรับฟอนต์เหลือ 9.5 pt)
+    firstPage.drawText("โรงเรียนพิมานพิทยาสรรค์", {
+      x: x + 8,
+      y: y + 51,
+      size: 9.5,
+      font: customFont,
+      color: inkColor
+    });
 
-    /* -------------------------
-       School Name
-       ------------------------- */
-
-    firstPage.drawText(
-      "โรงเรียนพิมานพิทยาสรรค์",
-      {
-
-        x:
-          x + 8,
-
-        y:
-          y + 51,
-
-        size:
-          9.5,
-
-        font:
-          customFont,
-
-        color:
-          inkColor
+    // 3. ฟังก์ชันสำหรับวาดเส้นประ
+    const drawDottedLine = (startX, startY, endX) => {
+      const dashLength = 1.2;
+      const gapLength = 1.2;
+      let currentX = startX;
+      while (currentX < endX) {
+        firstPage.drawLine({
+          start: { x: currentX, y: startY },
+          end: { x: Math.min(currentX + dashLength, endX), y: startY },
+          thickness: 0.5,
+          color: inkColor
+        });
+        currentX += dashLength + gapLength;
       }
-    );
-
-
-    /* -------------------------
-       Dotted Line
-       ------------------------- */
-
-    const drawDottedLine =
-      (
-        startX,
-        startY,
-        endX
-      ) => {
-
-        const dashLength = 1.2;
-        const gapLength = 1.2;
-
-        let currentX =
-          startX;
-
-
-        while (
-          currentX < endX
-        ) {
-
-          firstPage.drawLine({
-
-            start: {
-              x:
-                currentX,
-
-              y:
-                startY
-            },
-
-            end: {
-
-              x:
-                Math.min(
-                  currentX +
-                  dashLength,
-                  endX
-                ),
-
-              y:
-                startY
-            },
-
-            thickness:
-              0.5,
-
-            color:
-              inkColor
-          });
-
-
-          currentX +=
-            dashLength +
-            gapLength;
-        }
-      };
-
-
-    /* -------------------------
-       Stamp Text Positions
-       ------------------------- */
-
-    const labelX =
-      x + 8;
-
-    const valueX =
-      x + 38;
-
-    const lineStartX =
-      x + 34;
-
-    const lineEndX =
-      x +
-      stampWidth -
-      8;
-
-
-    /* -------------------------
-       Receive Number
-       ------------------------- */
-
-    firstPage.drawText(
-      "รับที่",
-      {
-
-        x:
-          labelX,
-
-        y:
-          y + 36,
-
-        size:
-          8.5,
-
-        font:
-          customFont,
-
-        color:
-          inkColor
-      }
-    );
-
-
-    firstPage.drawText(
-      thaiReceiveNo,
-      {
-
-        x:
-          valueX,
-
-        y:
-          y + 36,
-
-        size:
-          8.5,
-
-        font:
-          customFont,
-
-        color:
-          inkColor
-      }
-    );
-
-
-    drawDottedLine(
-      lineStartX,
-      y + 34,
-      lineEndX
-    );
-
-
-    /* -------------------------
-       Date
-       ------------------------- */
-
-    firstPage.drawText(
-      "วันที่",
-      {
-
-        x:
-          labelX,
-
-        y:
-          y + 21,
-
-        size:
-          8.5,
-
-        font:
-          customFont,
-
-        color:
-          inkColor
-      }
-    );
-
-
-    firstPage.drawText(
-      formattedToday,
-      {
-
-        x:
-          valueX,
-
-        y:
-          y + 21,
-
-        size:
-          8.5,
-
-        font:
-          customFont,
-
-        color:
-          inkColor
-      }
-    );
-
-
-    drawDottedLine(
-      lineStartX,
-      y + 20,
-      lineEndX
-    );
-
-
-    /* -------------------------
-       Time
-       ------------------------- */
-
-    firstPage.drawText(
-      "เวลา",
-      {
-
-        x:
-          labelX,
-
-        y:
-          y + 6,
-
-        size:
-          8.5,
-
-        font:
-          customFont,
-
-        color:
-          inkColor
-      }
-    );
-
-
-    firstPage.drawText(
-      formattedTime,
-      {
-
-        x:
-          valueX,
-
-        y:
-          y + 6,
-
-        size:
-          8.5,
-
-        font:
-          customFont,
-
-        color:
-          inkColor
-      }
-    );
-
-
-    drawDottedLine(
-      lineStartX,
-      y + 5,
-      lineEndX
-    );
-
-
-    /* -------------------------
-       Save PDF
-       ------------------------- */
-
-    const stampedPdfBytes =
-      await pdfDoc.save();
-
-
-    /* -------------------------
-       Convert to Base64
-       ------------------------- */
+    };
+
+    // 4. ข้อความ + เส้นประแต่ละบรรทัด (ปรับฟอนต์เหลือ 8.5 pt)
+    const labelX = x + 8;
+    const valueX = x + 38;
+    const lineStartX = x + 34;
+    const lineEndX = x + stampWidth - 8;
+
+    // บรรทัดที่ 1: รับที่
+    firstPage.drawText("รับที่", { x: labelX, y: y + 36, size: 8.5, font: customFont, color: inkColor });
+    firstPage.drawText(thaiReceiveNo, { x: valueX, y: y + 36, size: 8.5, font: customFont, color: inkColor });
+    drawDottedLine(lineStartX, y + 34, lineEndX);
+
+    // บรรทัดที่ 2: วันที่
+    firstPage.drawText("วันที่", { x: labelX, y: y + 21, size: 8.5, font: customFont, color: inkColor });
+    firstPage.drawText(formattedToday, { x: valueX, y: y + 21, size: 8.5, font: customFont, color: inkColor });
+    drawDottedLine(lineStartX, y + 20, lineEndX);
+
+    // บรรทัดที่ 3: เวลา
+    firstPage.drawText("เวลา", { x: labelX, y: y + 6, size: 8.5, font: customFont, color: inkColor });
+    firstPage.drawText(formattedTime, { x: valueX, y: y + 6, size: 8.5, font: customFont, color: inkColor });
+    drawDottedLine(lineStartX, y + 5, lineEndX);
+
+    const stampedPdfBytes = await pdfDoc.save();
 
     let binary = '';
-
-    const bytes =
-      new Uint8Array(
-        stampedPdfBytes
-      );
-
-    const len =
-      bytes.byteLength;
-
-    const chunkSize =
-      8192;
-
-
-    for (
-      let i = 0;
-      i < len;
-      i += chunkSize
-    ) {
-
-      binary +=
-        String.fromCharCode.apply(
-          null,
-          bytes.subarray(
-            i,
-            Math.min(
-              i + chunkSize,
-              len
-            )
-          )
-        );
+    const bytes = new Uint8Array(stampedPdfBytes);
+    const len = bytes.byteLength;
+    const chunkSize = 8192;
+    for (let i = 0; i < len; i += chunkSize) {
+      binary += String.fromCharCode.apply(null, bytes.subarray(i, Math.min(i + chunkSize, len)));
     }
-
-
-    return (
-      'data:application/pdf;base64,' +
-      btoa(binary)
-    );
+    return 'data:application/pdf;base64,' + btoa(binary);
   }
 
-
-  /* =========================================================
-     REGISTER BOOK
-     ========================================================= */
-
   async function handleRegisterBook(e) {
-
-    if (
-      e &&
-      typeof e.preventDefault ===
-      'function'
-    ) {
-
-      e.preventDefault();
-    }
-
-
-    // ป้องกันการกดปุ่มซ้ำ
-    if (isRegisteringBook) {
-      return;
-    }
-
-
-    isRegisteringBook = true;
-
-
-    const btn =
-      document.getElementById(
-        'btnSubmitBook'
-      );
-
-
+    if (e && typeof e.preventDefault === 'function') e.preventDefault();
+    
+    const btn = document.getElementById('btnSubmitBook');
     if (btn) {
-
-      btn.innerHTML =
-        `<i class="fa-solid fa-circle-notch animate-spin"></i> ` +
-        `กำลังประทับตราและบันทึก...`;
-
+      btn.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin"></i> กำลังประทับตราและบันทึก...`;
       btn.disabled = true;
     }
 
-
     try {
-
-      /* -------------------------
-         Check PDF
-         ------------------------- */
-
-      const fileInput =
-        document.getElementById(
-          'bookPdf'
-        );
-
-
-      if (
-        !fileInput ||
-        !fileInput.files ||
-        fileInput.files.length === 0
-      ) {
-
-        showAlert(
-          "กรุณาเลือกไฟล์ PDF หนังสือเข้า",
-          "แจ้งเตือน",
-          "warning"
-        );
-
+      const fileInput = document.getElementById('bookPdf');
+      if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+        showAlert("กรุณาเลือกไฟล์ PDF หนังสือเข้า", "แจ้งเตือน", "warning");
+        if (btn) {
+          btn.innerHTML = `<i class="fa-solid fa-stamp"></i> <span>ลงรับและประทับตราหนังสือ</span>`;
+          btn.disabled = false;
+        }
         return;
       }
 
+      const file = fileInput.files[0];
+      const recNo = document.getElementById('bookRecNo')?.value || '';
+      const bookNo = document.getElementById('bookNo')?.value || '';
+      const bookDate = document.getElementById('bookDate')?.value || '';
+      const receiveDate = document.getElementById('receiveDateInput')?.value || '';
+      const bookFrom = document.getElementById('bookFrom')?.value || '';
+      const bookTitle = document.getElementById('bookTitle')?.value || '';
 
-      const file =
-        fileInput.files[0];
-
-
-      /* -------------------------
-         Get Form Data
-         ------------------------- */
-
-      const recNo =
-        document.getElementById(
-          'bookRecNo'
-        )?.value || '';
-
-
-      const bookNo =
-        document.getElementById(
-          'bookNo'
-        )?.value || '';
-
-
-      const bookDate =
-        document.getElementById(
-          'bookDate'
-        )?.value || '';
-
-
-      const receiveDate =
-        document.getElementById(
-          'receiveDateInput'
-        )?.value || '';
-
-
-      const bookFrom =
-        document.getElementById(
-          'bookFrom'
-        )?.value || '';
-
-
-      const bookTitle =
-        document.getElementById(
-          'bookTitle'
-        )?.value || '';
-
-
-      /* -------------------------
-         Stamp PDF
-         ------------------------- */
-
-      const stampedBase64 =
-        await stampPdfOnClient(
-          file,
-          recNo,
-          receiveDate
-        );
-
-
-      /* -------------------------
-         Save to GAS
-         ------------------------- */
+      const stampedBase64 = await stampPdfOnClient(file, recNo, receiveDate);
 
       const payload = {
-
-        action:
-          'SAVE_NEW_DOC',
-
+        action: 'SAVE_NEW_DOC',
         data: {
-
-          receiveNo:
-            recNo,
-
-          bookNo:
-            bookNo,
-
-          receiveDate:
-            receiveDate,
-
-          bookDate:
-            bookDate,
-
-          fromDept:
-            bookFrom,
-
-          title:
-            bookTitle,
-
-          fileData:
-            stampedBase64
+          receiveNo: recNo,
+          bookNo: bookNo,
+          receiveDate: receiveDate,
+          bookDate: bookDate,
+          fromDept: bookFrom,
+          title: bookTitle,
+          fileData: stampedBase64
         }
       };
 
+      const response = await fetch(GAS_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
 
-      const res =
-        await postToGas(
-          payload
-        );
-
-
-      /* -------------------------
-         Success
-         ------------------------- */
+      const res = await response.json();
 
       if (res.success) {
-
-        const form =
-          document.getElementById(
-            'sarabunRegisterForm'
-          );
-
-
-        if (form) {
-          form.reset();
-        }
-
-
-        // โหลดข้อมูลใหม่
+        const form = document.getElementById('sarabunRegisterForm');
+        if (form) form.reset();
+        
         await loadDocsData();
-
-
-        // อัปเดตเลขรับถัดไป
         updateNextRecNo();
-
-
-        // กลับหน้ารายการ
-        switchSarabunMenu(
-          'registered'
-        );
-
-
-        const currentYearBE =
-          getCurrentYearBE();
-
-
-        showAlert(
-          `ลงรับหนังสือเลขที่ ${recNo}/${currentYearBE} และประทับตราเรียบร้อยแล้ว`,
-          "ลงรับสำเร็จ",
-          "success"
-        );
-
-
+        switchSarabunMenu('registered');
+        
+        const currentYearBE = new Date().getFullYear() + 543;
+        showAlert(`ลงรับหนังสือเลขที่ ${recNo}/${currentYearBE} และประทับตราเรียบร้อยแล้ว`, "ลงรับสำเร็จ", "success");
       } else {
-
-        showAlert(
-          res.message ||
-          "เกิดข้อผิดพลาดในการบันทึกข้อมูล",
-          "บันทึกไม่สำเร็จ",
-          "error"
-        );
+        showAlert(res.message || "เกิดข้อผิดพลาดในการบันทึกข้อมูล", "บันทึกไม่สำเร็จ", "error");
       }
-
-
     } catch (err) {
-
-      console.error(
-        "Register book error:",
-        err
-      );
-
-
-      showAlert(
-        "เกิดข้อผิดพลาด: " +
-        (err?.message || err),
-        "เกิดข้อผิดพลาด",
-        "error"
-      );
-
-
+      console.error(err);
+      showAlert("เกิดข้อผิดพลาด: " + err.message, "เกิดข้อผิดพลาด", "error");
     } finally {
-
-      isRegisteringBook = false;
-
-
       if (btn) {
-
-        btn.innerHTML =
-          `<i class="fa-solid fa-stamp"></i> ` +
-          `<span>ลงรับและประทับตราหนังสือ</span>`;
-
+        btn.innerHTML = `<i class="fa-solid fa-stamp"></i> <span>ลงรับและประทับตราหนังสือ</span>`;
         btn.disabled = false;
       }
     }
   }
-
-
-  /* =========================================================
-     LOGOUT
-     ========================================================= */
-
+  
   function logout() {
-
     currentUser = null;
+    targetRoleGroup = 'SARABUN';
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('targetRoleGroup');
 
-    targetRoleGroup =
-      'SARABUN';
-
-
-    incomingBooks = [];
-
-    filteredBooks = [];
-
-    currentPage = 1;
-
-    isLoadingData = false;
-
-    isLoggingIn = false;
-
-    isRegisteringBook = false;
-
-
-    localStorage.removeItem(
-      'currentUser'
-    );
-
-    localStorage.removeItem(
-      'targetRoleGroup'
-    );
-
-
-    document
-      .getElementById('mainDashboard')
-      ?.classList.add('hidden');
-
-
-    document
-      .getElementById('portalSection')
-      ?.classList.remove('hidden');
-
-
-    // เคลียร์ช่องค้นหา
-    const searchInput =
-      document.getElementById(
-        'searchInput'
-      );
-
-    if (searchInput) {
-      searchInput.value = '';
-    }
-
-
-    // กลับหน้าเริ่มต้น
-    currentSarabunTab =
-      'registered';
+    document.getElementById('mainDashboard')?.classList.add('hidden');
+    document.getElementById('portalSection')?.classList.remove('hidden');
   }
-
-
-  /* =========================================================
-     OPTIONAL: CLOSE ALERT WHEN CLICK OUTSIDE
-     ========================================================= */
-
-  document.addEventListener(
-    'click',
-    (event) => {
-
-      const modal =
-        document.getElementById(
-          'alertModal'
-        );
-
-      if (!modal) {
-        return;
-      }
-
-
-      // ไม่บังคับปิด Modal
-      // เพื่อรักษาพฤติกรรมเดิมของระบบ
-    }
-  );
-
 </script>
   
 </body>
