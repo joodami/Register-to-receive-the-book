@@ -298,7 +298,7 @@
           <!-- ฝั่งขวา: ส่วนแสดงผลเนื้อหา (Content Container) -->
           <div class="md:col-span-9 lg:col-span-10 space-y-4">
 
-            <!-- 1. ฟอร์มลงรับหนังสือเข้าใหม่ (เริ่มต้นซ่อนไว้ ด้วยคลาส hidden) -->
+            <!-- 1. ฟอร์มลงรับหนังสือเข้าใหม่ -->
             <div id="sarabunAddFormSection" class="hidden bg-white rounded-2xl border-2 border-slate-700 shadow-md overflow-hidden page-transition">
               <div class="bg-slate-800 text-amber-400 px-4 py-3 font-bold text-xs md:text-sm flex items-center justify-between">
                 <div class="flex items-center gap-2">
@@ -393,7 +393,7 @@
               </div>
             </div>
 
-            <!-- 2. ตารางหนังสือรับที่ลงทะเบียนแล้ว (แสดงเป็นหน้าแรก) -->
+            <!-- 2. ตารางหนังสือรับที่ลงทะเบียนแล้ว -->
             <div id="sarabunTableSection" class="bg-white/95 rounded-2xl border-2 border-sky-200 shadow-md p-4 md:p-5 page-transition">
               <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 mb-4">
                 <div class="flex items-center gap-2">
@@ -450,7 +450,7 @@
       </div>
     </main>
 
-    <!-- Floating Navigation Bar (แสดงเฉพาะบนมือถือ ซ่อนบนคอมพิวเตอร์ด้วย md:hidden) -->
+    <!-- Floating Navigation Bar (แสดงเฉพาะบนมือถือ) -->
     <div class="fixed bottom-4 left-0 right-0 z-30 px-4 max-w-md mx-auto block md:hidden">
       <nav class="floating-nav bg-white/95 backdrop-blur-xl rounded-2xl p-1.5 border-2 border-sky-200 shadow-2xl shadow-sky-300/50 flex justify-around items-center">
         <button type="button" onclick="loadRoleDashboard()" class="flex flex-col items-center justify-center w-full py-2 text-sky-600 transition group">
@@ -501,7 +501,6 @@
       </button>
     </div>
   </div>
-  
 <!-- ================= JavaScript ================= -->
 <script>
   const GAS_URL = "https://script.google.com/macros/s/AKfycbxauMbrEeIaDNAN_U0DvffmUVN5vfbUqpNOpmVSPvtMZ9qbl0WfTcxB2JnvcRxkOfQm/exec"; 
@@ -588,13 +587,13 @@
     messageEl.innerText = message;
 
     if (type === 'error') {
-      iconContainer.className = "w-14 h-14 bg-red-50 text-red-600 border border-red-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-sm";
+      iconContainer.className = "w-14 h-14 bg-red-50 text-red-600 border border-red-200 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-sm";
       icon.className = "fa-solid fa-triangle-exclamation";
     } else if (type === 'success') {
-      iconContainer.className = "w-14 h-14 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-sm";
+      iconContainer.className = "w-14 h-14 bg-emerald-50 text-emerald-600 border border-emerald-200 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-sm";
       icon.className = "fa-solid fa-circle-check";
     } else if (type === 'warning') {
-      iconContainer.className = "w-14 h-14 bg-amber-50 text-amber-600 border border-amber-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-sm";
+      iconContainer.className = "w-14 h-14 bg-amber-50 text-amber-600 border border-amber-200 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-sm";
       icon.className = "fa-solid fa-circle-exclamation";
     } else {
       iconContainer.className = "w-14 h-14 bg-sky-100 text-[#0f2b48] border border-sky-300 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl shadow-sm";
@@ -606,6 +605,11 @@
 
   function closeAlertModal() {
     const modal = document.getElementById('alertModal');
+    if (modal) modal.classList.add('hidden');
+  }
+
+  function closeLoginModal() {
+    const modal = document.getElementById('loginModal');
     if (modal) modal.classList.add('hidden');
   }
 
@@ -813,14 +817,14 @@
     const btnRet = document.getElementById('menuBtnReturned');
 
     [btnAdd, btnReg, btnRet].forEach(btn => {
-      if (btn) btn.classList.remove('active', 'bg-sky-700', 'text-white');
+      if (btn) btn.classList.remove('active');
     });
 
     const addSection = document.getElementById('sarabunAddFormSection');
     const tableSection = document.getElementById('sarabunTableSection');
 
     if (tabName === 'add') {
-      if (btnAdd) btnAdd.classList.add('active', 'bg-sky-700', 'text-white');
+      if (btnAdd) btnAdd.classList.add('active');
       
       if (addSection) addSection.classList.remove('hidden');
       if (tableSection) tableSection.classList.add('hidden');
@@ -836,9 +840,9 @@
       if (tableSection) tableSection.classList.remove('hidden');
 
       if (tabName === 'registered' && btnReg) {
-        btnReg.classList.add('active', 'bg-sky-700', 'text-white');
+        btnReg.classList.add('active');
       } else if (tabName === 'returned' && btnRet) {
-        btnRet.classList.add('active', 'bg-sky-700', 'text-white');
+        btnRet.classList.add('active');
       }
       
       filterDocs();
@@ -943,7 +947,7 @@
     switchSarabunMenu('add');
   }
 
-async function stampPdfOnClient(file, receiveNo, receiveDate) {
+  async function stampPdfOnClient(file, receiveNo, receiveDate) {
     if (typeof PDFLib === 'undefined' || typeof fontkit === 'undefined') {
       throw new Error("ไม่พบไลบรารี PDF-Lib หรือ fontkit");
     }
@@ -981,7 +985,7 @@ async function stampPdfOnClient(file, receiveNo, receiveDate) {
     const firstPage = pages[0];
     const { width, height } = firstPage.getSize();
 
-    // ย่อขนาดกล่องตราประทับลงเหลือ 155 x 68 พิกเซล
+    // ขนาดกล่องตราประทับ 155 x 68 พิกเซล
     const stampWidth = 155;
     const stampHeight = 68;
     const margin = 15;
@@ -1008,7 +1012,7 @@ async function stampPdfOnClient(file, receiveNo, receiveDate) {
       borderWidth: 0.6
     });
 
-    // 2. ชื่อโรงเรียน (ปรับฟอนต์เหลือ 9.5 pt)
+    // 2. ชื่อโรงเรียน
     firstPage.drawText("โรงเรียนพิมานพิทยาสรรค์", {
       x: x + 8,
       y: y + 51,
@@ -1033,7 +1037,7 @@ async function stampPdfOnClient(file, receiveNo, receiveDate) {
       }
     };
 
-    // 4. ข้อความ + เส้นประแต่ละบรรทัด (ปรับฟอนต์เหลือ 8.5 pt)
+    // 4. ข้อความ + เส้นประแต่ละบรรทัด
     const labelX = x + 8;
     const valueX = x + 38;
     const lineStartX = x + 34;
