@@ -59,19 +59,6 @@
     .pb-safe { padding-bottom: max(1.25rem, env(safe-area-inset-bottom)); }
     .pt-safe { padding-top: max(1rem, env(safe-area-inset-top)); }
 
-    .system-tab-button {
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    
-    .system-tab-active {
-      background-color: #ffffff !important;
-      color: #0f2b48 !important;
-      font-weight: 800 !important;
-      border: 2.5px solid #0284c7 !important;
-      box-shadow: 0 6px 16px rgba(2, 132, 199, 0.2) !important;
-      transform: translateY(-2px);
-    }
-
     .sidebar-menu-btn {
       transition: all 0.2s ease;
     }
@@ -83,6 +70,16 @@
     }
     .sidebar-menu-btn.active i {
       color: #ffffff !important;
+    }
+
+    /* 3D Glass Effect Container */
+    .icon-3d-box {
+      perspective: 1000px;
+      transform-style: preserve-3d;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .group:hover .icon-3d-box {
+      transform: translateY(-4px) rotateX(10deg) rotateY(-8deg) scale(1.05);
     }
   </style>
 </head>
@@ -97,28 +94,28 @@
   </div>
 
   <!-- ================= 1. หน้าแรก LANDING PAGE ================= -->
-  <div id="portalSection" class="max-w-5xl mx-auto px-4 py-6 relative z-10">
-    <input type="hidden" id="selectedRoleGroup" value="SARABUN">
+  <div id="portalSection" class="w-full relative z-10">
+    <input type="hidden" id="selectedRoleGroup" value="EXEC">
 
-    <!-- ================= แบนเนอร์สไตล์บาร์ขนาดเล็ก พร้อมรูปภาพพื้นหลัง ================= -->
-    <div class="mb-8 rounded-2xl px-5 py-3.5 relative overflow-hidden shadow-lg border border-sky-900/20 group">
-      <!-- รูปภาพพื้นหลังแบนเนอร์ (สามารถเปลี่ยน URL รูปภาพตรง src ได้) -->
+    <!-- ================= แบนเนอร์สไตล์บาร์ แบบขยายเต็มหน้าจอ (Full-Width Bar / No Rounded Corner) ================= -->
+    <div class="w-full mb-8 px-4 md:px-8 py-3.5 relative overflow-hidden shadow-md border-b border-sky-900/30 group">
+      <!-- รูปภาพพื้นหลังแบนเนอร์ -->
       <img src="https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?q=80&w=1600&auto=format&fit=crop" 
            alt="Background" 
            class="absolute inset-0 w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-700">
       
-      <!-- เลเยอร์สีทับรูปภาพ (Overlay) ให้อ่านข้อความง่ายขึ้น -->
-      <div class="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-sky-950/75 to-blue-900/65 backdrop-blur-[2px]"></div>
+      <!-- Overlay ทับรูปภาพ -->
+      <div class="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-sky-950/80 to-blue-900/70 backdrop-blur-[2px]"></div>
 
-      <!-- เนื้อหาแบนเนอร์แบบแนวนอน (Compact Bar) -->
-      <div class="relative z-10 flex items-center justify-between gap-4">
+      <!-- เนื้อหาภายในแบนเนอร์ -->
+      <div class="max-w-6xl mx-auto relative z-10 flex items-center justify-between gap-4">
         <div class="flex items-center gap-3.5">
-          <!-- โลโก้ขนาดกะทัดรัด -->
-          <div class="w-12 h-12 rounded-xl bg-white/90 p-1.5 shadow-md flex items-center justify-center shrink-0 border border-white/50">
+          <!-- โลโก้ -->
+          <div class="w-11 h-11 rounded-xl bg-white/90 p-1.5 shadow-md flex items-center justify-center shrink-0 border border-white/50">
             <img id="portalSchoolLogo" src="https://raw.githubusercontent.com/joodami/school-assets/main/logo.png" alt="ตราโรงเรียนพิมานพิทยาสรรค์" class="w-full h-full object-contain drop-shadow">
           </div>
           
-          <!-- ข้อความแบนเนอร์แบบสั้น -->
+          <!-- ข้อความแบนเนอร์ -->
           <div>
             <h1 class="text-base md:text-lg font-black text-white tracking-wide leading-tight flex items-center gap-2">
               <span>ระบบสารบรรณอิเล็กทรอนิกส์</span>
@@ -130,7 +127,7 @@
           </div>
         </div>
 
-        <!-- แท็กสถานะแอปพลิเคชัน (แสดงบนจอคอมพิวเตอร์) -->
+        <!-- สถานะระบบ -->
         <div class="hidden md:flex items-center gap-2 shrink-0 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/20">
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
           <span class="text-xs font-bold text-white tracking-wide">พร้อมใช้งาน</span>
@@ -138,76 +135,79 @@
       </div>
     </div>
 
-    <!-- ================= STEP 1: หน้าเลือกไอคอนระบบ (App Selection) ================= -->
-    <div id="appSelectSection">
-      <!-- Grid การ์ดไอคอนแบบ แอปพลิเคชัน -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        
-        <!-- แอป 1: งานสารบรรณ -->
-        <div onclick="selectAppSystem('SARABUN', 'ระบบงานสารบรรณ')" 
-             class="group bg-white/80 backdrop-blur-md p-6 rounded-3xl border border-white shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer text-center relative overflow-hidden">
-          <div class="w-20 h-20 bg-gradient-to-tr from-sky-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 text-white text-3xl shadow-lg shadow-sky-200 group-hover:scale-110 transition-transform">
-            <i class="fa-solid fa-file-signature"></i>
+    <!-- ส่วนกล่องเนื้อหาการเลือกแอปพลิเคชัน -->
+    <div class="max-w-5xl mx-auto px-4 pb-6">
+      
+      <!-- STEP 1: หน้าเลือกไอคอนระบบ (App Selection) -->
+      <div id="appSelectSection">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          
+          <!-- แอป 1: ผู้บริหาร (นำขึ้นก่อน + ไอคอน 3D 3D Fluent Style) -->
+          <div onclick="selectAppSystem('EXEC', 'ระบบผู้บริหาร')" 
+               class="group bg-white/80 backdrop-blur-md p-6 rounded-3xl border border-white shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer text-center relative overflow-hidden">
+            <div class="icon-3d-box w-16 h-16 bg-gradient-to-br from-amber-400 via-orange-500 to-amber-600 rounded-2xl flex items-center justify-center mx-auto mb-4 text-white text-3xl shadow-lg shadow-orange-500/35 border-t border-l border-white/40">
+              <i class="fa-solid fa-user-tie drop-shadow-[0_4px_6px_rgba(0,0,0,0.3)]"></i>
+            </div>
+            <h3 class="font-bold text-slate-800 text-lg group-hover:text-amber-600 transition-colors">ระบบผู้บริหาร</h3>
+            <p class="text-xs text-slate-500 mt-1">เกษียณหนังสือ พิจารณา และสั่งการเอกสาร</p>
           </div>
-          <h3 class="font-bold text-slate-800 text-lg group-hover:text-sky-600 transition-colors">งานสารบรรณ</h3>
-          <p class="text-xs text-slate-500 mt-1">ลงรับหนังสือเข้า จัดการเอกสาร และออกเลขรับ</p>
-        </div>
 
-        <!-- แอป 2: ผู้บริหาร -->
-        <div onclick="selectAppSystem('EXEC', 'ระบบผู้บริหาร')" 
-             class="group bg-white/80 backdrop-blur-md p-6 rounded-3xl border border-white shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer text-center relative overflow-hidden">
-          <div class="w-20 h-20 bg-gradient-to-tr from-amber-400 to-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-4 text-white text-3xl shadow-lg shadow-amber-200 group-hover:scale-110 transition-transform">
-            <i class="fa-solid fa-user-tie"></i>
+          <!-- แอป 2: งานสารบรรณ (สลับมาเป็นอันดับสอง + ไอคอน 3D Fluent Style) -->
+          <div onclick="selectAppSystem('SARABUN', 'ระบบงานสารบรรณ')" 
+               class="group bg-white/80 backdrop-blur-md p-6 rounded-3xl border border-white shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer text-center relative overflow-hidden">
+            <div class="icon-3d-box w-16 h-16 bg-gradient-to-br from-sky-400 via-blue-600 to-indigo-700 rounded-2xl flex items-center justify-center mx-auto mb-4 text-white text-3xl shadow-lg shadow-blue-500/35 border-t border-l border-white/40">
+              <i class="fa-solid fa-file-signature drop-shadow-[0_4px_6px_rgba(0,0,0,0.3)]"></i>
+            </div>
+            <h3 class="font-bold text-slate-800 text-lg group-hover:text-sky-600 transition-colors">งานสารบรรณ</h3>
+            <p class="text-xs text-slate-500 mt-1">ลงรับหนังสือเข้า จัดการเอกสาร และออกเลขรับ</p>
           </div>
-          <h3 class="font-bold text-slate-800 text-lg group-hover:text-amber-600 transition-colors">ผู้บริหาร</h3>
-          <p class="text-xs text-slate-500 mt-1">เกษียณหนังสือ พิจารณา และสั่งการเอกสาร</p>
-        </div>
 
-        <!-- แอป 3: ครูและบุคลากร -->
-        <div onclick="selectAppSystem('TEACHER', 'ระบบครูและบุคลากร')" 
-             class="group bg-white/80 backdrop-blur-md p-6 rounded-3xl border border-white shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer text-center relative overflow-hidden">
-          <div class="w-20 h-20 bg-gradient-to-tr from-emerald-400 to-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-4 text-white text-3xl shadow-lg shadow-teal-200 group-hover:scale-110 transition-transform">
-            <i class="fa-solid fa-chalkboard-user"></i>
+          <!-- แอป 3: ครูและบุคลากร (ไอคอน 3D Fluent Style) -->
+          <div onclick="selectAppSystem('TEACHER', 'ระบบครูและบุคลากร')" 
+               class="group bg-white/80 backdrop-blur-md p-6 rounded-3xl border border-white shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer text-center relative overflow-hidden">
+            <div class="icon-3d-box w-16 h-16 bg-gradient-to-br from-emerald-400 via-teal-600 to-emerald-700 rounded-2xl flex items-center justify-center mx-auto mb-4 text-white text-3xl shadow-lg shadow-teal-500/35 border-t border-l border-white/40">
+              <i class="fa-solid fa-chalkboard-user drop-shadow-[0_4px_6px_rgba(0,0,0,0.3)]"></i>
+            </div>
+            <h3 class="font-bold text-slate-800 text-lg group-hover:text-emerald-600 transition-colors">ครูและบุคลากร</h3>
+            <p class="text-xs text-slate-500 mt-1">ติดตามหนังสือ ติดตามเรื่อง และรับทราบเอกสาร</p>
           </div>
-          <h3 class="font-bold text-slate-800 text-lg group-hover:text-emerald-600 transition-colors">ครูและบุคลากร</h3>
-          <p class="text-xs text-slate-500 mt-1">ติดตามหนังสือ ติดตามเรื่อง และรับทราบเอกสาร</p>
-        </div>
 
+        </div>
       </div>
-    </div>
 
-    <!-- ================= STEP 2: ฟอร์มกรอกรหัสเข้าสู่ระบบ (ซ่อนไว้ก่อน) ================= -->
-    <div id="loginFormSection" class="hidden max-w-md mx-auto">
-      <div class="bg-white/90 backdrop-blur-xl p-8 rounded-3xl border border-white shadow-xl">
-        
-        <!-- ปุ่มย้อนกลับ -->
-        <button type="button" onclick="backToAppSelect()" class="inline-flex items-center gap-1.5 text-xs font-bold text-slate-400 hover:text-slate-700 mb-6 transition-colors">
-          <i class="fa-solid fa-arrow-left"></i> ย้อนกลับไปเลือกระบบ
-        </button>
-
-        <div class="text-center mb-6">
-          <h3 id="activeSystemNameDisplay" class="text-lg font-bold text-slate-700"></h3>
-          <p class="text-xs text-slate-400 mt-1">กรอกชื่อผู้ใช้และรหัสผ่านเพื่อเข้าใช้งาน</p>
-        </div>
-
-        <form onsubmit="handleLogin(event)" class="space-y-4">
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">ชื่อผู้ใช้งาน</label>
-            <input type="text" id="username" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-sky-500 text-sm">
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">รหัสผ่าน</label>
-            <input type="password" id="password" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-sky-500 text-sm">
-          </div>
-          <button type="submit" id="btnLogin" class="w-full py-3 bg-[#0f2b48] text-white font-bold rounded-xl shadow-lg hover:bg-sky-900 transition duration-200 flex items-center justify-center gap-2 text-sm">
-            <i class="fa-solid fa-right-to-bracket text-xs"></i> <span>เข้าสู่ระบบ</span>
+      <!-- STEP 2: ฟอร์มกรอกรหัสเข้าสู่ระบบ (ซ่อนไว้ก่อน) -->
+      <div id="loginFormSection" class="hidden max-w-md mx-auto">
+        <div class="bg-white/90 backdrop-blur-xl p-8 rounded-3xl border border-white shadow-xl">
+          
+          <button type="button" onclick="backToAppSelect()" class="inline-flex items-center gap-1.5 text-xs font-bold text-slate-400 hover:text-slate-700 mb-6 transition-colors">
+            <i class="fa-solid fa-arrow-left"></i> ย้อนกลับไปเลือกระบบ
           </button>
-        </form>
-      </div>
-    </div>
 
-    <div class="w-full text-center py-6 text-[11px] text-sky-900 font-bold">
-      <p>โรงเรียนพิมานพิทยาสรรค์ © Piman Phityasan School</p>
+          <div class="text-center mb-6">
+            <h3 id="activeSystemNameDisplay" class="text-lg font-bold text-slate-700"></h3>
+            <p class="text-xs text-slate-400 mt-1">กรอกชื่อผู้ใช้และรหัสผ่านเพื่อเข้าใช้งาน</p>
+          </div>
+
+          <form onsubmit="handleLogin(event)" class="space-y-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-600 mb-1">ชื่อผู้ใช้งาน</label>
+              <input type="text" id="username" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-sky-500 text-sm">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-600 mb-1">รหัสผ่าน</label>
+              <input type="password" id="password" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-sky-500 text-sm">
+            </div>
+            <button type="submit" id="btnLogin" class="w-full py-3 bg-[#0f2b48] text-white font-bold rounded-xl shadow-lg hover:bg-sky-900 transition duration-200 flex items-center justify-center gap-2 text-sm">
+              <i class="fa-solid fa-right-to-bracket text-xs"></i> <span>เข้าสู่ระบบ</span>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <div class="w-full text-center py-6 text-[11px] text-sky-900 font-bold">
+        <p>โรงเรียนพิมานพิทยาสรรค์ © Piman Phityasan School</p>
+      </div>
+
     </div>
   </div>
 
@@ -265,7 +265,6 @@
               <i class="fa-solid fa-bars text-sky-600"></i>
               <span>เมนูสารบรรณ</span>
             </div>
-            <!-- Sidebar Menu -->
             <div class="space-y-1">
               <button type="button" id="menuBtnAddBook" onclick="switchSarabunMenu('add')" class="sidebar-menu-btn active w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all shadow-sm">
                 <i class="fa-solid fa-file-circle-plus"></i>
@@ -299,9 +298,7 @@
               <div class="p-4 md:p-6 bg-gradient-to-b from-sky-50/30 to-white">
                 
                 <form id="sarabunRegisterForm" onsubmit="handleRegisterBook(event)" class="space-y-4">
-                  
                   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <!-- เลขรับ -->
                     <div>
                       <label class="block text-xs font-bold text-slate-700 mb-1">
                         เลขรับหนังสือ <span class="text-rose-500">*</span>
@@ -310,7 +307,6 @@
                              class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-sky-500 outline-none font-semibold text-amber-700 shadow-sm">
                     </div>
 
-                    <!-- เลขที่หนังสือ -->
                     <div>
                       <label class="block text-xs font-bold text-slate-700 mb-1">
                         เลขที่หนังสือ <span class="text-rose-500">*</span>
@@ -319,7 +315,6 @@
                              class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-sky-500 outline-none font-medium shadow-sm">
                     </div>
 
-                    <!-- ลงวันที่ในหนังสือ -->
                     <div>
                       <label class="block text-xs font-bold text-slate-700 mb-1">
                         ลงวันที่ (ในหนังสือ) <span class="text-rose-500">*</span>
@@ -328,7 +323,6 @@
                              class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-sky-500 outline-none shadow-sm">
                     </div>
 
-                    <!-- วันที่ลงรับในระบบ -->
                     <div>
                       <label class="block text-xs font-bold text-slate-700 mb-1">
                         วันที่ลงรับระบบ <span class="text-rose-500">*</span>
@@ -339,7 +333,6 @@
                   </div>
 
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- จาก -->
                     <div>
                       <label class="block text-xs font-bold text-slate-700 mb-1">
                         จาก (หน่วยงานเจ้าของหนังสือ) <span class="text-rose-500">*</span>
@@ -348,7 +341,6 @@
                              class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-sky-500 outline-none shadow-sm">
                     </div>
 
-                    <!-- เรื่อง -->
                     <div>
                       <label class="block text-xs font-bold text-slate-700 mb-1">
                         เรื่อง <span class="text-rose-500">*</span>
@@ -358,7 +350,6 @@
                     </div>
                   </div>
 
-                  <!-- แนบไฟล์ PDF -->
                   <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">
                       แนบไฟล์ PDF หนังสือเข้า <span class="text-rose-500">*</span>
@@ -367,7 +358,6 @@
                            class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs text-slate-600 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-sky-100 file:text-sky-700 hover:file:bg-sky-200 cursor-pointer shadow-sm">
                   </div>
 
-                  <!-- ปุ่มลงทะเบียน -->
                   <div class="pt-2 flex justify-end">
                     <button type="submit" id="btnSubmitBook" 
                             class="px-6 py-2.5 bg-gradient-to-r from-sky-600 to-blue-700 hover:from-sky-700 hover:to-blue-800 text-white font-bold rounded-xl text-xs shadow-md transition duration-200 flex items-center gap-2">
@@ -375,7 +365,6 @@
                       <span>ลงรับและประทับตราหนังสือ</span>
                     </button>
                   </div>
-
                 </form>
 
               </div>
@@ -397,7 +386,6 @@
                 </div>
               </div>
 
-              <!-- Table Body -->
               <div class="overflow-x-auto rounded-xl border border-slate-200">
                 <table class="w-full text-left border-collapse text-xs">
                   <thead>
@@ -412,12 +400,10 @@
                     </tr>
                   </thead>
                   <tbody id="bookTableBody" class="divide-y divide-slate-200 text-slate-700">
-                    <!-- รายการตารางจะโหลดผ่าน JavaScript -->
                   </tbody>
                 </table>
               </div>
 
-              <!-- Pagination -->
               <div class="flex flex-col md:flex-row items-center justify-between gap-3 mt-4 text-xs text-slate-600 font-medium">
                 <div id="paginationInfo">
                   แสดง <span id="pageStart">1</span> - <span id="pageEnd">20</span> จากทั้งหมด <span id="totalItems">0</span> รายการ
